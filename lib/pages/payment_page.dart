@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
@@ -170,14 +171,14 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
             ),
             const SizedBox(height: 30),
-            
+
             // Payment Methods
             const Text(
               'เลือกช่องทางการชำระเงิน',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            
+
             _buildPaymentOption(
               context,
               id: 'QR',
@@ -210,12 +211,23 @@ class _PaymentPageState extends State<PaymentPage> {
               subtitle: 'ชำระเมื่อรับสินค้า',
               color: Colors.green,
             ),
-            
+
             const SizedBox(height: 40),
-            
+
             // Bottom Action
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                try {
+                  // Send UDP Packet to Robot (Broadcast to local network)
+                  final socket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, 0);
+                  socket.broadcastEnabled = true;
+                  socket.send('F'.codeUnits, InternetAddress('255.255.255.255'), 2001);
+                  debugPrint('Successfully sent UDP packet "F" to Robot (Broadcast 2001)');
+                  socket.close();
+                } catch (e) {
+                  debugPrint('Failed to send UDP packet: $e');
+                }
+
                 _showSuccessDialog(context);
               },
               style: ElevatedButton.styleFrom(
@@ -262,7 +274,7 @@ class _PaymentPageState extends State<PaymentPage> {
         ),
         title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(subtitle, style: const TextStyle(color: Colors.grey, fontSize: 13)),
-        trailing: isSelected 
+        trailing: isSelected
           ? Icon(Icons.check_circle, color: AppTheme.primaryGreen)
           : const Icon(Icons.circle_outlined, color: Colors.grey),
       ),
@@ -283,7 +295,7 @@ class _PaymentPageState extends State<PaymentPage> {
             const SizedBox(height: 24),
             const Text('ชำระเงินสำเร็จ!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            const Text('ขอบคุณที่ใช้บริการ Boi นะครับ\nไรเดอร์กำลังเตรียมจัดส่งสินค้าให้คุณ', 
+            const Text('ขอบคุณที่ใช้บริการ Boi นะครับ\nไรเดอร์กำลังเตรียมจัดส่งสินค้าให้คุณ',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey, fontSize: 16),
             ),
@@ -294,7 +306,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 // Sequence of pops
                 Navigator.pop(context); // Close dialog
                 Navigator.pop(context); // Back to cart
-                
+
                 // Go to Order History Tab (Index 1)
                 context.read<CartProvider>().setTabIndex(1);
               },
