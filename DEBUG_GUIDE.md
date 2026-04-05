@@ -1,10 +1,13 @@
 # Robot UDP Communication - Debug & Verification Guide
 
-This guide explains how to test and debug the UDP communication between the **Flutter Application** and the **ESP32 Robot**.
+This guide explains how to test and debug the UDP communication between the
+**Flutter Application** and the **ESP32 Robot**.
 
 ## Prerequisites
 
-For the system to work, **both** the device running the Flutter app (smartphone/emulator) and the ESP32 **must be connected to the exact same WiFi network**.
+For the system to work, **both** the device running the Flutter app
+(smartphone/emulator) and the ESP32
+**must be connected to the exact same WiFi network**.
 
 Based on your `config.h`, the default network is:
 
@@ -41,7 +44,8 @@ Based on your `config.h`, the default network is:
 
 ## Method 2: Test Flutter App (Without Robot)
 
-*Use this to verify the Flutter app is successfully broadcasting UDP packets, even if the robot is turned off.*
+*Use this to verify the Flutter app is successfully broadcasting UDP packets,
+even if the robot is turned off.*
 
 1. Connect your computer to the same WiFi network as your phone/emulator.
 2. Create a file on your computer named `test_server.py` with the following Python code:
@@ -73,7 +77,8 @@ Based on your `config.h`, the default network is:
 
 ## Method 3: Test Robot (Without Flutter App)
 
-*Use this to test the ESP32 logic and motor controls without needing the Flutter app.*
+*Use this to test the ESP32 logic and motor controls without needing the Flutter
+app.*
 
 1. Connect your computer to the `Boi` WiFi network.
 2. Get the ESP32's IP address from the Arduino Serial Monitor (e.g., `192.168.43.100`).
