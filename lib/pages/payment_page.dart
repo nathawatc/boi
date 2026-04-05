@@ -221,13 +221,23 @@ class _PaymentPageState extends State<PaymentPage> {
                   // Send UDP Packet to Robot (Broadcast to local network)
                   final socket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, 0);
                   socket.broadcastEnabled = true;
-                  socket.send('F'.codeUnits, InternetAddress('255.255.255.255'), 2001);
-                  debugPrint('Successfully sent UDP packet "F" to Robot (Broadcast 2001)');
+
+                  // UDP is a fire-and-forget protocol (no guaranteed delivery).
+                  // To fix packet loss without adding complex TCP handshakes,
+                  // we send the packet 3 times with a tiny 50ms delay between them.
+                  // This is standard practice in IoT remote controls.
+                  for (int i = 0; i < 3; i++) {
+                    socket.send('F'.codeUnits, InternetAddress('255.255.255.255'), 2001);
+                    await Future.delayed(const Duration(milliseconds: 50));
+                  }
+
+                  debugPrint('Successfully broadcasted UDP packet "F" to Robot (3x Redundancy)');
                   socket.close();
                 } catch (e) {
                   debugPrint('Failed to send UDP packet: $e');
                 }
 
+                if (!mounted) return;
                 _showSuccessDialog(context);
               },
               style: ElevatedButton.styleFrom(
