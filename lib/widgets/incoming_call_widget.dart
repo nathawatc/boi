@@ -88,7 +88,7 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
                     ),
                     child: ClipOval(
                       child: Image.asset(
-                        'lib/Logo.JPG',
+                        'assets/images/Logo.JPG',
                         width: 250,
                         height: 250,
                         fit: BoxFit.cover,
