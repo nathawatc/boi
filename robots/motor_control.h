@@ -4,56 +4,73 @@
 #include <Arduino.h>
 #include "config.h"
 
-// Initialize motor pins and PWM channels
+// Initialize motor pins and PWM channels for standard L298N driver
 void initMotors() {
-    // Setup PWM channels for ESP32
-    ledcSetup(PWM_CH_A_IN1, PWM_FREQ, PWM_RESOLUTION);
-    ledcSetup(PWM_CH_A_IN2, PWM_FREQ, PWM_RESOLUTION);
-    ledcSetup(PWM_CH_B_IN3, PWM_FREQ, PWM_RESOLUTION);
-    ledcSetup(PWM_CH_B_IN4, PWM_FREQ, PWM_RESOLUTION);
+    // Set Direction pins (IN1, IN2, IN3, IN4) as standard digital outputs
+    pinMode(MOTOR_A_IN1, OUTPUT);
+    pinMode(MOTOR_A_IN2, OUTPUT);
+    pinMode(MOTOR_B_IN3, OUTPUT);
+    pinMode(MOTOR_B_IN4, OUTPUT);
 
-    // Attach pins to PWM channels
-    ledcAttachPin(MOTOR_A_IN1, PWM_CH_A_IN1);
-    ledcAttachPin(MOTOR_A_IN2, PWM_CH_A_IN2);
-    ledcAttachPin(MOTOR_B_IN3, PWM_CH_B_IN3);
-    ledcAttachPin(MOTOR_B_IN4, PWM_CH_B_IN4);
+    // Setup PWM channels for ENA and ENB (Speed Control)
+    ledcSetup(PWM_CH_A_EN, PWM_FREQ, PWM_RESOLUTION);
+    ledcSetup(PWM_CH_B_EN, PWM_FREQ, PWM_RESOLUTION);
+
+    // Attach ENA and ENB pins to the PWM channels
+    ledcAttachPin(MOTOR_A_EN, PWM_CH_A_EN);
+    ledcAttachPin(MOTOR_B_EN, PWM_CH_B_EN);
 
     // Ensure motors are stopped initially
-    ledcWrite(PWM_CH_A_IN1, 0);
-    ledcWrite(PWM_CH_A_IN2, 0);
-    ledcWrite(PWM_CH_B_IN3, 0);
-    ledcWrite(PWM_CH_B_IN4, 0);
+    digitalWrite(MOTOR_A_IN1, LOW);
+    digitalWrite(MOTOR_A_IN2, LOW);
+    digitalWrite(MOTOR_B_IN3, LOW);
+    digitalWrite(MOTOR_B_IN4, LOW);
+    
+    ledcWrite(PWM_CH_A_EN, 0);
+    ledcWrite(PWM_CH_B_EN, 0);
 }
 
-// Control Left Motor
+// Control Left Motor (Motor A)
 // speed: -MAX_SPEED to MAX_SPEED (negative for reverse)
 void setMotorLeft(int speed) {
     speed = constrain(speed, -MAX_SPEED, MAX_SPEED);
     if (speed > 0) {
-        ledcWrite(PWM_CH_A_IN1, speed);
-        ledcWrite(PWM_CH_A_IN2, 0);
+        // Forward
+        digitalWrite(MOTOR_A_IN1, HIGH);
+        digitalWrite(MOTOR_A_IN2, LOW);
+        ledcWrite(PWM_CH_A_EN, speed);
     } else if (speed < 0) {
-        ledcWrite(PWM_CH_A_IN1, 0);
-        ledcWrite(PWM_CH_A_IN2, -speed);
+        // Reverse
+        digitalWrite(MOTOR_A_IN1, LOW);
+        digitalWrite(MOTOR_A_IN2, HIGH);
+        ledcWrite(PWM_CH_A_EN, -speed);
     } else {
-        ledcWrite(PWM_CH_A_IN1, 0);
-        ledcWrite(PWM_CH_A_IN2, 0);
+        // Stop
+        digitalWrite(MOTOR_A_IN1, LOW);
+        digitalWrite(MOTOR_A_IN2, LOW);
+        ledcWrite(PWM_CH_A_EN, 0);
     }
 }
 
-// Control Right Motor
+// Control Right Motor (Motor B)
 // speed: -MAX_SPEED to MAX_SPEED (negative for reverse)
 void setMotorRight(int speed) {
     speed = constrain(speed, -MAX_SPEED, MAX_SPEED);
     if (speed > 0) {
-        ledcWrite(PWM_CH_B_IN3, speed);
-        ledcWrite(PWM_CH_B_IN4, 0);
+        // Forward
+        digitalWrite(MOTOR_B_IN3, HIGH);
+        digitalWrite(MOTOR_B_IN4, LOW);
+        ledcWrite(PWM_CH_B_EN, speed);
     } else if (speed < 0) {
-        ledcWrite(PWM_CH_B_IN3, 0);
-        ledcWrite(PWM_CH_B_IN4, -speed);
+        // Reverse
+        digitalWrite(MOTOR_B_IN3, LOW);
+        digitalWrite(MOTOR_B_IN4, HIGH);
+        ledcWrite(PWM_CH_B_EN, -speed);
     } else {
-        ledcWrite(PWM_CH_B_IN3, 0);
-        ledcWrite(PWM_CH_B_IN4, 0);
+        // Stop
+        digitalWrite(MOTOR_B_IN3, LOW);
+        digitalWrite(MOTOR_B_IN4, LOW);
+        ledcWrite(PWM_CH_B_EN, 0);
     }
 }
 

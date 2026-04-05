@@ -14,10 +14,12 @@ const uint16_t UDP_PORT = 2001;
 // Motor Pins Configuration
 // ==========================================
 // Motor A (Left)
+const int MOTOR_A_EN = 14;  // L298N ENA (PWM)
 const int MOTOR_A_IN1 = 26;
 const int MOTOR_A_IN2 = 27;
 
 // Motor B (Right)
+const int MOTOR_B_EN = 15;  // L298N ENB (PWM)
 const int MOTOR_B_IN3 = 32;
 const int MOTOR_B_IN4 = 33;
 
@@ -28,10 +30,8 @@ const int PWM_FREQ = 5000;
 const int PWM_RESOLUTION = 8; // 8-bit resolution (0-255)
 
 // PWM Channels (ESP32 supports up to 16 channels)
-const int PWM_CH_A_IN1 = 0;
-const int PWM_CH_A_IN2 = 1;
-const int PWM_CH_B_IN3 = 2;
-const int PWM_CH_B_IN4 = 3;
+const int PWM_CH_A_EN = 0;
+const int PWM_CH_B_EN = 1;
 
 // ==========================================
 // Sensor Pins Configuration
