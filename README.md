@@ -34,6 +34,13 @@ To run this project locally, ensure you have Flutter installed and set up on you
     flutter run
     ```
 
+### Compile
+
+   ```bash
+   flutter build apk --release
+   flutter build ios --release
+   ```
+
 ## Resources
 
 A few resources to get you started if this is your first Flutter project:
