@@ -26,7 +26,7 @@ Comprehensive documentation is available in the [`docs/`](./docs/) directory:
 
 ---
 
-## What is Boi?
+## What Is Boi?
 
 Boi is an autonomous delivery robot system that allows users to:
 
@@ -45,7 +45,7 @@ The system consists of:
 
 ## Project Structure
 
-```
+```text
 boi/
 ├── lib/                    # Flutter application
 │   ├── main.dart           # Entry point
@@ -139,6 +139,7 @@ boi/
    - Band: 2.4GHz
 
 5. **Run Flutter app**
+
    ```bash
    flutter run
    ```
@@ -149,7 +150,7 @@ boi/
 
 ## Network Architecture
 
-```
+```text
 Phone (Flutter App)
   Creates Hotspot: "Boi"
   IP: 192.168.43.1
@@ -220,17 +221,14 @@ flutter analyze
 ### Short Term
 
 - [ ] WiFiManager integration for ESP32
-- [ ] Manual robot control page
-- [ ] Robot connection status indicator
 - [ ] Command acknowledgment (ESP32 → App)
 
 ### Medium Term
 
 - [ ] Battery monitoring
-- [ ] Multiple robot support
 - [ ] Delivery route planning
 - [ ] Push notifications
 
 ---
 
-_Last Updated: 2026-04-06_
+Last Updated: _2026-04-06_
