@@ -22,9 +22,9 @@ class _RatingDialogState extends State<RatingDialog> {
         top: 10,
         bottom: MediaQuery.of(context).viewInsets.bottom + 20,
       ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -34,18 +34,25 @@ class _RatingDialogState extends State<RatingDialog> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'ให้คะแนนความพึงพอใจ',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
               IconButton(
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close, color: Colors.grey),
+                icon: Icon(
+                  Icons.close,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 10),
-          
+
           // Star Rating
           Center(
             child: Row(
@@ -59,7 +66,9 @@ class _RatingDialogState extends State<RatingDialog> {
                   },
                   icon: Icon(
                     index < _rating ? Icons.star : Icons.star_border,
-                    color: index < _rating ? Colors.amber : Colors.grey.shade300,
+                    color: index < _rating
+                        ? Colors.amber
+                        : Theme.of(context).colorScheme.outlineVariant,
                     size: 40,
                   ),
                 );
@@ -67,28 +76,48 @@ class _RatingDialogState extends State<RatingDialog> {
             ),
           ),
           const SizedBox(height: 20),
-          
+
           // Comment Box
-          const Text('คอมเม้นต์เพิ่มเติม', style: TextStyle(fontWeight: FontWeight.w500)),
+          Text(
+            'คอมเม้นต์เพิ่มเติม',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
           const SizedBox(height: 8),
           TextField(
             controller: _commentController,
             maxLines: 3,
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             decoration: InputDecoration(
               hintText: 'บอกเราหน่อยว่าคุณชอบอะไรหรืออยากให้เราปรับปรุงส่วนไหน...',
-              hintStyle: const TextStyle(fontSize: 14, color: Colors.grey),
+              hintStyle: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey.shade300),
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: AppTheme.primaryGreen),
               ),
+              filled: true,
+              fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // Submit Button
           SizedBox(
             width: double.infinity,
