@@ -106,6 +106,7 @@ class CartProvider with ChangeNotifier {
     _disposed = true;
     _timer?.cancel();
     _callTimer?.cancel();
+    _pendingCallTimer?.cancel();
     _audioPlayer.dispose();
     super.dispose();
   }
@@ -133,6 +134,7 @@ class CartProvider with ChangeNotifier {
   int _callTimeoutSeconds = 10;
   int get callTimeoutSeconds => _callTimeoutSeconds;
   Timer? _callTimer;
+  Timer? _pendingCallTimer; // Tracks the delayed future before incoming call starts
 
   void playNotificationSound({bool isLong = false}) async {
     try {
@@ -140,8 +142,14 @@ class CartProvider with ChangeNotifier {
         // Reset timeout to 3 minutes (180 seconds)
         _callTimeoutSeconds = 180;
 
+        // Cancel any pending call that was already scheduled
+        _pendingCallTimer?.cancel();
+
         // Wait 10 seconds after checkout before simulate the "Incoming Call"
-        Future.delayed(const Duration(seconds: 10), () async {
+        _pendingCallTimer = Timer(const Duration(seconds: 10), () async {
+          // Check if we've been disposed or the call was cancelled
+          if (_disposed) return;
+
           _isIncomingCall = true;
           _callTimeoutSeconds = 180; // 3 minutes to receive the call
           _safeNotifyListeners();
@@ -185,6 +193,7 @@ class CartProvider with ChangeNotifier {
   void stopCall() {
     _isIncomingCall = false;
     _callTimer?.cancel();
+    _pendingCallTimer?.cancel();
     _audioPlayer.stop();
     _safeNotifyListeners();
   }

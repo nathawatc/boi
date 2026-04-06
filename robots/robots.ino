@@ -137,44 +137,41 @@ void loop() {
     Serial.printf("Received UDP command: %s from %s:%d\n", command.c_str(), remoteIp.toString().c_str(), remotePort);
     lastCommandTime = millis(); // Reset safety timer
 
-    // Send acknowledgment response back to sender
-    sendResponse("OK", remoteIp, remotePort);
-
-    // Process command
+    // Process command and send single response
     if (command == "F") {
       isLineFollowing = false;
       isMovingManually = true;
       moveRobot(MAX_SPEED, MAX_SPEED);
-      sendResponse("MOVING_FORWARD", remoteIp, remotePort);
+      sendResponse("F", remoteIp, remotePort);
     } else if (command == "B") {
       isLineFollowing = false;
       isMovingManually = true;
       moveRobot(-MAX_SPEED, -MAX_SPEED);
-      sendResponse("MOVING_BACKWARD", remoteIp, remotePort);
+      sendResponse("B", remoteIp, remotePort);
     } else if (command == "L") {
       isLineFollowing = false;
       isMovingManually = true;
       moveRobot(-BASE_SPEED, BASE_SPEED);
-      sendResponse("TURNING_LEFT", remoteIp, remotePort);
+      sendResponse("L", remoteIp, remotePort);
     } else if (command == "R") {
       isLineFollowing = false;
       isMovingManually = true;
       moveRobot(BASE_SPEED, -BASE_SPEED);
-      sendResponse("TURNING_RIGHT", remoteIp, remotePort);
+      sendResponse("R", remoteIp, remotePort);
     } else if (command == "S") {
       isLineFollowing = false;
       isMovingManually = false;
       stopMotors();
-      sendResponse("STOPPED", remoteIp, remotePort);
+      sendResponse("S", remoteIp, remotePort);
     } else if (command == "LF") {
       isLineFollowing = true;
       isMovingManually = false;
       resetPID();
       Serial.println("Line Follow Mode Enabled");
-      sendResponse("LINE_FOLLOW_ENABLED", remoteIp, remotePort);
+      sendResponse("LF", remoteIp, remotePort);
     } else {
       Serial.println("Unknown Command ignored");
-      sendResponse("UNKNOWN", remoteIp, remotePort);
+      sendResponse("ERR", remoteIp, remotePort);
     }
   }
 
