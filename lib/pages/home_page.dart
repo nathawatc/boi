@@ -100,92 +100,116 @@ class HomeContent extends StatelessWidget {
               gradient: AppTheme.primaryGradient,
             ),
             child: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 1. Top Action Icons Row
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 18,
-                          backgroundColor: Colors.white.withOpacity(0.2),
-                          child: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 16),
-                        ),
-                        const Spacer(),
-                        // Robot Status Indicator
-                        RobotStatusIndicator(
-                          robotApi: context.read<RobotApi>(),
-                          showRefreshButton: true,
-                          showTapToDiscover: true,
-                        ),
-                        const SizedBox(width: 12),
-                        _CircularIcon(icon: Icons.favorite_border),
-                        const SizedBox(width: 12),
-                        _CircularIcon(label: 'TH'),
-                        const SizedBox(width: 12),
-                        _CircularIcon(icon: Icons.person_outline),
-                      ],
-                    ),
-                  ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final screenWidth = constraints.maxWidth;
+                  final isSmallScreen = screenWidth < 360;
+                  final showIp = screenWidth >= 380;
 
-                  // 2. Delivery Info Column
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('ส่งทันที', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 4),
-                        Row(
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 1. Top Action Icons Row (Removed back button, Robot on left)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: Row(
                           children: [
-                            const Text('1 ตำบล นาป่า อำเภอเมืองชลบุรี ชลบุ...',
-                              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400)),
-                            const SizedBox(width: 4),
-                            Icon(Icons.keyboard_arrow_down, color: Colors.white.withOpacity(0.8), size: 18),
+                            // Robot Status Indicator - Constrained to left side
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth: screenWidth * 0.5, // Max 50% of screen
+                              ),
+                              child: RobotStatusIndicator(
+                                robotApi: context.read<RobotApi>(),
+                                showRefreshButton: screenWidth >= 360,
+                                showTapToDiscover: true,
+                                showIp: showIp,
+                              ),
+                            ),
+                            const Spacer(),
+                            // Icons always on the right
+                            _CircularIcon(icon: Icons.favorite_border),
+                            const SizedBox(width: 12),
+                            _CircularIcon(icon: Icons.person_outline),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
 
-                  // 3. Search Bar
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: CustomSearchBar(),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // 4. Main Service Cards (Food & Mart)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _ServiceCard(
-                            title: 'Drink',
-                            badge: 'ลด ฿100',
-                            badgeColor: Colors.redAccent,
-                            icon: Icons.local_drink_rounded,
-                            isSpecial: true,
-                          ),
+                      // 2. Delivery Info Column
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'ส่งทันที',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: isSmallScreen ? 20 : 24,
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    '1 ตำบล นาป่า อำเภอเมืองชลบุรี ชลบุรี',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: isSmallScreen ? 14 : 16,
+                                      fontWeight: FontWeight.w400
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Icon(Icons.keyboard_arrow_down, color: Colors.white.withOpacity(0.8), size: 18),
+                              ],
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _ServiceCard(
-                            title: 'Mart',
-                            badge: 'ส่งฟรี!',
-                            badgeColor: Colors.pinkAccent,
-                            icon: Icons.storefront_rounded,
-                            isSpecial: true,
-                          ),
+                      ),
+
+                      // 3. Search Bar
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: CustomSearchBar(),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // 4. Main Service Cards (Food & Mart)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _ServiceCard(
+                                title: 'Drink',
+                                badge: 'ลด ฿100',
+                                badgeColor: Colors.redAccent,
+                                icon: Icons.local_drink_rounded,
+                                isSpecial: true,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _ServiceCard(
+                                title: 'Mart',
+                                badge: 'ส่งฟรี!',
+                                badgeColor: Colors.pinkAccent,
+                                icon: Icons.storefront_rounded,
+                                isSpecial: true,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                ],
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),
@@ -222,17 +246,23 @@ class HomeContent extends StatelessWidget {
               ),
               Consumer<CartProvider>(
                 builder: (context, cart, child) {
-                  return SizedBox(
-                    height: 110,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: cart.availableCoupons.length,
-                      itemBuilder: (context, index) {
-                        final coupon = cart.availableCoupons[index];
-                        return _CouponCard(coupon: coupon);
-                      },
-                    ),
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      // Responsive height based on screen size
+                      final height = constraints.maxWidth < 360 ? 100.0 : 110.0;
+                      return SizedBox(
+                        height: height,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: cart.availableCoupons.length,
+                          itemBuilder: (context, index) {
+                            final coupon = cart.availableCoupons[index];
+                            return _CouponCard(coupon: coupon);
+                          },
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -278,25 +308,33 @@ class HomeContent extends StatelessWidget {
 
               // Categories Section
               const SectionHeader(title: 'หมวดหมู่สินค้า'),
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 5,
-                childAspectRatio: 0.85,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                mainAxisSpacing: 8,
-                children: [
-                  const CategoryItem(title: 'อาหาร', icon: Icons.lunch_dining),
-                  const CategoryItem(title: 'เครื่องดื่ม', icon: Icons.local_drink),
-                  const CategoryItem(title: 'ไอศกรีม', icon: Icons.icecream),
-                  const CategoryItem(title: 'เบเกอรี่', icon: Icons.breakfast_dining),
-                  const CategoryItem(title: 'ของสด', icon: Icons.apple),
-                  const CategoryItem(title: 'สุขภาพ', icon: Icons.health_and_safety),
-                  const CategoryItem(title: 'ของใช้', icon: Icons.house_siding),
-                  const CategoryItem(title: 'นมและไข่', icon: Icons.egg),
-                  const CategoryItem(title: 'แช่แข็ง', icon: Icons.ac_unit),
-                  const CategoryItem(title: 'อื่นๆ', icon: Icons.more_horiz),
-                ],
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final width = constraints.maxWidth;
+                  final crossAxisCount = width > 600 ? 6 : 5;
+                  final childAspectRatio = width > 600 ? 0.9 : 0.85;
+
+                  return GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: crossAxisCount,
+                    childAspectRatio: childAspectRatio,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    mainAxisSpacing: 8,
+                    children: const [
+                      CategoryItem(title: 'อาหาร', icon: Icons.lunch_dining),
+                      CategoryItem(title: 'เครื่องดื่ม', icon: Icons.local_drink),
+                      CategoryItem(title: 'ไอศกรีม', icon: Icons.icecream),
+                      CategoryItem(title: 'เบเกอรี่', icon: Icons.breakfast_dining),
+                      CategoryItem(title: 'ของสด', icon: Icons.apple),
+                      CategoryItem(title: 'สุขภาพ', icon: Icons.health_and_safety),
+                      CategoryItem(title: 'ของใช้', icon: Icons.house_siding),
+                      CategoryItem(title: 'นมและไข่', icon: Icons.egg),
+                      CategoryItem(title: 'แช่แข็ง', icon: Icons.ac_unit),
+                      CategoryItem(title: 'อื่นๆ', icon: Icons.more_horiz),
+                    ],
+                  );
+                },
               ),
 
               // Social Trends
@@ -464,124 +502,138 @@ class _CouponCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 280,
-      margin: const EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Make coupon card responsive
+        final maxWidth = constraints.maxWidth;
+        final cardWidth = (maxWidth * 0.75).clamp(240.0, 280.0);
+
+        return Container(
+          width: cardWidth,
+          margin: const EdgeInsets.only(right: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          children: [
-            Row(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
               children: [
-                // Left Ticket Section
-                Container(
-                  width: 80,
-                  height: 90,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppTheme.primarySky.withOpacity(0.1), Colors.white],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '${coupon.discountAmount.toInt()}.-',
-                      style: TextStyle(
-                        color: AppTheme.primarySky,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 22,
-                        letterSpacing: -1
+                Row(
+                  children: [
+                    // Left Ticket Section
+                    Container(
+                      width: 80,
+                      height: 90,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppTheme.primarySky.withOpacity(0.1), Colors.white],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-                // Dashed Line Simulation (using CustomPaint or Row of small blocks)
-                Container(
-                  width: 1,
-                  height: 60,
-                  color: Colors.grey.shade200,
-                ),
-                // Right Section
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          coupon.title,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'เมื่อซื้อครบ ${coupon.minSpend.toInt()} บาท',
-                          style: const TextStyle(color: Colors.grey, fontSize: 11),
-                        ),
-                        const SizedBox(height: 8),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: ElevatedButton(
-                            onPressed: coupon.isCollected
-                              ? null
-                              : () {
-                                context.read<CartProvider>().collectCoupon(coupon.code);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('เก็บคูปอง ${coupon.code} สำเร็จ!'), backgroundColor: Colors.green),
-                                );
-                              },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: coupon.isCollected ? Colors.grey.shade200 : AppTheme.primarySky,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              minimumSize: const Size(80, 28),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                            child: Text(
-                              coupon.isCollected ? 'เก็บแล้ว' : 'เก็บเลย',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: coupon.isCollected ? Colors.grey : Colors.white
-                              ),
+                      child: Center(
+                        child: FittedBox(
+                          child: Text(
+                            '${coupon.discountAmount.toInt()}.-',
+                            style: TextStyle(
+                              color: AppTheme.primarySky,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 22,
+                              letterSpacing: -1
                             ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                    // Dashed Line Simulation (using CustomPaint or Row of small blocks)
+                    Container(
+                      width: 1,
+                      height: 60,
+                      color: Colors.grey.shade200,
+                    ),
+                    // Right Section
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              coupon.title,
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'เมื่อซื้อครบ ${coupon.minSpend.toInt()} บาท',
+                                style: const TextStyle(color: Colors.grey, fontSize: 11),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: ElevatedButton(
+                                onPressed: coupon.isCollected
+                                  ? null
+                                  : () {
+                                    context.read<CartProvider>().collectCoupon(coupon.code);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('เก็บคูปอง ${coupon.code} สำเร็จ!'), backgroundColor: Colors.green),
+                                    );
+                                  },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: coupon.isCollected ? Colors.grey.shade200 : AppTheme.primarySky,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  minimumSize: const Size(80, 28),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: Text(
+                                  coupon.isCollected ? 'เก็บแล้ว' : 'เก็บเลย',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: coupon.isCollected ? Colors.grey : Colors.white
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // Ticket Cut-outs (Top & Bottom)
+                Positioned(
+                  left: 72,
+                  top: -8,
+                  child: _buildCutOut(),
+                ),
+                Positioned(
+                  left: 72,
+                  bottom: -8,
+                  child: _buildCutOut(),
                 ),
               ],
             ),
-            // Ticket Cut-outs (Top & Bottom)
-            Positioned(
-              left: 72,
-              top: -8,
-              child: _buildCutOut(),
-            ),
-            Positioned(
-              left: 72,
-              bottom: -8,
-              child: _buildCutOut(),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -616,8 +668,15 @@ class _CircularIcon extends StatelessWidget {
 }
 
 /// More menu page with list of options
-class MoreMenuPage extends StatelessWidget {
+class MoreMenuPage extends StatefulWidget {
   const MoreMenuPage({super.key});
+
+  @override
+  State<MoreMenuPage> createState() => _MoreMenuPageState();
+}
+
+class _MoreMenuPageState extends State<MoreMenuPage> {
+  bool _isThai = true;
 
   @override
   Widget build(BuildContext context) {
@@ -629,6 +688,68 @@ class MoreMenuPage extends StatelessWidget {
       child: ListView(
         children: [
           const SizedBox(height: 16),
+          // Language Toggle
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryGreen.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.language, color: AppTheme.primaryGreen),
+                ),
+                const SizedBox(width: 16),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('ภาษา / Language', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      Text('เลือกภาษา ไทย / อังกฤษ', style: TextStyle(color: Colors.grey, fontSize: 13)),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _isThai ? AppTheme.primaryGreen : Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        onTap: () => setState(() => _isThai = true),
+                        child: Text(
+                          'TH',
+                          style: TextStyle(
+                            color: _isThai ? Colors.white : Colors.grey,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () => setState(() => _isThai = false),
+                        child: Text(
+                          'EN',
+                          style: TextStyle(
+                            color: !_isThai ? Colors.white : Colors.grey,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1, indent: 72),
           _MoreMenuItem(
             icon: Icons.gamepad,
             iconColor: AppTheme.primaryGreen,

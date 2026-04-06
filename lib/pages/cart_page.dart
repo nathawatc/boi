@@ -10,7 +10,7 @@ class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>();
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -24,14 +24,16 @@ class CartPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: cart.items.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey.shade300),
-                  const SizedBox(height: 16),
-                  const Text('ไม่มีสินค้าในตระกร้า', style: TextStyle(color: Colors.grey, fontSize: 16)),
-                ],
+          ? SafeArea(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey.shade300),
+                    const SizedBox(height: 16),
+                    const Text('ไม่มีสินค้าในตระกร้า', style: TextStyle(color: Colors.grey, fontSize: 16)),
+                  ],
+                ),
               ),
             )
           : Column(
@@ -66,7 +68,11 @@ class CartPage extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  ),
                                   Text(item.price, style: TextStyle(color: AppTheme.primaryGreen, fontWeight: FontWeight.bold)),
                                 ],
                               ),
@@ -172,7 +178,7 @@ class CartPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text('ราคาสุทธิ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            Text('${cart.totalAmount.toStringAsFixed(2)} บาท', 
+                            Text('${cart.totalAmount.toStringAsFixed(2)} บาท',
                               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen)),
                           ],
                         ),
