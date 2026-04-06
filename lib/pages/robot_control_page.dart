@@ -30,16 +30,20 @@ class _RobotControlPageState extends State<RobotControlPage> {
       return;
     }
 
+    debugPrint('[RobotControl] Sending command: ${command.value}');
+
     robotApi.sendCommand(command).then((response) {
       if (!mounted) return;
 
       if (response.success) {
+        debugPrint('[RobotControl] Command sent successfully: ${command.value}');
         if (command == RobotCommand.lineFollow) {
           setState(() => _isLineFollowing = true);
         } else if (command == RobotCommand.stop) {
           setState(() => _isLineFollowing = false);
         }
       } else {
+        debugPrint('[RobotControl] Command failed: ${response.message}');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(response.message),
@@ -47,6 +51,15 @@ class _RobotControlPageState extends State<RobotControlPage> {
           ),
         );
       }
+    }).catchError((error) {
+      if (!mounted) return;
+      debugPrint('[RobotControl] Error sending command: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('เกิดข้อผิดพลาด: $error'),
+          backgroundColor: Colors.red,
+        ),
+      );
     });
   }
 
