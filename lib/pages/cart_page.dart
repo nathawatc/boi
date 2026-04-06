@@ -55,7 +55,7 @@ class CartPage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final item = cart.items[index];
                       return Container(
-                        margin: const EdgeInsets.only(bottom: 12),
+                        margin: EdgeInsets.only(bottom: 12, top: index == 0 ? 16 : 0),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
