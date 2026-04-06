@@ -127,10 +127,6 @@ class HomeContent extends StatelessWidget {
                             const Spacer(),
                             _CircularIcon(icon: Icons.favorite_border),
                             const SizedBox(width: 12),
-                            if (screenWidth >= 380) ...[
-                              _CircularIcon(label: 'TH'),
-                              const SizedBox(width: 12),
-                            ],
                             _CircularIcon(icon: Icons.person_outline),
                           ],
                         ),
@@ -669,8 +665,15 @@ class _CircularIcon extends StatelessWidget {
 }
 
 /// More menu page with list of options
-class MoreMenuPage extends StatelessWidget {
+class MoreMenuPage extends StatefulWidget {
   const MoreMenuPage({super.key});
+
+  @override
+  State<MoreMenuPage> createState() => _MoreMenuPageState();
+}
+
+class _MoreMenuPageState extends State<MoreMenuPage> {
+  bool _isThai = true;
 
   @override
   Widget build(BuildContext context) {
@@ -682,6 +685,68 @@ class MoreMenuPage extends StatelessWidget {
       child: ListView(
         children: [
           const SizedBox(height: 16),
+          // Language Toggle
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryGreen.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.language, color: AppTheme.primaryGreen),
+                ),
+                const SizedBox(width: 16),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('ภาษา / Language', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      Text('เลือกภาษา ไทย / อังกฤษ', style: TextStyle(color: Colors.grey, fontSize: 13)),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _isThai ? AppTheme.primaryGreen : Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        onTap: () => setState(() => _isThai = true),
+                        child: Text(
+                          'TH',
+                          style: TextStyle(
+                            color: _isThai ? Colors.white : Colors.grey,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () => setState(() => _isThai = false),
+                        child: Text(
+                          'EN',
+                          style: TextStyle(
+                            color: !_isThai ? Colors.white : Colors.grey,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1, indent: 72),
           _MoreMenuItem(
             icon: Icons.gamepad,
             iconColor: AppTheme.primaryGreen,
