@@ -12,7 +12,56 @@ class OrderDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
       builder: (context, cart, child) {
-        final order = cart.orders.firstWhere((o) => o.id == orderId);
+        final order = cart.orders.firstWhere(
+          (o) => o.id == orderId,
+          orElse: () => Order(
+            id: '',
+            items: [],
+            totalAmount: 0,
+            date: DateTime.now(),
+            status: 'ไม่พบคำสั่งซื้อ',
+          ),
+        );
+
+        // If order not found, show error and back button
+        if (order.id.isEmpty) {
+          return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            appBar: AppBar(
+              title: const Text('รายละเอียดคำสั่งซื้อ',
+                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+              backgroundColor: Colors.transparent,
+              flexibleSpace: Container(
+                decoration: BoxDecoration(gradient: AppTheme.primaryGradient),
+              ),
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+              centerTitle: true,
+            ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 80, color: Colors.grey.withOpacity(0.5)),
+                  const SizedBox(height: 16),
+                  const Text('ไม่พบคำสั่งซื้อนี้',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Text('รหัสคำสั่งซื้อไม่ถูกต้องหรือถูกลบแล้ว',
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('ย้อนกลับ'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
 
         return Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surface,
@@ -65,27 +114,36 @@ class OrderDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       if (order.status == 'กำลังจัดส่ง')
-                        Text(
-                          'จะได้รับในอีกประมาณ ${order.estimatedMinutes} นาที',
-                          style: TextStyle(
-                            color: AppTheme.primaryGreen,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold
-                          ),
+                        Column(
+                          children: [
+                            Text(
+                              'จะได้รับในอีกประมาณ ${order.estimatedMinutes} นาที',
+                              style: TextStyle(
+                                color: AppTheme.primaryGreen,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'ไรเดอร์กำลังมุ่งหน้าไปหาคุณ...',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
                         )
-                      else
+                      else if (order.status == 'สำเร็จ')
                         const Text('ขอบคุณที่ใช้บริการ Boi POS!',
                           style: TextStyle(color: Colors.grey)
+                        )
+                      else
+                        Text(
+                          'สถานะ: ${order.status}',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                         ),
-                      const SizedBox(height: 8),
-                      Text(
-                        order.status == 'กำลังจัดส่ง'
-                            ? ''
-                            : 'ไรเดอร์กำลังมุ่งหน้าไปหาคุณ...',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
                     ],
                   ),
                 ),

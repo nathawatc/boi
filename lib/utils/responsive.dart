@@ -2,29 +2,25 @@ import 'package:flutter/material.dart';
 
 /// Responsive utility class to handle different screen sizes
 class Responsive {
-  static late double screenWidth;
-  static late double screenHeight;
-  static late double blockSizeHorizontal;
-  static late double blockSizeVertical;
-  static late bool isSmallPhone;
-  static late bool isMediumPhone;
-  static late bool isLargePhone;
-  static late bool isTablet;
-  static late bool isLandscape;
+  static double? _screenWidth;
+  static double? _screenHeight;
+
+  static double get screenWidth => _screenWidth ?? 360.0;
+  static double get screenHeight => _screenHeight ?? 640.0;
+
+  static double get blockSizeHorizontal => screenWidth / 100;
+  static double get blockSizeVertical => screenHeight / 100;
+
+  static bool get isSmallPhone => screenWidth < 360;
+  static bool get isMediumPhone => screenWidth >= 360 && screenWidth < 414;
+  static bool get isLargePhone => screenWidth >= 414 && screenWidth < 600;
+  static bool get isTablet => screenWidth >= 600;
+  static bool get isLandscape => screenWidth > screenHeight;
 
   /// Initialize responsive values
   static void init(BuildContext context) {
-    screenWidth = MediaQuery.of(context).size.width;
-    screenHeight = MediaQuery.of(context).size.height;
-    blockSizeHorizontal = screenWidth / 100;
-    blockSizeVertical = screenHeight / 100;
-
-    // Breakpoints for different device sizes
-    isSmallPhone = screenWidth < 360;    // Small phones (e.g., iPhone SE)
-    isMediumPhone = screenWidth >= 360 && screenWidth < 414;  // Medium phones
-    isLargePhone = screenWidth >= 414 && screenWidth < 600;   // Large phones
-    isTablet = screenWidth >= 600;       // Tablets
-    isLandscape = screenWidth > screenHeight;
+    _screenWidth = MediaQuery.sizeOf(context).width;
+    _screenHeight = MediaQuery.sizeOf(context).height;
   }
 
   /// Get proportional width (percentage of screen width)
@@ -96,8 +92,11 @@ class Responsive {
     }
 
     double scale = 1.0;
-    if (isSmallPhone) scale = 0.85;
-    else if (isTablet) scale = 1.15;
+    if (isSmallPhone) {
+      scale = 0.85;
+    } else if (isTablet) {
+      scale = 1.15;
+    }
 
     return EdgeInsets.only(
       left: (left > 0 ? left : horizontal) * scale,
@@ -119,10 +118,7 @@ class ResponsiveBuilder extends StatelessWidget {
     bool isTablet,
   ) builder;
 
-  const ResponsiveBuilder({
-    Key? key,
-    required this.builder,
-  }) : super(key: key);
+  const ResponsiveBuilder({super.key, required this.builder});
 
   @override
   Widget build(BuildContext context) {
@@ -132,10 +128,10 @@ class ResponsiveBuilder extends StatelessWidget {
         return builder(
           context,
           constraints,
-          width < 360,      // isSmallPhone
-          width >= 360 && width < 414,  // isMediumPhone
-          width >= 414 && width < 600,  // isLargePhone
-          width >= 600,     // isTablet
+          width < 360, // isSmallPhone
+          width >= 360 && width < 414, // isMediumPhone
+          width >= 414 && width < 600, // isLargePhone
+          width >= 600, // isTablet
         );
       },
     );
@@ -151,13 +147,13 @@ class AdaptiveSafeArea extends StatelessWidget {
   final bool right;
 
   const AdaptiveSafeArea({
-    Key? key,
+    super.key,
     required this.child,
     this.top = true,
     this.bottom = true,
     this.left = true,
     this.right = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

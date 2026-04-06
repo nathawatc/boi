@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 class SectionHeader extends StatelessWidget {
   final String title;
-  const SectionHeader({super.key, required this.title});
+  final VoidCallback? onViewAll;
+
+  const SectionHeader({super.key, required this.title, this.onViewAll});
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +17,24 @@ class SectionHeader extends StatelessWidget {
             title,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          const Row(
-            children: [
-              Text('ดูทั้งหมด', style: TextStyle(color: Colors.grey, fontSize: 14)),
-              Icon(Icons.chevron_right, color: Colors.grey, size: 20),
-            ],
-          ),
+          if (onViewAll != null)
+            InkWell(
+              onTap: onViewAll,
+              borderRadius: BorderRadius.circular(8),
+              child: Row(
+                children: [
+                  const Text('ดูทั้งหมด', style: TextStyle(color: Colors.grey, fontSize: 14)),
+                  const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
+                ],
+              ),
+            )
+          else
+            const Row(
+              children: [
+                const Text('ดูทั้งหมด', style: TextStyle(color: Colors.grey, fontSize: 14)),
+                const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
+              ],
+            ),
         ],
       ),
     );

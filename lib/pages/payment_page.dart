@@ -399,12 +399,9 @@ class _PaymentPageState extends State<PaymentPage> {
             ElevatedButton(
               onPressed: () {
                 cartProvider.checkout();
-                // Sequence of pops
                 Navigator.pop(context); // Close dialog
-                Navigator.pop(context); // Back to cart
-
-                // Go to Order History Tab (Index 1)
-                cartProvider.setTabIndex(1);
+                // Safely navigate back: pop until we reach HomePage
+                _navigateToHomePage(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.gradientEnd.withOpacity(0.8),
@@ -450,8 +447,8 @@ class _PaymentPageState extends State<PaymentPage> {
               onPressed: () {
                 cartProvider.checkout();
                 Navigator.pop(context); // Close dialog
-                Navigator.pop(context); // Back to cart
-                cartProvider.setTabIndex(1);
+                // Safely navigate back: pop until we reach HomePage
+                _navigateToHomePage(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
@@ -465,6 +462,22 @@ class _PaymentPageState extends State<PaymentPage> {
         ),
       ),
     );
+  }
+
+  /// Safely navigate back to the home page by popping until reaching root
+  void _navigateToHomePage(BuildContext context) {
+    // Pop until we reach the root (HomePage), using a safe approach
+    int popCount = 0;
+    while (Navigator.of(context).canPop() && popCount < 3) {
+      Navigator.of(context).pop();
+      popCount++;
+    }
+    // Set tab index after navigation
+    Future.microtask(() {
+      if (context.mounted) {
+        context.read<CartProvider>().setTabIndex(1);
+      }
+    });
   }
 
   void _handlePaymentConfirmation(BuildContext context) {
@@ -588,6 +601,7 @@ class _PaymentPageState extends State<PaymentPage> {
                           });
 
                           final ip = await robotApi.discoverRobot();
+                          final dialogCtx = dialogContext;
 
                           setDialogState(() {
                             isDiscovering = false;
@@ -595,7 +609,9 @@ class _PaymentPageState extends State<PaymentPage> {
 
                           // If found, close dialog and proceed
                           if (ip != null && mounted) {
-                            Navigator.pop(dialogContext);
+                            if (dialogCtx.mounted) {
+                              Navigator.pop(dialogCtx);
+                            }
                             _processPayment(context);
                           }
                         },

@@ -4,10 +4,17 @@ import '../theme/app_theme.dart';
 import '../providers/cart_provider.dart';
 import 'product_detail_page.dart';
 
-class CategoryProductsPage extends StatelessWidget {
+class CategoryProductsPage extends StatefulWidget {
   final String categoryName;
 
   const CategoryProductsPage({super.key, required this.categoryName});
+
+  @override
+  State<CategoryProductsPage> createState() => _CategoryProductsPageState();
+}
+
+class _CategoryProductsPageState extends State<CategoryProductsPage> {
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +28,7 @@ class CategoryProductsPage extends StatelessWidget {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
-                categoryName,
+                widget.categoryName,
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -49,16 +56,20 @@ class CategoryProductsPage extends StatelessWidget {
                     BoxShadow(color: Theme.of(context).colorScheme.shadow.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 4)),
                   ],
                 ),
-                child: Row(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: Icon(Icons.search, color: Colors.grey),
-                    ),
-                    Expanded(
-                      child: Text('ค้นหาสินค้าใน $categoryName...', style: const TextStyle(color: Colors.grey, fontSize: 14)),
-                    ),
-                  ],
+                child: TextField(
+                  onChanged: (value) => setState(() => _searchQuery = value),
+                  decoration: InputDecoration(
+                    hintText: 'ค้นหาสินค้าใน ${widget.categoryName}...',
+                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 20),
+                            onPressed: () => setState(() => _searchQuery = ''),
+                          )
+                        : null,
+                  ),
                 ),
               ),
             ),
@@ -74,6 +85,18 @@ class CategoryProductsPage extends StatelessWidget {
                 final crossAxisCount = width > 600 ? 3 : (width > 400 ? 2 : 2);
                 final childAspectRatio = width > 600 ? 0.85 : 0.75;
 
+                // Generate products
+                final allProducts = List.generate(10, (i) => {
+                  'id': 'prod_$i',
+                  'name': 'สินค้าตัวอย่าง ${i + 1}',
+                  'price': '${(i + 1) * 10 + 5}.-',
+                  'imageUrl': 'https://loremflickr.com/300/300/food,snack?lock=$i',
+                });
+
+                final products = _searchQuery.isEmpty
+                    ? allProducts
+                    : allProducts.where((p) => (p['name'] as String).contains(_searchQuery)).toList();
+
                 return SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
@@ -83,14 +106,15 @@ class CategoryProductsPage extends StatelessWidget {
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
+                      final product = products[index];
                       return _ProductCard(
-                        id: 'prod_$index',
-                        name: 'สินค้าตัวอย่าง ${index + 1}',
-                        price: '${(index + 1) * 10 + 5}.-',
-                        imageUrl: 'https://loremflickr.com/300/300/food,snack?lock=$index',
+                        id: product['id'] as String,
+                        name: product['name'] as String,
+                        price: product['price'] as String,
+                        imageUrl: product['imageUrl'] as String,
                       );
                     },
-                    childCount: 10,
+                    childCount: products.length,
                   ),
                 );
               },

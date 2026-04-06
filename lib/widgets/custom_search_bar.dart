@@ -1,7 +1,29 @@
 import 'package:flutter/material.dart';
 
-class CustomSearchBar extends StatelessWidget {
-  const CustomSearchBar({super.key});
+class CustomSearchBar extends StatefulWidget {
+  final ValueChanged<String>? onChanged;
+  final VoidCallback? onMicTap;
+  final VoidCallback? onQrTap;
+
+  const CustomSearchBar({
+    super.key,
+    this.onChanged,
+    this.onMicTap,
+    this.onQrTap,
+  });
+
+  @override
+  State<CustomSearchBar> createState() => _CustomSearchBarState();
+}
+
+class _CustomSearchBarState extends State<CustomSearchBar> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,15 +47,27 @@ class CustomSearchBar extends StatelessWidget {
             child: Icon(Icons.search, color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           Expanded(
-            child: Text(
-              'ลด 30.- โค้ด WED30 (ขั้นต่ำ 300)',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14),
+            child: TextField(
+              controller: _controller,
+              onChanged: widget.onChanged,
+              decoration: InputDecoration(
+                hintText: 'ค้นหาสินค้าหรือคูปอง...',
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                isDense: true,
+              ),
             ),
           ),
-          Icon(Icons.mic_none, color: Theme.of(context).colorScheme.onSurfaceVariant),
-          SizedBox(width: 12),
-          Icon(Icons.qr_code_scanner, color: Theme.of(context).colorScheme.onSurfaceVariant),
-          SizedBox(width: 12),
+          InkWell(
+            onTap: widget.onMicTap,
+            child: Icon(Icons.mic_none, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
+          const SizedBox(width: 12),
+          InkWell(
+            onTap: widget.onQrTap,
+            child: Icon(Icons.qr_code_scanner, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
+          const SizedBox(width: 12),
         ],
       ),
     );

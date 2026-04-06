@@ -214,13 +214,12 @@ class CartProvider with ChangeNotifier {
   }
 
   bool applyCoupon(String code) {
-    final coupon = _availableCoupons.firstWhere(
+    final index = _availableCoupons.indexWhere(
       (c) => c.code.toUpperCase() == code.toUpperCase(),
-      orElse: () => Coupon(code: '', title: '', discountAmount: 0, expiryDate: DateTime(2099, 12, 31)),
     );
 
-    if (coupon.code.isNotEmpty) {
-      _appliedCoupon = coupon;
+    if (index >= 0) {
+      _appliedCoupon = _availableCoupons[index];
       notifyListeners();
       return true;
     }

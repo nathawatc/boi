@@ -37,6 +37,7 @@ class _RobotControlPageState extends State<RobotControlPage> {
 
       if (response.success) {
         debugPrint('[RobotControl] Command sent successfully: ${command.value}');
+        // Update line follow state only after successful command
         if (command == RobotCommand.lineFollow) {
           setState(() => _isLineFollowing = true);
         } else if (command == RobotCommand.stop) {
@@ -391,7 +392,6 @@ class _RobotControlPageState extends State<RobotControlPage> {
               label: 'ควบคุมเอง',
               isSelected: !_isLineFollowing,
               onTap: () {
-                setState(() => _isLineFollowing = false);
                 _sendCommand(RobotCommand.stop);
               },
             ),
@@ -401,7 +401,6 @@ class _RobotControlPageState extends State<RobotControlPage> {
               label: 'ตามเส้น',
               isSelected: _isLineFollowing,
               onTap: () {
-                setState(() => _isLineFollowing = true);
                 _sendCommand(RobotCommand.lineFollow);
               },
             ),
