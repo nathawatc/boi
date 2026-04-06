@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
 import '../providers/cart_provider.dart';
 import '../services/robot_api.dart';
+import '../widgets/robot_status_indicator.dart';
 
 class PaymentPage extends StatefulWidget {
   final double totalAmount;
@@ -17,7 +18,6 @@ class _PaymentPageState extends State<PaymentPage> {
   int _selectedAddressIndex = 0; // 0 for Home, 1 for Office
   String _selectedPaymentMethod = 'QR';
   late final List<CartItem> _orderItems;
-  final RobotApi _robotApi = RobotApi();
   bool _isSendingToRobot = false;
 
   @override
@@ -62,6 +62,16 @@ class _PaymentPageState extends State<PaymentPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Robot Connection Status
+            Center(
+              child: RobotStatusIndicator(
+                robotApi: context.read<RobotApi>(),
+                showRefreshButton: true,
+                showTapToDiscover: true,
+              ),
+            ),
+            const SizedBox(height: 16),
+
             // Amount Summary Card
             Container(
               width: double.infinity,
@@ -225,57 +235,76 @@ class _PaymentPageState extends State<PaymentPage> {
             const SizedBox(height: 40),
 
             // Bottom Action
-            ElevatedButton(
-              onPressed: _isSendingToRobot ? null : () async {
-                // Store cart provider reference before async operation
-                final cartProvider = context.read<CartProvider>();
+            Consumer<RobotApi>(
+              builder: (context, robotApi, child) {
+                return ElevatedButton(
+                  onPressed: (_isSendingToRobot || !robotApi.isConnected)
+                      ? null
+                      : () async {
+                          // Store cart provider reference before async operation
+                          final cartProvider = context.read<CartProvider>();
 
-                setState(() {
-                  _isSendingToRobot = true;
-                });
+                          setState(() {
+                            _isSendingToRobot = true;
+                          });
 
-                try {
-                  // Send command to robot via new API
-                  final response = await _robotApi.moveForward();
+                          try {
+                            // Send command to robot via new API
+                            final response = await robotApi.moveForward();
 
-                  if (!mounted) return;
+                            if (!mounted) return;
 
-                  if (response.success) {
-                    debugPrint('Robot command successful');
-                    _showSuccessDialog(context, cartProvider);
-                  } else {
-                    debugPrint('Robot command failed: ${response.message}');
-                    _showErrorDialog(context, cartProvider, response.message);
-                  }
-                } catch (e) {
-                  debugPrint('Error sending robot command: $e');
-                  if (mounted) {
-                    _showErrorDialog(context, cartProvider, 'เกิดข้อผิดพลาดในการเชื่อมต่อ: $e');
-                  }
-                } finally {
-                  if (mounted) {
-                    setState(() {
-                      _isSendingToRobot = false;
-                    });
-                  }
-                }
+                            if (response.success) {
+                              debugPrint('Robot command successful');
+                              _showSuccessDialog(context, cartProvider);
+                            } else {
+                              debugPrint('Robot command failed: ${response.message}');
+                              _showErrorDialog(context, cartProvider, response.message);
+                            }
+                          } catch (e) {
+                            debugPrint('Error sending robot command: $e');
+                            if (mounted) {
+                              _showErrorDialog(context, cartProvider, 'เกิดข้อผิดพลาดในการเชื่อมต่อ: $e');
+                            }
+                          } finally {
+                            if (mounted) {
+                              setState(() {
+                                _isSendingToRobot = false;
+                              });
+                            }
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: robotApi.isConnected ? AppTheme.primaryGreen : Colors.grey,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 56),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 0,
+                  ),
+                  child: _isSendingToRobot
+                      ? const SizedBox(
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3,
+                          ),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              robotApi.isConnected ? Icons.check_circle : Icons.wifi_off,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              robotApi.isConnected ? 'ยืนยันรายการ' : 'หุ่นยนต์ยังไม่เชื่อมต่อ',
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                );
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryGreen,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 56),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                elevation: 0,
-              ),
-              child: _isSendingToRobot
-                ? const SizedBox(
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 3,
-                    ),
-                  )
-                : const Text('ยืนยันรายการ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
           ],
         ),

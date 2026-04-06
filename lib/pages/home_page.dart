@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
 import '../providers/cart_provider.dart';
+import '../services/robot_api.dart';
 import '../widgets/custom_search_bar.dart';
 import '../widgets/section_header.dart';
 import '../widgets/promotion_item.dart';
 import '../widgets/category_item.dart';
 import '../widgets/product_card.dart';
 import '../widgets/frequent_product_item.dart';
+import '../widgets/robot_status_indicator.dart';
 import 'cart_page.dart';
 import 'order_history_page.dart';
 import 'coupon_page.dart';
@@ -120,6 +122,13 @@ class HomeContent extends StatelessWidget {
                           child: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 16),
                         ),
                         const Spacer(),
+                        // Robot Status Indicator
+                        RobotStatusIndicator(
+                          robotApi: context.read<RobotApi>(),
+                          showRefreshButton: true,
+                          showTapToDiscover: true,
+                        ),
+                        const SizedBox(width: 12),
                         _CircularIcon(icon: Icons.favorite_border),
                         const SizedBox(width: 12),
                         _CircularIcon(label: 'TH'),

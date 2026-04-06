@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'theme/app_theme.dart';
 import 'pages/splash_screen.dart';
 import 'providers/cart_provider.dart';
+import 'services/robot_api.dart';
 import 'widgets/incoming_call_widget.dart';
 
 void main() {
@@ -14,6 +15,7 @@ void main() {
       builder: (context) => MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => CartProvider()),
+          ChangeNotifierProvider(create: (_) => RobotApi()),
         ],
         child: const BoiApp(),
       ),
