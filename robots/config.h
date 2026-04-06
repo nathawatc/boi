@@ -11,22 +11,15 @@
 // Option 3: Read from EEPROM/SPIFFS (implemented below)
 
 // Default credentials - change these for production
+// TODO: Replace with WiFiManager for production use
 const char* DEFAULT_WIFI_SSID = "Boi";
 const char* DEFAULT_WIFI_PASSWORD = "12345678";
 
-// These will be overridden by EEPROM if available
-String wifiSSID = "";
-String wifiPassword = "";
-
 const uint16_t UDP_PORT = 2001;
 
-// Helper to load WiFi credentials from EEPROM (if implemented)
-void loadWiFiCredentials() {
-  // TODO: Implement EEPROM read for persistent credentials
-  // For now, use defaults
-  wifiSSID = DEFAULT_WIFI_SSID;
-  wifiPassword = DEFAULT_WIFI_PASSWORD;
-}
+// Helper to get WiFi credentials (use WiFiManager in production)
+const char* getWiFiSSID() { return DEFAULT_WIFI_SSID; }
+const char* getWiFiPassword() { return DEFAULT_WIFI_PASSWORD; }
 
 // Use credentials variable
 const char* WIFI_SSID = DEFAULT_WIFI_SSID;

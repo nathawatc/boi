@@ -30,9 +30,9 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SafeArea(
+    return Container(
+      color: Theme.of(context).colorScheme.surface,
+      child: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
             final screenHeight = constraints.maxHeight;

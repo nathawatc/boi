@@ -90,7 +90,7 @@ class OrderHistoryPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '${order.date.day}/${order.date.month}/${order.date.year} ${order.date.hour}:${order.date.minute}',
+                          '${order.date.day}/${order.date.month}/${order.date.year} ${order.date.hour.toString().padLeft(2, '0')}:${order.date.minute.toString().padLeft(2, '0')}',
                           style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12),
                         ),
                         if (order.status == 'กำลังจัดส่ง')

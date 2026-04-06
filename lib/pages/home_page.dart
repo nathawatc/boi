@@ -233,14 +233,23 @@ class HomeContent extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('คูปองส่วนลด', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-                    TextButton(
-                      onPressed: () {},
-                      child: const Row(
-                        children: [
-                          Text('ดูทั้งหมด', style: TextStyle(color: Colors.grey, fontSize: 13)),
-                          Icon(Icons.chevron_right, color: Colors.grey, size: 16),
-                        ],
-                      ),
+                    Consumer<SettingsProvider>(
+                      builder: (context, settings, _) {
+                        return TextButton(
+                          onPressed: () {
+                            context.read<CartProvider>().setTabIndex(3);
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                settings.isThai ? 'ดูทั้งหมด' : 'View All',
+                                style: TextStyle(color: Colors.grey, fontSize: 13),
+                              ),
+                              Icon(Icons.chevron_right, color: Colors.grey, size: 16),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -717,7 +726,16 @@ class _MoreMenuPageState extends State<MoreMenuPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           GestureDetector(
-                            onTap: () => settings.setIsThai(true),
+                            onTap: () {
+                              settings.setIsThai(true);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('ตั้งค่าภาษาเป็นภาษาไทยแล้ว'),
+                                  backgroundColor: AppTheme.primaryGreen,
+                                  duration: const Duration(seconds: 1),
+                                ),
+                              );
+                            },
                             child: Text(
                               'TH',
                               style: TextStyle(
@@ -729,7 +747,16 @@ class _MoreMenuPageState extends State<MoreMenuPage> {
                           ),
                           const SizedBox(width: 8),
                           GestureDetector(
-                            onTap: () => settings.setIsThai(false),
+                            onTap: () {
+                              settings.setIsThai(false);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Language set to English'),
+                                  backgroundColor: AppTheme.primaryGreen,
+                                  duration: const Duration(seconds: 1),
+                                ),
+                              );
+                            },
                             child: Text(
                               'EN',
                               style: TextStyle(

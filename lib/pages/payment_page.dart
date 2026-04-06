@@ -64,10 +64,50 @@ class _PaymentPageState extends State<PaymentPage> {
           children: [
             // Robot Connection Status
             Center(
-              child: RobotStatusIndicator(
-                robotApi: context.read<RobotApi>(),
-                showRefreshButton: true,
-                showTapToDiscover: true,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RobotStatusIndicator(
+                    robotApi: context.read<RobotApi>(),
+                    showRefreshButton: false,
+                    showTapToDiscover: true,
+                  ),
+                  const SizedBox(width: 8),
+                  // Manual IP button
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: _showManualIpDialog,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.3)),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.edit_location,
+                              size: 14,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'ระบุ IP',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 16),
@@ -359,12 +399,9 @@ class _PaymentPageState extends State<PaymentPage> {
             ElevatedButton(
               onPressed: () {
                 cartProvider.checkout();
-                // Sequence of pops
                 Navigator.pop(context); // Close dialog
-                Navigator.pop(context); // Back to cart
-
-                // Go to Order History Tab (Index 1)
-                cartProvider.setTabIndex(1);
+                // Safely navigate back: pop until we reach HomePage
+                _navigateToHomePage(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.gradientEnd.withOpacity(0.8),
@@ -410,8 +447,8 @@ class _PaymentPageState extends State<PaymentPage> {
               onPressed: () {
                 cartProvider.checkout();
                 Navigator.pop(context); // Close dialog
-                Navigator.pop(context); // Back to cart
-                cartProvider.setTabIndex(1);
+                // Safely navigate back: pop until we reach HomePage
+                _navigateToHomePage(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
@@ -427,6 +464,21 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
+  /// Safely navigate back to the home page by popping until reaching root
+  void _navigateToHomePage(BuildContext context) {
+    // Capture the CartProvider BEFORE popping routes (context becomes unmounted after pop)
+    final cartProvider = context.read<CartProvider>();
+
+    // Pop until we reach the root (HomePage), using a safe approach
+    int popCount = 0;
+    while (Navigator.of(context).canPop() && popCount < 3) {
+      Navigator.of(context).pop();
+      popCount++;
+    }
+    // Set tab index to 0 (Home) after navigation
+    cartProvider.setTabIndex(0);
+  }
+
   void _handlePaymentConfirmation(BuildContext context) {
     final robotApi = context.read<RobotApi>();
 
@@ -438,6 +490,15 @@ class _PaymentPageState extends State<PaymentPage> {
 
     // Proceed with payment
     _processPayment(context);
+  }
+
+  void _showManualIpDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => _ManualIpInputDialog(
+        robotApi: context.read<RobotApi>(),
+      ),
+    );
   }
 
   Future<void> _processPayment(BuildContext context) async {
@@ -539,6 +600,7 @@ class _PaymentPageState extends State<PaymentPage> {
                           });
 
                           final ip = await robotApi.discoverRobot();
+                          final dialogCtx = dialogContext;
 
                           setDialogState(() {
                             isDiscovering = false;
@@ -546,7 +608,9 @@ class _PaymentPageState extends State<PaymentPage> {
 
                           // If found, close dialog and proceed
                           if (ip != null && mounted) {
-                            Navigator.pop(dialogContext);
+                            if (dialogCtx.mounted) {
+                              Navigator.pop(dialogCtx);
+                            }
                             _processPayment(context);
                           }
                         },
@@ -602,6 +666,98 @@ class _PaymentPageState extends State<PaymentPage> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Dialog for entering manual IP address
+class _ManualIpInputDialog extends StatefulWidget {
+  final RobotApi robotApi;
+
+  const _ManualIpInputDialog({required this.robotApi});
+
+  @override
+  State<_ManualIpInputDialog> createState() => _ManualIpInputDialogState();
+}
+
+class _ManualIpInputDialogState extends State<_ManualIpInputDialog> {
+  final _ipController = TextEditingController();
+  bool _isValid = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _ipController.text = widget.robotApi.effectiveTargetIp ?? '192.168.43.1';
+    _validateIp(_ipController.text);
+    _ipController.addListener(() => _validateIp(_ipController.text));
+  }
+
+  void _validateIp(String value) {
+    setState(() {
+      _isValid = isValidIPv4(value.trim());
+    });
+  }
+
+  void _connect() {
+    final ip = _ipController.text.trim();
+    if (isValidIPv4(ip)) {
+      widget.robotApi.selectRobot(ip);
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('เชื่อมต่อหุ่นยนต์ที่: $ip'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _ipController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('ระบุ IP หุ่นยนต์'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            controller: _ipController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(
+              hintText: 'เช่น 192.168.43.1',
+              labelText: 'IP Address',
+              border: const OutlineInputBorder(),
+              errorText: _isValid ? null : 'รูปแบบ IP ไม่ถูกต้อง',
+            ),
+            autofocus: true,
+            onSubmitted: _isValid ? (_) => _connect() : null,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'IP ปัจจุบัน: ${widget.robotApi.effectiveTargetIp ?? "ยังไม่ตั้งค่า"}',
+            style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('ยกเลิก'),
+        ),
+        ElevatedButton(
+          onPressed: _isValid ? _connect : null,
+          child: const Text('เชื่อมต่อ'),
+        ),
+      ],
     );
   }
 }

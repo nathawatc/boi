@@ -64,6 +64,7 @@ class CartProvider with ChangeNotifier {
   final List<CartItem> _items = [];
   final List<Order> _orders = [];
   Timer? _timer;
+  bool _disposed = false;
 
   // Coupons
   final List<Coupon> _availableCoupons = [
@@ -79,8 +80,8 @@ class CartProvider with ChangeNotifier {
   List<Coupon> get collectedCoupons => _availableCoupons.where((c) => c.isCollected).toList();
 
   CartProvider() {
-    // Countdown timer that only runs when there are active orders
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    // Countdown timer: fires every 60 seconds (1 real minute per estimated minute)
+    _timer = Timer.periodic(const Duration(seconds: 60), (timer) {
       // Check if there are any active orders
       final hasActiveOrders = _orders.any((o) => o.status == 'กำลังจัดส่ง' && o.estimatedMinutes > 1);
 
@@ -96,14 +97,22 @@ class CartProvider with ChangeNotifier {
           changed = true;
         }
       }
-      if (changed) notifyListeners();
+      if (changed) _safeNotifyListeners();
     });
   }
 
   @override
   void dispose() {
+    _disposed = true;
     _timer?.cancel();
+    _callTimer?.cancel();
+    _pendingCallTimer?.cancel();
+    _audioPlayer.dispose();
     super.dispose();
+  }
+
+  void _safeNotifyListeners() {
+    if (!_disposed) notifyListeners();
   }
 
   List<CartItem> get items => [..._items];
@@ -115,7 +124,7 @@ class CartProvider with ChangeNotifier {
 
   void setTabIndex(int index) {
     _currentTabIndex = index;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
   int get itemCount => _items.fold(0, (sum, item) => sum + item.quantity);
@@ -125,6 +134,7 @@ class CartProvider with ChangeNotifier {
   int _callTimeoutSeconds = 10;
   int get callTimeoutSeconds => _callTimeoutSeconds;
   Timer? _callTimer;
+  Timer? _pendingCallTimer; // Tracks the delayed future before incoming call starts
 
   void playNotificationSound({bool isLong = false}) async {
     try {
@@ -132,18 +142,24 @@ class CartProvider with ChangeNotifier {
         // Reset timeout to 3 minutes (180 seconds)
         _callTimeoutSeconds = 180;
 
+        // Cancel any pending call that was already scheduled
+        _pendingCallTimer?.cancel();
+
         // Wait 10 seconds after checkout before simulate the "Incoming Call"
-        Future.delayed(const Duration(seconds: 10), () async {
+        _pendingCallTimer = Timer(const Duration(seconds: 10), () async {
+          // Check if we've been disposed or the call was cancelled
+          if (_disposed) return;
+
           _isIncomingCall = true;
           _callTimeoutSeconds = 180; // 3 minutes to receive the call
-          notifyListeners();
+          _safeNotifyListeners();
 
           // 1. Start countdown timer FIRST so UI responds immediately
           _callTimer?.cancel();
           _callTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
             if (_callTimeoutSeconds > 0) {
               _callTimeoutSeconds--;
-              notifyListeners();
+              _safeNotifyListeners();
             } else {
               _handleCallTimeout();
               timer.cancel();
@@ -177,8 +193,9 @@ class CartProvider with ChangeNotifier {
   void stopCall() {
     _isIncomingCall = false;
     _callTimer?.cancel();
+    _pendingCallTimer?.cancel();
     _audioPlayer.stop();
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
   double get subTotal {
@@ -209,19 +226,18 @@ class CartProvider with ChangeNotifier {
     final index = _availableCoupons.indexWhere((c) => c.code == code);
     if (index >= 0) {
       _availableCoupons[index].isCollected = true;
-      notifyListeners();
+      _safeNotifyListeners();
     }
   }
 
   bool applyCoupon(String code) {
-    final coupon = _availableCoupons.firstWhere(
-      (c) => c.code.toUpperCase() == code.toUpperCase(),
-      orElse: () => Coupon(code: '', title: '', discountAmount: 0, expiryDate: DateTime(2099, 12, 31)),
+    final index = _availableCoupons.indexWhere(
+      (c) => c.code.toUpperCase() == code.toUpperCase() && c.isCollected && !c.isExpired,
     );
 
-    if (coupon.code.isNotEmpty) {
-      _appliedCoupon = coupon;
-      notifyListeners();
+    if (index >= 0) {
+      _appliedCoupon = _availableCoupons[index];
+      _safeNotifyListeners();
       return true;
     }
     return false;
@@ -229,7 +245,7 @@ class CartProvider with ChangeNotifier {
 
   void removeCoupon() {
     _appliedCoupon = null;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
   void addItem(String id, String name, String price, {int quantity = 1}) {
@@ -239,13 +255,13 @@ class CartProvider with ChangeNotifier {
     } else {
       _items.add(CartItem(id: id, name: name, price: price, quantity: quantity));
     }
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
   void removeItem(String id) {
     _items.removeWhere((item) => item.id == id);
     if (_items.isEmpty) _appliedCoupon = null;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
   void checkout() {
@@ -270,12 +286,12 @@ class CartProvider with ChangeNotifier {
     int index = _orders.indexWhere((o) => o.id == orderId);
     if (index >= 0) {
       _orders[index].status = 'สำเร็จ';
-      notifyListeners();
+      _safeNotifyListeners();
     }
   }
 
   void clearCart() {
     _items.clear();
-    notifyListeners();
+    _safeNotifyListeners();
   }
 }

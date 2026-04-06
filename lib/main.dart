@@ -40,7 +40,6 @@ class BoiApp extends StatelessWidget {
     return Consumer<SettingsProvider>(
       builder: (context, settings, _) {
         return MaterialApp(
-          useInheritedMediaQuery: true,
           locale: DevicePreview.locale(context),
           title: 'Boi',
           debugShowCheckedModeBanner: false,

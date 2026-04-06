@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'home_page.dart';
 import '../theme/app_theme.dart';
@@ -31,6 +32,15 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       context.read<SettingsProvider>().initialize(),
       Future.delayed(const Duration(seconds: 3)),
     ]).then((_) {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      }
+    }).catchError((error) {
+      debugPrint('Error during splash initialization: $error');
+      // Still navigate to home even if settings fail to load
       if (mounted) {
         Navigator.pushReplacement(
           context,
