@@ -104,7 +104,7 @@ class HomeContent extends StatelessWidget {
                 builder: (context, constraints) {
                   final screenWidth = constraints.maxWidth;
                   final isSmallScreen = screenWidth < 360;
-                  final showIp = screenWidth >= 400; // Only show IP on larger screens
+                  final showIp = screenWidth >= 380;
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,11 +114,12 @@ class HomeContent extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: Row(
                           children: [
-                            // Robot Status Indicator - Responsive, on the left
+                            // Robot Status Indicator - Balanced sizing
                             Flexible(
+                              flex: 2,
                               child: RobotStatusIndicator(
                                 robotApi: context.read<RobotApi>(),
-                                showRefreshButton: screenWidth >= 380,
+                                showRefreshButton: screenWidth >= 360,
                                 showTapToDiscover: true,
                                 showIp: showIp,
                               ),
