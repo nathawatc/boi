@@ -114,9 +114,11 @@ class HomeContent extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: Row(
                           children: [
-                            // Robot Status Indicator - Balanced sizing
-                            Flexible(
-                              flex: 2,
+                            // Robot Status Indicator - Constrained to left side
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth: screenWidth * 0.5, // Max 50% of screen
+                              ),
                               child: RobotStatusIndicator(
                                 robotApi: context.read<RobotApi>(),
                                 showRefreshButton: screenWidth >= 360,
@@ -125,6 +127,7 @@ class HomeContent extends StatelessWidget {
                               ),
                             ),
                             const Spacer(),
+                            // Icons always on the right
                             _CircularIcon(icon: Icons.favorite_border),
                             const SizedBox(width: 12),
                             _CircularIcon(icon: Icons.person_outline),
