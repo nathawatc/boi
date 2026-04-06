@@ -7,12 +7,14 @@ Get your Boi delivery robot system up and running in 5 minutes.
 ## Prerequisites
 
 ### For Flutter App
+
 - Flutter SDK 3.11.1 or higher
 - Android Studio / VS Code with Flutter extensions
 - Android device or emulator
 - Dart SDK (included with Flutter)
 
 ### For ESP32 Robot
+
 - ESP32 Development Board
 - L298N Motor Driver (or compatible)
 - 2x DC Motors
@@ -21,6 +23,7 @@ Get your Boi delivery robot system up and running in 5 minutes.
 - Micro USB cable
 
 ### For Network
+
 - Smartphone with WiFi hotspot capability
 - OR any 2.4GHz WiFi router
 
@@ -28,7 +31,7 @@ Get your Boi delivery robot system up and running in 5 minutes.
 
 ## Step-by-Step Setup
 
-### Step 1: Set Up WiFi Hotspot
+### Step 1: Set up WiFi Hotspot
 
 1. On your smartphone, go to **Settings > Hotspot & Tethering**
 2. Turn on **WiFi Hotspot**
@@ -45,13 +48,8 @@ Get your Boi delivery robot system up and running in 5 minutes.
 ### Step 2: Flash ESP32 Firmware
 
 1. **Install Arduino IDE** (if not already installed)
-   - Download from: https://www.arduino.cc/en/software
-   - Install ESP32 board support:
-     - Go to `File > Preferences`
-     - Add to "Additional Board Manager URLs":
-       ```
-       https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
-       ```
+   - Download from: [Arduino](https://www.arduino.cc/en/software)
+   - Install ESP32 board support
      - Go to `Tools > Board > Boards Manager`
      - Search "ESP32" and install
 
@@ -71,7 +69,8 @@ Get your Boi delivery robot system up and running in 5 minutes.
    - Open Serial Monitor (`Tools > Serial Monitor`)
    - Set baud rate to **115200**
    - You should see:
-     ```
+
+     ```text
      Connecting to WiFi: Boi....
      WiFi Connected
      IP Address: 192.168.43.XXX
@@ -84,11 +83,13 @@ Get your Boi delivery robot system up and running in 5 minutes.
 ### Step 3: Run Flutter App
 
 1. **Clone/Download Repository**
+
    ```bash
    cd /path/to/boi
    ```
 
 2. **Install Dependencies**
+
    ```bash
    flutter pub get
    ```
@@ -97,14 +98,16 @@ Get your Boi delivery robot system up and running in 5 minutes.
    - Connect Android device via USB
    - Enable USB Debugging on device
    - Verify connection:
+
      ```bash
      flutter devices
      ```
 
 4. **Run App**
-   ```bash
+
+```bash
    flutter run
-   ```
+```
 
 ---
 
@@ -125,9 +128,10 @@ Get your Boi delivery robot system up and running in 5 minutes.
 
 3. **Alternative: Test with Serial Monitor**
    - In Arduino Serial Monitor, you should see:
-     ```
+
+   ```text
      Received UDP command: F
-     ```
+   ```
 
 ---
 
@@ -149,6 +153,7 @@ Get your Boi delivery robot system up and running in 5 minutes.
 **Symptoms**: Stuck on "Connecting to WiFi: Boi...."
 
 **Solutions**:
+
 1. Verify hotspot is ON
 2. Check password is exactly `12345678`
 3. Ensure hotspot is broadcasting on **2.4GHz** (not 5GHz)
@@ -160,19 +165,21 @@ Get your Boi delivery robot system up and running in 5 minutes.
 **Symptoms**: App shows success, but robot doesn't move
 
 **Check**:
+
 1. Motors properly connected to L298N?
 2. Battery charged and connected?
 3. L298N enable pins receiving PWM?
 4. Serial Monitor shows "Received UDP command: F"?
 
 **Debug Steps**:
+
 1. See [Debug Guide](./DEBUG_GUIDE.md) for full troubleshooting
 2. Test with manual `netcat` command (Method 3 in Debug Guide)
-3. Check motor wiring in [ESP32 Setup](./ESP32_SETUP.md)
 
 ### Flutter App Crashes on Startup
 
 **Solutions**:
+
 ```bash
 flutter clean
 flutter pub get
@@ -210,4 +217,4 @@ After verifying basic functionality:
 
 ---
 
-*Last Updated: 2026-04-06*
+_Last Updated: 2026-04-06_

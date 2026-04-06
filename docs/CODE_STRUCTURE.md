@@ -6,7 +6,7 @@ Understanding the organization and architecture of the Boi delivery robot codeba
 
 ## Project Structure Overview
 
-```
+```text
 boi/
 ├── lib/                          # Flutter application source
 │   ├── main.dart                 # App entry point
@@ -203,7 +203,7 @@ pid_control.h        // Line following
 
 ### Example: User Places Order
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │ 1. USER INTERACTION (Presentation Layer)                                                                       │
 │    - User clicks "ยืนยันรายการ" on PaymentPage                                                                    │
@@ -360,7 +360,7 @@ await robotApi.sendCommand("F");                   // ❌ Not allowed
 
 ## Dependencies Graph
 
-```
+```text
 main.dart
   ├── CartProvider (state)
   │   ├── Cart items
@@ -457,7 +457,7 @@ decoration: BoxDecoration(gradient: AppTheme.primaryGradient),
 
 ## Testing Structure
 
-```
+```text
 test/
 └── widget_test.dart          # Basic smoke test
 ```
@@ -556,28 +556,6 @@ void loop() {
 - **Constants**: `UPPER_SNAKE_CASE`
 - **Variables**: `camelCase`
 - **Functions**: `camelCase`
-
----
-
-## Future Structure Additions
-
-### Planned
-
-```
-lib/
-├── services/
-│   ├── robot_api.dart        ✅ Current
-│   ├── robot_control_page.dart  ⏳ Manual control UI
-│   └── battery_monitor.dart     ⏳ Battery tracking
-│
-├── models/
-│   ├── product.dart             ⏳ Typed product model
-│   └── order.dart               ⏳ Typed order model
-│
-└── utils/
-    ├── validators.dart          ⏳ Form validation
-    └── formatters.dart          ⏳ Price/date formatting
-```
 
 ---
 

@@ -14,17 +14,6 @@
 - **[API Reference](./API_REFERENCE.md)** - Robot API service documentation
 - **[Code Structure](./CODE_STRUCTURE.md)** - Project organization and architecture
 
-### Hardware
-
-- **[ESP32 Setup](./ESP32_SETUP.md)** - Firmware installation and configuration
-- **[Robot Assembly](./ROBOT_ASSEMBLY.md)** - Hardware components and wiring
-
-### Advanced
-
-- [`robots/`](../robots/) - ESP32 firmware source code
-- [`lib/services/`](../lib/services/) - API service layer
-- [`lib/providers/`](../lib/providers/) - State management
-
 ---
 
 ## Quick Links
@@ -34,7 +23,6 @@
 | Set up WiFi connection   | [Network Setup](./NETWORK_SETUP.md)     |
 | Test robot communication | [Debug Guide](./DEBUG_GUIDE.md)         |
 | Understand the API       | [API Reference](./API_REFERENCE.md)     |
-| Install ESP32 firmware   | [ESP32 Setup](./ESP32_SETUP.md)         |
 | See system architecture  | [System Overview](./SYSTEM_OVERVIEW.md) |
 
 ---

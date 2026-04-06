@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'theme/app_theme.dart';
 import 'pages/splash_screen.dart';
 import 'providers/cart_provider.dart';
+import 'providers/settings_provider.dart';
 import 'services/robot_api.dart';
 import 'widgets/incoming_call_widget.dart';
 
@@ -23,6 +24,7 @@ void main() {
             });
             return robotApi;
           }),
+          ChangeNotifierProvider(create: (_) => SettingsProvider()),
         ],
         child: const BoiApp(),
       ),
@@ -35,31 +37,37 @@ class BoiApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      useInheritedMediaQuery: true,
-      locale: DevicePreview.locale(context),
-      title: 'Boi',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      home: const SplashScreen(),
-      builder: (context, child) {
-        // Apply DevicePreview.appBuilder as base
-        final previewChild = DevicePreview.appBuilder(context, child);
+    return Consumer<SettingsProvider>(
+      builder: (context, settings, _) {
+        return MaterialApp(
+          useInheritedMediaQuery: true,
+          locale: DevicePreview.locale(context),
+          title: 'Boi',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: settings.materialThemeMode,
+          home: const SplashScreen(),
+          builder: (context, child) {
+            // Apply DevicePreview.appBuilder as base
+            final previewChild = DevicePreview.appBuilder(context, child);
 
-        return Stack(
-          children: [
-            previewChild,
-            Consumer<CartProvider>(
-              builder: (context, cart, _) {
-                if (cart.isIncomingCall) {
-                  return const Positioned.fill(
-                    child: IncomingCallWidget(),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-          ],
+            return Stack(
+              children: [
+                previewChild,
+                Consumer<CartProvider>(
+                  builder: (context, cart, _) {
+                    if (cart.isIncomingCall) {
+                      return const Positioned.fill(
+                        child: IncomingCallWidget(),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ],
+            );
+          },
         );
       },
     );

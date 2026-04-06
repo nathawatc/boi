@@ -38,11 +38,11 @@ class ProductCard extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -55,7 +55,11 @@ class ProductCard extends StatelessWidget {
             aspectRatio: 1,
             child: Container(
               decoration: BoxDecoration(
-                color: imageUrl == null ? (icon != null ? Colors.blue.shade50 : (color ?? Colors.grey.shade100)) : (color ?? Colors.grey.shade200),
+                color: imageUrl == null
+                    ? (icon != null
+                        ? Theme.of(context).colorScheme.primaryContainer
+                        : (color ?? Theme.of(context).colorScheme.surfaceContainerHighest))
+                    : (color ?? Theme.of(context).colorScheme.surfaceContainerHighest),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
               ),
               child: imageUrl != null
@@ -66,8 +70,10 @@ class ProductCard extends StatelessWidget {
                   : Center(
                       child: Icon(
                         icon ?? Icons.image_outlined,
-                        color: icon != null ? Colors.blue : Colors.grey,
-                        size: 50
+                        color: icon != null
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                        size: 50,
                       ),
                     ),
             ),
@@ -79,7 +85,11 @@ class ProductCard extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

@@ -13,7 +13,7 @@ class OrderHistoryPage extends StatelessWidget {
     final orders = context.watch<CartProvider>().orders;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('ประวัติการซื้อ', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
@@ -29,9 +29,9 @@ class OrderHistoryPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.history, size: 80, color: Colors.grey.shade300),
+                  Icon(Icons.history, size: 80, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
                   const SizedBox(height: 16),
-                  const Text('ยังไม่มีประวัติการซื้อ', style: TextStyle(color: Colors.grey)),
+                  Text('ยังไม่มีประวัติการซื้อ', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                 ],
               ),
             )
@@ -43,7 +43,7 @@ class OrderHistoryPage extends StatelessWidget {
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
-                      context, 
+                      context,
                       MaterialPageRoute(builder: (context) => OrderDetailPage(orderId: order.id))
                     );
                   },
@@ -51,10 +51,10 @@ class OrderHistoryPage extends StatelessWidget {
                     margin: const EdgeInsets.only(bottom: 16),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
-                        BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+                        BoxShadow(color: Theme.of(context).colorScheme.shadow.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 4)),
                       ],
                     ),
                     child: Column(
@@ -70,18 +70,18 @@ class OrderHistoryPage extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: order.status == 'สำเร็จ' 
-                                    ? Colors.green.withOpacity(0.1) 
+                                color: order.status == 'สำเร็จ'
+                                    ? Colors.green.withOpacity(0.1)
                                     : (order.status == 'คำสั่งซื้อไม่สำเร็จ' ? Colors.red.withOpacity(0.1) : Colors.orange.withOpacity(0.1)),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 order.status,
                                 style: TextStyle(
-                                  color: order.status == 'สำเร็จ' 
-                                      ? Colors.green 
-                                      : (order.status == 'คำสั่งซื้อไม่สำเร็จ' ? Colors.red : Colors.orange), 
-                                  fontSize: 12, 
+                                  color: order.status == 'สำเร็จ'
+                                      ? Colors.green
+                                      : (order.status == 'คำสั่งซื้อไม่สำเร็จ' ? Colors.red : Colors.orange),
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold
                                 ),
                               ),
@@ -91,7 +91,7 @@ class OrderHistoryPage extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           '${order.date.day}/${order.date.month}/${order.date.year} ${order.date.hour}:${order.date.minute}',
-                          style: const TextStyle(color: Colors.grey, fontSize: 12),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12),
                         ),
                         if (order.status == 'กำลังจัดส่ง')
                           Padding(
@@ -128,7 +128,7 @@ class OrderHistoryPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        
+
                         if (order.status == 'กำลังจัดส่ง') ...[
                           const SizedBox(height: 16),
                           SizedBox(

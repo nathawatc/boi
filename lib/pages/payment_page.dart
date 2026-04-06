@@ -43,7 +43,7 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('ชำระเงิน', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
@@ -77,15 +77,15 @@ class _PaymentPageState extends State<PaymentPage> {
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 10)),
+                  BoxShadow(color: Theme.of(context).colorScheme.shadow.withOpacity(0.15), blurRadius: 20, offset: const Offset(0, 10)),
                 ],
               ),
               child: Column(
                 children: [
-                  const Text('ยอดชำระทั้งหมด', style: TextStyle(color: Colors.grey, fontSize: 16)),
+                  Text('ยอดชำระทั้งหมด', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16)),
                   const SizedBox(height: 8),
                   Text(
                     '${widget.totalAmount.toStringAsFixed(2)} บาท',
@@ -115,7 +115,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: isSelected ? AppTheme.primaryGreen : Colors.transparent,
@@ -147,7 +147,7 @@ class _PaymentPageState extends State<PaymentPage> {
                             const SizedBox(height: 4),
                             Text(
                               addr['detail']!,
-                              style: const TextStyle(color: Colors.grey, fontSize: 13),
+                              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
                             ),
                           ],
                         ),
@@ -155,7 +155,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       if (isSelected)
                         Icon(Icons.check_circle, color: AppTheme.primaryGreen)
                       else
-                        const Icon(Icons.circle_outlined, color: Colors.grey),
+                        Icon(Icons.circle_outlined, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ],
                   ),
                 ),
@@ -172,7 +172,7 @@ class _PaymentPageState extends State<PaymentPage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -182,7 +182,7 @@ class _PaymentPageState extends State<PaymentPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('${item.name} x ${item.quantity}', style: const TextStyle(color: Colors.black87)),
+                        Text('${item.name} x ${item.quantity}', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                         Text(item.price, style: const TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
@@ -244,7 +244,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       ? () => _handlePaymentConfirmation(context)
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isConnected ? AppTheme.primaryGreen : Colors.grey.shade400,
+                    backgroundColor: isConnected ? AppTheme.primaryGreen : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 56),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -286,7 +286,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       '💡 แตะที่ตัวแสดงสถานะด้านบนเพื่อค้นหาหุ่นยนต์',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.grey.shade600,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 13,
                       ),
                     ),
@@ -313,7 +313,7 @@ class _PaymentPageState extends State<PaymentPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: isSelected ? AppTheme.primaryGreen : Colors.transparent, width: 2),
       ),
@@ -329,10 +329,10 @@ class _PaymentPageState extends State<PaymentPage> {
           child: Icon(icon, color: color),
         ),
         title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(subtitle, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+        subtitle: Text(subtitle, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13)),
         trailing: isSelected
           ? Icon(Icons.check_circle, color: AppTheme.primaryGreen)
-          : const Icon(Icons.circle_outlined, color: Colors.grey),
+          : Icon(Icons.circle_outlined, color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     );
   }
@@ -351,9 +351,9 @@ class _PaymentPageState extends State<PaymentPage> {
             const SizedBox(height: 24),
             const Text('ชำระเงินสำเร็จ!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            const Text('ขอบคุณที่ใช้บริการ Boi นะครับ\nไรเดอร์กำลังเตรียมจัดส่งสินค้าให้คุณ',
+            Text('ขอบคุณที่ใช้บริการ Boi นะครับ\nไรเดอร์กำลังเตรียมจัดส่งสินค้าให้คุณ',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey, fontSize: 16),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
             ),
             const SizedBox(height: 32),
             ElevatedButton(
@@ -397,13 +397,13 @@ class _PaymentPageState extends State<PaymentPage> {
             Text(
               'ไม่สามารถเชื่อมต่อหุ่นยนต์ได้\n$errorMessage',
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.grey, fontSize: 16),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
             ),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'คำสั่งซื้อของคุณจะถูกบันทึกและจัดส่งเมื่อหุ่นยนต์พร้อม',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey, fontSize: 14),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14),
             ),
             const SizedBox(height: 32),
             ElevatedButton(
@@ -503,10 +503,10 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
               const SizedBox(height: 12),
               if (robotApi.isConnected) ...[
-                const Text(
+                Text(
                   'หุ่นยนต์พร้อมทำงานแล้ว',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
                 ),
               ] else ...[
                 Text(
@@ -514,7 +514,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       ? 'กำลังค้นหาหุ่นยนต์บนเครือข่าย...'
                       : 'กรุณาตรวจสอบว่าหุ่นยนต์เปิดอยู่และเชื่อมต่อกับ WiFi เดียวกัน',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.grey, fontSize: 16),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
                 ),
                 if (robotApi.lastKnownIp != null) ...[
                   const SizedBox(height: 8),
@@ -575,9 +575,9 @@ class _PaymentPageState extends State<PaymentPage> {
                   onPressed: () {
                     Navigator.pop(dialogContext);
                   },
-                  child: const Text(
+                  child: Text(
                     'ยกเลิก',
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
                   ),
                 ),
               ] else ...[

@@ -9,7 +9,7 @@ class CouponPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7F5),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('คูปองส่วนลด', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
@@ -32,7 +32,7 @@ class CouponPage extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
+                    colors: [Color(0xFF90CAF9), Color(0xFF64B5F6)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -40,14 +40,14 @@ class CouponPage extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.stars, color: Colors.blue, size: 40),
+                    const Icon(Icons.stars, color: Colors.white, size: 40),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('สะสมคูปองเพื่อประหยัดมากขึ้น', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.blueGrey)),
-                          Text('คุณมีคูปองที่เก็บแล้ว ${cart.collectedCoupons.length} ใบ', style: const TextStyle(fontSize: 13, color: Colors.blue)),
+                          const Text('สะสมคูปองเพื่อประหยัดมากขึ้น', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
+                          Text('คุณมีคูปองที่เก็บแล้ว ${cart.collectedCoupons.length} ใบ', style: const TextStyle(fontSize: 13, color: Colors.white70)),
                         ],
                       ),
                     ),
@@ -69,7 +69,7 @@ class CouponPage extends StatelessWidget {
               Center(
                 child: Text(
                   'คูปองใหม่จะเข้าทุกสัปดาห์ อย่าลืมมาตรวจเช็คนะ!',
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12),
                 ),
               ),
               const SizedBox(height: 40),
@@ -91,10 +91,10 @@ class _LargeCouponCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(color: Theme.of(context).colorScheme.shadow.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 4)),
         ],
       ),
       child: Stack(
@@ -125,7 +125,7 @@ class _LargeCouponCard extends StatelessWidget {
               Container(
                 width: 1,
                 height: 70,
-                color: Colors.grey.shade200,
+                color: Theme.of(context).colorScheme.outlineVariant,
               ),
 
               // Right Details Part
@@ -145,17 +145,17 @@ class _LargeCouponCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         'เมื่อซื้อครบ ${coupon.minSpend.toInt()}.-',
-                        style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12),
                       ),
                       const SizedBox(height: 12),
                       Row(
                         children: [
-                          Icon(Icons.history, color: Colors.grey.shade400, size: 14),
+                          Icon(Icons.history, color: Theme.of(context).colorScheme.onSurfaceVariant, size: 14),
                           const SizedBox(width: 4),
                           Text(
                             coupon.isExpired ? 'หมดอายุแล้ว' : 'ใช้ได้ถึง ${coupon.expiryDateFormatted}',
                             style: TextStyle(
-                              color: coupon.isExpired ? Colors.red : Colors.grey.shade400,
+                              color: coupon.isExpired ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.onSurfaceVariant,
                               fontSize: 10
                             ),
                           ),
@@ -167,8 +167,8 @@ class _LargeCouponCard extends StatelessWidget {
                                 context.read<CartProvider>().collectCoupon(coupon.code);
                               },
                             style: TextButton.styleFrom(
-                              backgroundColor: coupon.isCollected ? Colors.grey.shade100 : (coupon.isExpired ? Colors.grey.shade300 : AppTheme.primarySky.withOpacity(0.1)),
-                              foregroundColor: coupon.isCollected ? Colors.grey : (coupon.isExpired ? Colors.grey.shade500 : AppTheme.primarySky),
+                              backgroundColor: coupon.isCollected ? Theme.of(context).colorScheme.surfaceContainerHighest : (coupon.isExpired ? Theme.of(context).colorScheme.surfaceContainerHighest : AppTheme.primarySky.withOpacity(0.1)),
+                              foregroundColor: coupon.isCollected ? Theme.of(context).colorScheme.onSurfaceVariant : (coupon.isExpired ? Theme.of(context).colorScheme.onSurfaceVariant : AppTheme.primarySky),
                               padding: const EdgeInsets.symmetric(horizontal: 16),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                             ),
@@ -190,12 +190,12 @@ class _LargeCouponCard extends StatelessWidget {
           Positioned(
             left: 95,
             top: -5,
-            child: CircleAvatar(radius: 5, backgroundColor: Color(0xFFF5F7F5)),
+            child: CircleAvatar(radius: 5, backgroundColor: Theme.of(context).colorScheme.surface),
           ),
           Positioned(
             left: 95,
             bottom: -5,
-            child: CircleAvatar(radius: 5, backgroundColor: Color(0xFFF5F7F5)),
+            child: CircleAvatar(radius: 5, backgroundColor: Theme.of(context).colorScheme.surface),
           ),
         ],
       ),

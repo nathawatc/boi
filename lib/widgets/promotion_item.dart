@@ -5,32 +5,49 @@ class PromotionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 80,
-      margin: const EdgeInsets.only(right: 12),
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 40,
-            backgroundColor: Colors.white,
-            child: Container(
-              margin: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.orange.shade50,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Responsive sizing based on available width
+        final iconSize = constraints.maxWidth < 400 ? 35.0 : 40.0;
+        final fontSize = constraints.maxWidth < 400 ? 10.0 : 11.0;
+
+        return Container(
+          width: 80.0.clamp(70.0, 90.0),
+          margin: const EdgeInsets.only(right: 12),
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: iconSize,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                child: Container(
+                  margin: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.flash_on,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: iconSize * 0.6,
+                    ),
+                  ),
+                ),
               ),
-              child: const Center(child: Icon(Icons.flash_on, color: Colors.orange)),
-            ),
+              const SizedBox(height: 8),
+              Text(
+                'โปรแรง 1 แถม 1',
+                style: TextStyle(
+                  fontSize: fontSize,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'โปรแรง 1 แถม 1',
-            style: TextStyle(fontSize: 11),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

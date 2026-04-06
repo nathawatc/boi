@@ -13,11 +13,11 @@ class OrderDetailPage extends StatelessWidget {
     return Consumer<CartProvider>(
       builder: (context, cart, child) {
         final order = cart.orders.firstWhere((o) => o.id == orderId);
-        
+
         return Scaffold(
-          backgroundColor: const Color(0xFFF8FAFC),
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(
-            title: Text('รายละเอียดคำสั่งซื้อ #${order.id.substring(order.id.length - 6)}', 
+            title: Text('รายละเอียดคำสั่งซื้อ #${order.id.substring(order.id.length - 6)}',
               style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
             backgroundColor: Colors.transparent,
             flexibleSpace: Container(
@@ -38,24 +38,28 @@ class OrderDetailPage extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 10)),
+                      BoxShadow(
+                        color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
                     ],
                   ),
                   child: Column(
                     children: [
                       Icon(
-                        order.status == 'สำเร็จ' ? Icons.check_circle : Icons.delivery_dining, 
-                        color: order.status == 'สำเร็จ' ? Colors.green : AppTheme.primaryGreen, 
+                        order.status == 'สำเร็จ' ? Icons.check_circle : Icons.delivery_dining,
+                        color: order.status == 'สำเร็จ' ? Colors.green : AppTheme.primaryGreen,
                         size: 60
                       ),
                       const SizedBox(height: 16),
-                      Text(order.status, 
+                      Text(order.status,
                         style: TextStyle(
-                          fontSize: 22, 
-                          fontWeight: FontWeight.bold, 
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
                           color: order.status == 'สำเร็จ' ? Colors.green : AppTheme.primaryGreen
                         )
                       ),
@@ -64,33 +68,45 @@ class OrderDetailPage extends StatelessWidget {
                         Text(
                           'จะได้รับในอีกประมาณ ${order.estimatedMinutes} นาที',
                           style: TextStyle(
-                            color: AppTheme.primaryGreen, 
-                            fontSize: 18, 
+                            color: AppTheme.primaryGreen,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold
                           ),
                         )
                       else
-                        const Text('ขอบคุณที่ใช้บริการ Boi POS!', 
+                        const Text('ขอบคุณที่ใช้บริการ Boi POS!',
                           style: TextStyle(color: Colors.grey)
                         ),
                       const SizedBox(height: 8),
-                      const Text('ไรเดอร์กำลังมุ่งหน้าไปหาคุณ...', 
-                        style: TextStyle(color: Colors.grey)
+                      Text(
+                        order.status == 'กำลังจัดส่ง'
+                            ? ''
+                            : 'ไรเดอร์กำลังมุ่งหน้าไปหาคุณ...',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 30),
-    
+
                 // Order Items
-                const Align(
+                Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('รายการสินค้า', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  child: Text(
+                    'รายการสินค้า',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: ListView.builder(
@@ -100,34 +116,59 @@ class OrderDetailPage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final item = order.items[index];
                       return ListTile(
-                        title: Text(item.name),
-                        subtitle: Text('จำนวน ${item.quantity}'),
-                        trailing: Text(item.price, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        title: Text(
+                          item.name,
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                        ),
+                        subtitle: Text(
+                          'จำนวน ${item.quantity}',
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        ),
+                        trailing: Text(
+                          item.price,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
                       );
                     },
                   ),
                 ),
                 const SizedBox(height: 30),
-    
+
                 // Total Summary
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('ราคาสุทธิ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      Text('${order.totalAmount.toStringAsFixed(2)} บาท', 
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen)),
+                      Text(
+                        'ราคาสุทธิ',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                      Text(
+                        '${order.totalAmount.toStringAsFixed(2)} บาท',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryGreen,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 40),
-    
+
                 // Confirm Button
                 if (order.status != 'สำเร็จ')
                   ElevatedButton(

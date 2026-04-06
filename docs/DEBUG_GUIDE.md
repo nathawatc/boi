@@ -110,8 +110,8 @@ _(Replace `<ESP32_IP_ADDRESS>` with the actual IP address of the robot)._
 
 - **App says packet sent, but robot does nothing:**
   - Verify they are on the exact same WiFi network.
-  - Some public routers or strict corporate WiFis enable "AP Isolation" or "Client Isolation", which blocks devices from talking to each other. Use a standard mobile hotspot to test.
+  - Some public routers or strict corporate WiFis enable "AP Isolation" or "Client Isolation", which blocks devices from talking to each other. Use a standard mobile hotspot to test. <!-- rumdl-disable-line MD013 -->
 - **ESP32 is stuck on `Connecting to WiFi: Boi....`:**
-  - Ensure your hotspot is turned on, broadcasting at 2.4GHz (ESP32 does not support 5GHz), and the password is exactly `12345678`.
+  - Ensure your hotspot is turned on, broadcasting at 2.4GHz (ESP32 does not support 5GHz), and the password is exactly `12345678`. <!-- rumdl-disable-line MD013 -->
 - **Motors make a humming sound but don't spin:**
-  - Check your power supply. The ESP32 cannot power DC motors directly from its 3.3V or 5V pins reliably; ensure you have a proper battery pack connected to your motor driver (L298N, TB6612, etc.).
+  - Check your power supply. The ESP32 cannot power DC motors directly from its 3.3V or 5V pins reliably; ensure you have a proper battery pack connected to your motor driver (L298N, TB6612, etc.). <!-- rumdl-disable-line MD013 -->

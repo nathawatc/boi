@@ -1,6 +1,6 @@
 # System Overview
 
-## What is Boi?
+## What Is Boi?
 
 Boi is an autonomous delivery robot system consisting of:
 
@@ -263,11 +263,11 @@ class CartProvider with ChangeNotifier {
 - ✅ Incoming call notification UI
 - ✅ Rating dialog after delivery
 - ✅ Loading states and error dialogs
+- ✅ Robot connection status indicator
+- ✅ Manual robot control page
 
 ### In Progress
 
-- ⏳ Robot connection status indicator
-- ⏳ Manual robot control page
 - ⏳ Real-time order tracking on map
 
 ---
@@ -343,7 +343,6 @@ class CartProvider with ChangeNotifier {
 - [Network Setup](./NETWORK_SETUP.md) - WiFi configuration
 - [Debug Guide](./DEBUG_GUIDE.md) - Troubleshooting
 - [API Reference](./API_REFERENCE.md) - Robot API documentation
-- [ESP32 Setup](./ESP32_SETUP.md) - Firmware installation
 
 ---
 

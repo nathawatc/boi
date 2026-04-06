@@ -131,7 +131,7 @@ class _RobotControlPageState extends State<RobotControlPage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppTheme.primaryGreen.withOpacity(0.1), Colors.white],
+            colors: [AppTheme.primaryGreen.withOpacity(0.1), Theme.of(context).colorScheme.surface],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -251,9 +251,9 @@ class _RobotControlPageState extends State<RobotControlPage> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             margin: const EdgeInsets.symmetric(horizontal: 24),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade300),
+              border: Border.all(color: Theme.of(context).colorScheme.outline),
             ),
             child: Row(
               children: [
@@ -263,19 +263,19 @@ class _RobotControlPageState extends State<RobotControlPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'โหมดกระจายสัญญาณ',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       Text(
                         'ส่งคำสั่งไปทุกหุ่นยนต์',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade600,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -295,12 +295,12 @@ class _RobotControlPageState extends State<RobotControlPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           margin: const EdgeInsets.symmetric(horizontal: 24),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppTheme.primaryGreen.withOpacity(0.3)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -366,7 +366,7 @@ class _RobotControlPageState extends State<RobotControlPage> {
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -397,80 +397,97 @@ class _RobotControlPageState extends State<RobotControlPage> {
   }
 
   Widget _buildDPad() {
-    return SizedBox(
-      width: 280,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Forward button
-          _buildDirectionButton(
-            'forward',
-            RobotCommand.forward,
-            Icons.keyboard_arrow_up,
-            Alignment.topCenter,
-          ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Make D-Pad responsive based on available width
+        final maxWidth = constraints.maxWidth;
+        final buttonSize = (maxWidth * 0.28).clamp(60.0, 80.0);
+        final centerSize = (maxWidth * 0.28).clamp(60.0, 80.0);
+        final spacing = (maxWidth * 0.03).clamp(6.0, 8.0);
 
-          const SizedBox(height: 8),
-
-          // Middle row: Left, Center (Stop), Right
-          Row(
+        return SizedBox(
+          width: double.infinity,
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Left button
+              // Forward button
               _buildDirectionButton(
-                'left',
-                RobotCommand.left,
-                Icons.keyboard_arrow_left,
-                Alignment.centerLeft,
+                'forward',
+                RobotCommand.forward,
+                Icons.keyboard_arrow_up,
+                Alignment.topCenter,
+                buttonSize: buttonSize,
               ),
 
-              const SizedBox(width: 8),
+              SizedBox(height: spacing),
 
-              // Center indicator
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.grey.shade200,
-                  border: Border.all(color: Colors.grey.shade300, width: 2),
-                ),
-                child: Center(
-                  child: Text(
-                    _isLineFollowing ? 'ตาม\nเส้น' : 'หยุด',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: _isLineFollowing ? AppTheme.primaryGreen : Colors.grey,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+              // Middle row: Left, Center (Stop), Right
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Left button
+                  _buildDirectionButton(
+                    'left',
+                    RobotCommand.left,
+                    Icons.keyboard_arrow_left,
+                    Alignment.centerLeft,
+                    buttonSize: buttonSize,
+                  ),
+
+                  SizedBox(width: spacing),
+
+                  // Center indicator
+                  Container(
+                    width: centerSize,
+                    height: centerSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      border: Border.all(color: Theme.of(context).colorScheme.outline, width: 2),
+                    ),
+                    child: Center(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          _isLineFollowing ? 'ตาม\nเส้น' : 'หยุด',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: _isLineFollowing ? AppTheme.primaryGreen : Colors.grey,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+
+                  SizedBox(width: spacing),
+
+                  // Right button
+                  _buildDirectionButton(
+                    'right',
+                    RobotCommand.right,
+                    Icons.keyboard_arrow_right,
+                    Alignment.centerRight,
+                    buttonSize: buttonSize,
+                  ),
+                ],
               ),
 
-              const SizedBox(width: 8),
+              SizedBox(height: spacing),
 
-              // Right button
+              // Backward button
               _buildDirectionButton(
-                'right',
-                RobotCommand.right,
-                Icons.keyboard_arrow_right,
-                Alignment.centerRight,
+                'backward',
+                RobotCommand.backward,
+                Icons.keyboard_arrow_down,
+                Alignment.bottomCenter,
+                buttonSize: buttonSize,
               ),
             ],
           ),
-
-          const SizedBox(height: 8),
-
-          // Backward button
-          _buildDirectionButton(
-            'backward',
-            RobotCommand.backward,
-            Icons.keyboard_arrow_down,
-            Alignment.bottomCenter,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -478,9 +495,11 @@ class _RobotControlPageState extends State<RobotControlPage> {
     String buttonId,
     RobotCommand command,
     IconData icon,
-    Alignment alignment,
-  ) {
+    Alignment alignment, {
+    double? buttonSize,
+  }) {
     final isPressed = _pressedButtons.contains(buttonId);
+    final size = buttonSize ?? 80;
 
     return GestureDetector(
       onTapDown: (_) => _onButtonPressed(buttonId, command),
@@ -488,20 +507,20 @@ class _RobotControlPageState extends State<RobotControlPage> {
       onTapCancel: () => _onButtonReleased(buttonId),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 100),
-        width: 80,
-        height: 80,
+        width: size,
+        height: size,
         decoration: BoxDecoration(
-          color: isPressed ? AppTheme.primaryGreen.withOpacity(0.3) : Colors.white,
+          color: isPressed ? AppTheme.primaryGreen.withOpacity(0.3) : Theme.of(context).colorScheme.surface,
           shape: BoxShape.circle,
           border: Border.all(
-            color: isPressed ? AppTheme.primaryGreen : Colors.grey.shade300,
+            color: isPressed ? AppTheme.primaryGreen : Theme.of(context).colorScheme.outline,
             width: 2,
           ),
           boxShadow: isPressed
               ? []
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -509,8 +528,8 @@ class _RobotControlPageState extends State<RobotControlPage> {
         ),
         child: Icon(
           icon,
-          size: 48,
-          color: isPressed ? AppTheme.primaryGreen : Colors.grey.shade600,
+          size: size * 0.6,
+          color: isPressed ? AppTheme.primaryGreen : Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       ),
     );
@@ -561,13 +580,13 @@ class _RobotControlPageState extends State<RobotControlPage> {
   String _getStatusText(RobotConnectionStatus status) {
     switch (status) {
       case RobotConnectionStatus.connected:
-        return 'หุ่นยนต์พร้อมใช้งาน';
+        return 'พร้อมใช้งาน';
       case RobotConnectionStatus.connecting:
-        return 'กำลังเชื่อมต่อ...';
+        return 'กำลังเชื่อมต่อ';
       case RobotConnectionStatus.error:
-        return 'เกิดข้อผิดพลาด';
+        return 'ผิดพลาด';
       case RobotConnectionStatus.disconnected:
-        return 'ยังไม่เชื่อมต่อ';
+        return 'ไม่เชื่อมต่อ';
     }
   }
 }
@@ -598,7 +617,7 @@ class _ModeButton extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.grey,
+              color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
