@@ -698,8 +698,8 @@ class _MoreMenuPageState extends State<MoreMenuPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('ภาษา / Language', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                          Text('เลือกภาษา ไทย / อังกฤษ', style: TextStyle(color: Colors.grey, fontSize: 13)),
+                          Text('ภาษา', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text('เลือกภาษา', style: TextStyle(color: Colors.grey, fontSize: 13)),
                         ],
                       ),
                     ),
@@ -760,8 +760,8 @@ class _MoreMenuPageState extends State<MoreMenuPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('ธีม / Theme', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                          Text('เลือกธีมสว่างหรือมืด', style: TextStyle(color: Colors.grey, fontSize: 13)),
+                          Text('ธีม', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text('เลือกธีม', style: TextStyle(color: Colors.grey, fontSize: 13)),
                         ],
                       ),
                     ),
