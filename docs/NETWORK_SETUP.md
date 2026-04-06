@@ -387,7 +387,6 @@ nc -u 192.168.43.XXX 2001
 
 - [Debug Guide](./DEBUG_GUIDE.md) - Test network communication
 - [System Overview](./SYSTEM_OVERVIEW.md) - Architecture details
-- [ESP32 Setup](./ESP32_SETUP.md) - Firmware configuration
 
 ---
 

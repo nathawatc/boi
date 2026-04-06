@@ -343,7 +343,6 @@ class CartProvider with ChangeNotifier {
 - [Network Setup](./NETWORK_SETUP.md) - WiFi configuration
 - [Debug Guide](./DEBUG_GUIDE.md) - Troubleshooting
 - [API Reference](./API_REFERENCE.md) - Robot API documentation
-- [ESP32 Setup](./ESP32_SETUP.md) - Firmware installation
 
 ---
 

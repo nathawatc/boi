@@ -175,7 +175,6 @@ Get your Boi delivery robot system up and running in 5 minutes.
 
 1. See [Debug Guide](./DEBUG_GUIDE.md) for full troubleshooting
 2. Test with manual `netcat` command (Method 3 in Debug Guide)
-3. Check motor wiring in [ESP32 Setup](./ESP32_SETUP.md)
 
 ### Flutter App Crashes on Startup
 
