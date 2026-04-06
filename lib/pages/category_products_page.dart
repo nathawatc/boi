@@ -64,27 +64,36 @@ class CategoryProductsPage extends StatelessWidget {
             ),
           ),
 
-          // Product Grid
+          // Product Grid with Responsive Layout
           SliverPadding(
             padding: const EdgeInsets.all(16),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.75,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return _ProductCard(
-                    id: 'prod_$index',
-                    name: 'สินค้าตัวอย่าง ${index + 1}',
-                    price: '${(index + 1) * 10 + 5}.-',
-                    imageUrl: 'https://loremflickr.com/300/300/food,snack?lock=$index',
-                  );
-                },
-                childCount: 10,
-              ),
+            sliver: SliverLayoutBuilder(
+              builder: (context, constraints) {
+                // Calculate cross axis count based on available width
+                final width = constraints.crossAxisExtent;
+                final crossAxisCount = width > 600 ? 3 : (width > 400 ? 2 : 2);
+                final childAspectRatio = width > 600 ? 0.85 : 0.75;
+
+                return SliverGrid(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    childAspectRatio: childAspectRatio,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return _ProductCard(
+                        id: 'prod_$index',
+                        name: 'สินค้าตัวอย่าง ${index + 1}',
+                        price: '${(index + 1) * 10 + 5}.-',
+                        imageUrl: 'https://loremflickr.com/300/300/food,snack?lock=$index',
+                      );
+                    },
+                    childCount: 10,
+                  ),
+                );
+              },
             ),
           ),
 

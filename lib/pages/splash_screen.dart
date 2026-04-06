@@ -45,51 +45,62 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Your Logo
-              Container(
-                width: 180,
-                height: 180,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.primaryGreen.withOpacity(0.2),
-                      blurRadius: 30,
-                      spreadRadius: 5,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final screenWidth = constraints.maxWidth;
+            final screenHeight = constraints.maxHeight;
+            // Responsive logo size
+            final logoSize = (screenWidth * 0.45).clamp(120.0, 180.0);
+
+            return Center(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Your Logo
+                    Container(
+                      width: logoSize,
+                      height: logoSize,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primaryGreen.withOpacity(0.2),
+                            blurRadius: 30,
+                            spreadRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/Logo.JPG',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: screenHeight * 0.05),
+                    // App Name or Loading indicator
+                    const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF005699)), // Blue color
+                      strokeWidth: 3,
+                    ),
+                    SizedBox(height: screenHeight * 0.03),
+                    Text(
+                      'Boi',
+                      style: TextStyle(
+                        fontSize: (screenWidth * 0.07).clamp(24.0, 28.0),
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                        color: const Color(0xFF005699),
+                      ),
                     ),
                   ],
                 ),
-                child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/Logo.JPG',
-                    fit: BoxFit.contain,
-                  ),
-                ),
               ),
-              const SizedBox(height: 30),
-              // App Name or Loading indicator
-              const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF005699)), // Blue color
-                strokeWidth: 3,
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Boi',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                  color: Color(0xFF005699),
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

@@ -222,17 +222,23 @@ class HomeContent extends StatelessWidget {
               ),
               Consumer<CartProvider>(
                 builder: (context, cart, child) {
-                  return SizedBox(
-                    height: 110,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: cart.availableCoupons.length,
-                      itemBuilder: (context, index) {
-                        final coupon = cart.availableCoupons[index];
-                        return _CouponCard(coupon: coupon);
-                      },
-                    ),
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      // Responsive height based on screen size
+                      final height = constraints.maxWidth < 360 ? 100.0 : 110.0;
+                      return SizedBox(
+                        height: height,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: cart.availableCoupons.length,
+                          itemBuilder: (context, index) {
+                            final coupon = cart.availableCoupons[index];
+                            return _CouponCard(coupon: coupon);
+                          },
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -278,25 +284,33 @@ class HomeContent extends StatelessWidget {
 
               // Categories Section
               const SectionHeader(title: 'หมวดหมู่สินค้า'),
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 5,
-                childAspectRatio: 0.85,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                mainAxisSpacing: 8,
-                children: [
-                  const CategoryItem(title: 'อาหาร', icon: Icons.lunch_dining),
-                  const CategoryItem(title: 'เครื่องดื่ม', icon: Icons.local_drink),
-                  const CategoryItem(title: 'ไอศกรีม', icon: Icons.icecream),
-                  const CategoryItem(title: 'เบเกอรี่', icon: Icons.breakfast_dining),
-                  const CategoryItem(title: 'ของสด', icon: Icons.apple),
-                  const CategoryItem(title: 'สุขภาพ', icon: Icons.health_and_safety),
-                  const CategoryItem(title: 'ของใช้', icon: Icons.house_siding),
-                  const CategoryItem(title: 'นมและไข่', icon: Icons.egg),
-                  const CategoryItem(title: 'แช่แข็ง', icon: Icons.ac_unit),
-                  const CategoryItem(title: 'อื่นๆ', icon: Icons.more_horiz),
-                ],
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final width = constraints.maxWidth;
+                  final crossAxisCount = width > 600 ? 6 : 5;
+                  final childAspectRatio = width > 600 ? 0.9 : 0.85;
+
+                  return GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: crossAxisCount,
+                    childAspectRatio: childAspectRatio,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    mainAxisSpacing: 8,
+                    children: const [
+                      CategoryItem(title: 'อาหาร', icon: Icons.lunch_dining),
+                      CategoryItem(title: 'เครื่องดื่ม', icon: Icons.local_drink),
+                      CategoryItem(title: 'ไอศกรีม', icon: Icons.icecream),
+                      CategoryItem(title: 'เบเกอรี่', icon: Icons.breakfast_dining),
+                      CategoryItem(title: 'ของสด', icon: Icons.apple),
+                      CategoryItem(title: 'สุขภาพ', icon: Icons.health_and_safety),
+                      CategoryItem(title: 'ของใช้', icon: Icons.house_siding),
+                      CategoryItem(title: 'นมและไข่', icon: Icons.egg),
+                      CategoryItem(title: 'แช่แข็ง', icon: Icons.ac_unit),
+                      CategoryItem(title: 'อื่นๆ', icon: Icons.more_horiz),
+                    ],
+                  );
+                },
               ),
 
               // Social Trends
@@ -464,124 +478,138 @@ class _CouponCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 280,
-      margin: const EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Make coupon card responsive
+        final maxWidth = constraints.maxWidth;
+        final cardWidth = (maxWidth * 0.75).clamp(240.0, 280.0);
+
+        return Container(
+          width: cardWidth,
+          margin: const EdgeInsets.only(right: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          children: [
-            Row(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
               children: [
-                // Left Ticket Section
-                Container(
-                  width: 80,
-                  height: 90,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppTheme.primarySky.withOpacity(0.1), Colors.white],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '${coupon.discountAmount.toInt()}.-',
-                      style: TextStyle(
-                        color: AppTheme.primarySky,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 22,
-                        letterSpacing: -1
+                Row(
+                  children: [
+                    // Left Ticket Section
+                    Container(
+                      width: 80,
+                      height: 90,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppTheme.primarySky.withOpacity(0.1), Colors.white],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-                // Dashed Line Simulation (using CustomPaint or Row of small blocks)
-                Container(
-                  width: 1,
-                  height: 60,
-                  color: Colors.grey.shade200,
-                ),
-                // Right Section
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          coupon.title,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'เมื่อซื้อครบ ${coupon.minSpend.toInt()} บาท',
-                          style: const TextStyle(color: Colors.grey, fontSize: 11),
-                        ),
-                        const SizedBox(height: 8),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: ElevatedButton(
-                            onPressed: coupon.isCollected
-                              ? null
-                              : () {
-                                context.read<CartProvider>().collectCoupon(coupon.code);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('เก็บคูปอง ${coupon.code} สำเร็จ!'), backgroundColor: Colors.green),
-                                );
-                              },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: coupon.isCollected ? Colors.grey.shade200 : AppTheme.primarySky,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              minimumSize: const Size(80, 28),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                            child: Text(
-                              coupon.isCollected ? 'เก็บแล้ว' : 'เก็บเลย',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: coupon.isCollected ? Colors.grey : Colors.white
-                              ),
+                      child: Center(
+                        child: FittedBox(
+                          child: Text(
+                            '${coupon.discountAmount.toInt()}.-',
+                            style: TextStyle(
+                              color: AppTheme.primarySky,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 22,
+                              letterSpacing: -1
                             ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                    // Dashed Line Simulation (using CustomPaint or Row of small blocks)
+                    Container(
+                      width: 1,
+                      height: 60,
+                      color: Colors.grey.shade200,
+                    ),
+                    // Right Section
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              coupon.title,
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'เมื่อซื้อครบ ${coupon.minSpend.toInt()} บาท',
+                                style: const TextStyle(color: Colors.grey, fontSize: 11),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: ElevatedButton(
+                                onPressed: coupon.isCollected
+                                  ? null
+                                  : () {
+                                    context.read<CartProvider>().collectCoupon(coupon.code);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('เก็บคูปอง ${coupon.code} สำเร็จ!'), backgroundColor: Colors.green),
+                                    );
+                                  },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: coupon.isCollected ? Colors.grey.shade200 : AppTheme.primarySky,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  minimumSize: const Size(80, 28),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: Text(
+                                  coupon.isCollected ? 'เก็บแล้ว' : 'เก็บเลย',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: coupon.isCollected ? Colors.grey : Colors.white
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // Ticket Cut-outs (Top & Bottom)
+                Positioned(
+                  left: 72,
+                  top: -8,
+                  child: _buildCutOut(),
+                ),
+                Positioned(
+                  left: 72,
+                  bottom: -8,
+                  child: _buildCutOut(),
                 ),
               ],
             ),
-            // Ticket Cut-outs (Top & Bottom)
-            Positioned(
-              left: 72,
-              top: -8,
-              child: _buildCutOut(),
-            ),
-            Positioned(
-              left: 72,
-              bottom: -8,
-              child: _buildCutOut(),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
