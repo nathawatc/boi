@@ -2,13 +2,9 @@
 
 A complete autonomous delivery robot system with Flutter mobile app, ESP32 robot firmware, and UDP network communication.
 
----
-
 ## Quick Start
 
 **Get up and running in 5 minutes**: [Quick Start Guide](./docs/QUICK_START.md)
-
----
 
 ## Documentation
 
@@ -24,8 +20,6 @@ Comprehensive documentation is available in the [`docs/`](./docs/) directory:
 | [🔌 API Reference](./docs/API_REFERENCE.md)     | Robot API documentation          |
 | [📁 Code Structure](./docs/CODE_STRUCTURE.md)   | Project organization             |
 
----
-
 ## What Is Boi?
 
 Boi is an autonomous delivery robot system that allows users to:
@@ -40,8 +34,6 @@ The system consists of:
 1. **Flutter Mobile App** - User interface for ordering
 2. **ESP32 Robot Firmware** - Motor control and sensors
 3. **UDP Network Communication** - Real-time command transmission over phone WiFi hotspot
-
----
 
 ## Project Structure
 
@@ -64,8 +56,6 @@ boi/
 ```
 
 **Learn more**: [Code Structure Guide](./docs/CODE_STRUCTURE.md)
-
----
 
 ## Features
 
@@ -95,8 +85,6 @@ boi/
 - UDP broadcast with 3x redundancy
 - Automatic IP discovery
 - Connection status tracking
-
----
 
 ## Getting Started
 
@@ -146,8 +134,6 @@ boi/
 
 **Detailed instructions**: [Quick Start Guide](./docs/QUICK_START.md)
 
----
-
 ## Network Architecture
 
 ```text
@@ -164,8 +150,6 @@ Phone (Flutter App)
 ```
 
 **Learn more**: [Network Setup Guide](./docs/NETWORK_SETUP.md)
-
----
 
 ## Testing
 
@@ -213,8 +197,6 @@ flutter analyze
 | ESP32 Firmware    | ✅ Production  | Motor control + PID                       |
 | UDP Communication | ✅ Tested      | 3x redundancy implemented                 |
 | WiFi Config       | ⚠️ In Progress | Hardcoded credentials (needs WiFiManager) |
-
----
 
 ## Roadmap
 
