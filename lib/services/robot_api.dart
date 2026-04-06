@@ -274,6 +274,22 @@ class RobotApi extends ChangeNotifier {
     }
   }
 
+  /// Auto-discover robot on initialization
+  /// Call this once when app starts to automatically find the robot
+  void autoDiscover() {
+    // Use a fire-and-forget approach to discover robot
+    // This won't block UI but will update status when found
+    discoverRobot().then((ip) {
+      if (ip != null) {
+        debugPrint('Auto-discovery successful: $ip');
+      } else {
+        debugPrint('Auto-discovery failed, robot not found');
+      }
+    }).catchError((e) {
+      debugPrint('Auto-discovery error: $e');
+    });
+  }
+
   /// Reset connection status
   void reset() {
     _connectionStatus = RobotConnectionStatus.disconnected;

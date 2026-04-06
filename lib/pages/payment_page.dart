@@ -237,45 +237,14 @@ class _PaymentPageState extends State<PaymentPage> {
             // Bottom Action
             Consumer<RobotApi>(
               builder: (context, robotApi, child) {
+                final isConnected = robotApi.isConnected;
+
                 return ElevatedButton(
-                  onPressed: (_isSendingToRobot || !robotApi.isConnected)
-                      ? null
-                      : () async {
-                          // Store cart provider reference before async operation
-                          final cartProvider = context.read<CartProvider>();
-
-                          setState(() {
-                            _isSendingToRobot = true;
-                          });
-
-                          try {
-                            // Send command to robot via new API
-                            final response = await robotApi.moveForward();
-
-                            if (!mounted) return;
-
-                            if (response.success) {
-                              debugPrint('Robot command successful');
-                              _showSuccessDialog(context, cartProvider);
-                            } else {
-                              debugPrint('Robot command failed: ${response.message}');
-                              _showErrorDialog(context, cartProvider, response.message);
-                            }
-                          } catch (e) {
-                            debugPrint('Error sending robot command: $e');
-                            if (mounted) {
-                              _showErrorDialog(context, cartProvider, 'เกิดข้อผิดพลาดในการเชื่อมต่อ: $e');
-                            }
-                          } finally {
-                            if (mounted) {
-                              setState(() {
-                                _isSendingToRobot = false;
-                              });
-                            }
-                          }
-                        },
+                  onPressed: isConnected && !_isSendingToRobot
+                      ? () => _handlePaymentConfirmation(context)
+                      : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: robotApi.isConnected ? AppTheme.primaryGreen : Colors.grey,
+                    backgroundColor: isConnected ? AppTheme.primaryGreen : Colors.grey.shade400,
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 56),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -293,17 +262,37 @@ class _PaymentPageState extends State<PaymentPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              robotApi.isConnected ? Icons.check_circle : Icons.wifi_off,
+                              isConnected ? Icons.check_circle : Icons.wifi_off,
                               size: 20,
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              robotApi.isConnected ? 'ยืนยันรายการ' : 'หุ่นยนต์ยังไม่เชื่อมต่อ',
+                              isConnected ? 'ยืนยันรายการ' : 'หุ่นยนต์ยังไม่เชื่อมต่อ',
                               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
                 );
+              },
+            ),
+
+            // Helper text
+            Consumer<RobotApi>(
+              builder: (context, robotApi, child) {
+                if (!robotApi.isConnected) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Text(
+                      '💡 แตะที่ตัวแสดงสถานะด้านบนเพื่อค้นหาหุ่นยนต์',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
               },
             ),
           ],
@@ -433,6 +422,184 @@ class _PaymentPageState extends State<PaymentPage> {
               child: const Text('เข้าใจแล้ว', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _handlePaymentConfirmation(BuildContext context) {
+    final robotApi = context.read<RobotApi>();
+
+    // Double-check connection status
+    if (!robotApi.isConnected) {
+      _showConnectionRequiredDialog(context);
+      return;
+    }
+
+    // Proceed with payment
+    _processPayment(context);
+  }
+
+  Future<void> _processPayment(BuildContext context) async {
+    final cartProvider = context.read<CartProvider>();
+    final robotApi = context.read<RobotApi>();
+
+    setState(() {
+      _isSendingToRobot = true;
+    });
+
+    try {
+      // Send command to robot via new API
+      final response = await robotApi.moveForward();
+
+      if (!mounted) return;
+
+      if (response.success) {
+        debugPrint('Robot command successful');
+        _showSuccessDialog(context, cartProvider);
+      } else {
+        debugPrint('Robot command failed: ${response.message}');
+        _showErrorDialog(context, cartProvider, response.message);
+      }
+    } catch (e) {
+      debugPrint('Error sending robot command: $e');
+      if (mounted) {
+        _showErrorDialog(context, cartProvider, 'เกิดข้อผิดพลาดในการเชื่อมต่อ: $e');
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSendingToRobot = false;
+        });
+      }
+    }
+  }
+
+  void _showConnectionRequiredDialog(BuildContext context) {
+    final robotApi = context.read<RobotApi>();
+    bool isDiscovering = false;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 20),
+              Icon(
+                robotApi.isConnected ? Icons.check_circle : Icons.wifi_off,
+                color: robotApi.isConnected ? Colors.green : Colors.orange,
+                size: 100,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                robotApi.isConnected
+                    ? 'เชื่อมต่อสำเร็จ!'
+                    : 'ต้องการการเชื่อมต่อหุ่นยนต์',
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              if (robotApi.isConnected) ...[
+                const Text(
+                  'หุ่นยนต์พร้อมทำงานแล้ว',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                ),
+              ] else ...[
+                Text(
+                  isDiscovering
+                      ? 'กำลังค้นหาหุ่นยนต์บนเครือข่าย...'
+                      : 'กรุณาตรวจสอบว่าหุ่นยนต์เปิดอยู่และเชื่อมต่อกับ WiFi เดียวกัน',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.grey, fontSize: 16),
+                ),
+                if (robotApi.lastKnownIp != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    'IP: ${robotApi.lastKnownIp}',
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontSize: 14,
+                      fontFamily: 'monospace',
+                    ),
+                  ),
+                ],
+              ],
+              const SizedBox(height: 32),
+              if (!robotApi.isConnected) ...[
+                ElevatedButton(
+                  onPressed: isDiscovering
+                      ? null
+                      : () async {
+                          setDialogState(() {
+                            isDiscovering = true;
+                          });
+
+                          final ip = await robotApi.discoverRobot();
+
+                          setDialogState(() {
+                            isDiscovering = false;
+                          });
+
+                          // If found, close dialog and proceed
+                          if (ip != null && mounted) {
+                            Navigator.pop(dialogContext);
+                            _processPayment(context);
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryGreen,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 56),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: isDiscovering
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'ค้นหาหุ่นยนต์',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                ),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                  },
+                  child: const Text(
+                    'ยกเลิก',
+                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                  ),
+                ),
+              ] else ...[
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                    _processPayment(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryGreen,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 56),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: const Text(
+                    'ยืนยันรายการ',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );

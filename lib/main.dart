@@ -15,7 +15,14 @@ void main() {
       builder: (context) => MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => CartProvider()),
-          ChangeNotifierProvider(create: (_) => RobotApi()),
+          ChangeNotifierProvider(create: (_) {
+            final robotApi = RobotApi();
+            // Auto-discover robot after app starts
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              robotApi.autoDiscover();
+            });
+            return robotApi;
+          }),
         ],
         child: const BoiApp(),
       ),
