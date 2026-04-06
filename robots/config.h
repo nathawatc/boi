@@ -6,9 +6,31 @@
 // ==========================================
 // WiFi & Network Configuration
 // ==========================================
-const char* WIFI_SSID = "Boi";
-const char* WIFI_PASSWORD = "12345678";
+// Option 1: Hardcoded credentials (for development)
+// Option 2: Use WiFiManager library for captive portal (recommended for production)
+// Option 3: Read from EEPROM/SPIFFS (implemented below)
+
+// Default credentials - change these for production
+const char* DEFAULT_WIFI_SSID = "Boi";
+const char* DEFAULT_WIFI_PASSWORD = "12345678";
+
+// These will be overridden by EEPROM if available
+String wifiSSID = "";
+String wifiPassword = "";
+
 const uint16_t UDP_PORT = 2001;
+
+// Helper to load WiFi credentials from EEPROM (if implemented)
+void loadWiFiCredentials() {
+  // TODO: Implement EEPROM read for persistent credentials
+  // For now, use defaults
+  wifiSSID = DEFAULT_WIFI_SSID;
+  wifiPassword = DEFAULT_WIFI_PASSWORD;
+}
+
+// Use credentials variable
+const char* WIFI_SSID = DEFAULT_WIFI_SSID;
+const char* WIFI_PASSWORD = DEFAULT_WIFI_PASSWORD;
 
 // ==========================================
 // Motor Pins Configuration

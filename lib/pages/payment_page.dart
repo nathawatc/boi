@@ -1,8 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
 import '../providers/cart_provider.dart';
+import '../services/robot_api.dart';
 
 class PaymentPage extends StatefulWidget {
   final double totalAmount;
@@ -17,6 +17,8 @@ class _PaymentPageState extends State<PaymentPage> {
   int _selectedAddressIndex = 0; // 0 for Home, 1 for Office
   String _selectedPaymentMethod = 'QR';
   late final List<CartItem> _orderItems;
+  final RobotApi _robotApi = RobotApi();
+  bool _isSendingToRobot = false;
 
   @override
   void initState() {
@@ -224,32 +226,39 @@ class _PaymentPageState extends State<PaymentPage> {
 
             // Bottom Action
             ElevatedButton(
-              onPressed: () async {
+              onPressed: _isSendingToRobot ? null : () async {
                 // Store cart provider reference before async operation
                 final cartProvider = context.read<CartProvider>();
 
+                setState(() {
+                  _isSendingToRobot = true;
+                });
+
                 try {
-                  // Send UDP Packet to Robot (Broadcast to local network)
-                  final socket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, 0);
-                  socket.broadcastEnabled = true;
+                  // Send command to robot via new API
+                  final response = await _robotApi.moveForward();
 
-                  // UDP is a fire-and-forget protocol (no guaranteed delivery).
-                  // To fix packet loss without adding complex TCP handshakes,
-                  // we send the packet 3 times with a tiny 50ms delay between them.
-                  // This is standard practice in IoT remote controls.
-                  for (int i = 0; i < 3; i++) {
-                    socket.send('F'.codeUnits, InternetAddress('255.255.255.255'), 2001);
-                    await Future.delayed(const Duration(milliseconds: 50));
+                  if (!mounted) return;
+
+                  if (response.success) {
+                    debugPrint('Robot command successful');
+                    _showSuccessDialog(context, cartProvider);
+                  } else {
+                    debugPrint('Robot command failed: ${response.message}');
+                    _showErrorDialog(context, cartProvider, response.message);
                   }
-
-                  debugPrint('Successfully broadcasted UDP packet "F" to Robot (3x Redundancy)');
-                  socket.close();
                 } catch (e) {
-                  debugPrint('Failed to send UDP packet: $e');
+                  debugPrint('Error sending robot command: $e');
+                  if (mounted) {
+                    _showErrorDialog(context, cartProvider, 'เกิดข้อผิดพลาดในการเชื่อมต่อ: $e');
+                  }
+                } finally {
+                  if (mounted) {
+                    setState(() {
+                      _isSendingToRobot = false;
+                    });
+                  }
                 }
-
-                if (!mounted) return;
-                _showSuccessDialog(context, cartProvider);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryGreen,
@@ -258,7 +267,15 @@ class _PaymentPageState extends State<PaymentPage> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 elevation: 0,
               ),
-              child: const Text('ยืนยันรายการ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              child: _isSendingToRobot
+                ? const SizedBox(
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 3,
+                    ),
+                  )
+                : const Text('ยืนยันรายการ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -338,6 +355,53 @@ class _PaymentPageState extends State<PaymentPage> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
               child: const Text('กลับสู่หน้าหลัก', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, CartProvider cartProvider, String errorMessage) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 20),
+            Icon(Icons.error_outline, color: Colors.red, size: 100),
+            const SizedBox(height: 24),
+            const Text('เกิดข้อผิดพลาด', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            Text(
+              'ไม่สามารถเชื่อมต่อหุ่นยนต์ได้\n$errorMessage',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.grey, fontSize: 16),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'คำสั่งซื้อของคุณจะถูกบันทึกและจัดส่งเมื่อหุ่นยนต์พร้อม',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey, fontSize: 14),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () {
+                cartProvider.checkout();
+                Navigator.pop(context); // Close dialog
+                Navigator.pop(context); // Back to cart
+                cartProvider.setTabIndex(1);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 56),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              ),
+              child: const Text('เข้าใจแล้ว', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
