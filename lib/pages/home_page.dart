@@ -399,7 +399,6 @@ class _ServiceCard extends StatelessWidget {
   final String title;
   final String badge;
   final Color? badgeColor;
-  final String? iconUrl;
   final IconData? icon;
   final bool isSpecial;
 
@@ -407,7 +406,6 @@ class _ServiceCard extends StatelessWidget {
     required this.title,
     required this.badge,
     this.badgeColor,
-    this.iconUrl,
     this.icon,
     this.isSpecial = false,
   });
@@ -456,18 +454,11 @@ class _ServiceCard extends StatelessWidget {
                 color: (title == 'Drink' ? Colors.blue.shade50 : Colors.pink.shade50).withOpacity(0.5),
                 shape: BoxShape.circle,
               ),
-              child: icon != null
-                ? Icon(
-                    icon,
-                    size: 45,
-                    color: title == 'Drink' ? AppTheme.primarySky : Colors.pink,
-                  )
-                : Image.network(
-                    iconUrl!,
-                    width: 45,
-                    height: 45,
-                    fit: BoxFit.contain,
-                  ),
+              child: Icon(
+                icon ?? Icons.category_rounded,
+                size: 45,
+                color: title == 'Drink' ? AppTheme.primarySky : Colors.pink,
+              ),
             ),
           ),
           // Elegant Badge
@@ -655,18 +646,15 @@ class _CouponCard extends StatelessWidget {
 
 class _CircularIcon extends StatelessWidget {
   final IconData? icon;
-  final String? label;
 
-  const _CircularIcon({this.icon, this.label});
+  const _CircularIcon({this.icon});
 
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: 18,
       backgroundColor: Colors.white.withOpacity(0.2),
-      child: icon != null
-        ? Icon(icon, color: Colors.white, size: 20)
-        : Text(label!, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+      child: Icon(icon, color: Colors.white, size: 20),
     );
   }
 }
