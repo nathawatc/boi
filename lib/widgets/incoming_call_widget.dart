@@ -37,17 +37,21 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
           builder: (context, constraints) {
             final screenHeight = constraints.maxHeight;
             final screenWidth = constraints.maxWidth;
-            // Make ripple container responsive - 40% of screen height
-            final rippleSize = (screenHeight * 0.4).clamp(200.0, 320.0);
-            final logoSize = (rippleSize * 0.78).clamp(150.0, 250.0);
+            // Make ripple container responsive - 35% of screen height for better centering
+            final rippleSize = (screenHeight * 0.35).clamp(180.0, 280.0);
+            final logoSize = (rippleSize * 0.78).clamp(140.0, 220.0);
 
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: screenHeight,
-                ),
-                child: IntrinsicHeight(
+            return Center(
+              child: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: screenHeight,
+                    maxWidth: screenWidth * 0.9, // Prevent edge overflow
+                  ),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const SizedBox(height: 20),
                       // Header Section
@@ -74,7 +78,7 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
                         ),
                       ),
 
-                      SizedBox(height: screenHeight * 0.03),
+                      SizedBox(height: screenHeight * 0.04),
 
                       // Responsive Ripple Container
                       SizedBox(
@@ -120,7 +124,7 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
                         ),
                       ),
 
-                      SizedBox(height: screenHeight * 0.03),
+                      SizedBox(height: screenHeight * 0.04),
 
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -155,7 +159,7 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
                         },
                       ),
 
-                      SizedBox(height: screenHeight * 0.02),
+                      SizedBox(height: screenHeight * 0.03),
 
                       GestureDetector(
                         onTap: () {
