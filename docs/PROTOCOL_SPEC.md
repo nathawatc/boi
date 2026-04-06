@@ -13,7 +13,7 @@ UDP-based communication between Flutter mobile app (controller) and ESP32 robot 
 | Transport | WiFi hotspot (phone creates, ESP32 connects as station) |
 | Subnet    | Typical /24 (e.g., 192.168.43.0/24)                     |
 
-## Command Codes (6 total)
+## Command Codes (6 Total)
 
 | Code | Meaning     | ESP32 Action                            | Response |
 | ---- | ----------- | --------------------------------------- | -------- |
@@ -30,7 +30,7 @@ Any other command → ESP32 responds with `ERR` and ignores it.
 
 ### 1. Robot Discovery
 
-```
+```text
 Flutter                                ESP32
   |                                      |
   |-- UDP "S" x3 (broadcast:2001) ------>|  (send 100ms apart)
@@ -46,7 +46,7 @@ Flutter                                ESP32
 
 ### 2. Command Send
 
-```
+```text
 Flutter                                ESP32
   |                                      |
   |-- UDP "F" x3 (robot_ip:2001) ------>|  (send 50ms apart)
@@ -63,7 +63,7 @@ Flutter                                ESP32
 
 ### 3. Multi-Robot Discovery
 
-```
+```text
 Flutter                                ESP32 #1
   |                                      |
   |-- UDP "S" x5 (broadcast:2001) ------>|
@@ -78,11 +78,11 @@ Flutter                                ESP32 #1
 
 ## Safety Mechanisms
 
-### Dead-man's Switch (1.5s timeout)
+### Dead-Man's Switch (1.5S Timeout)
 
 ESP32 tracks `lastCommandTime`. If no command received for 1500ms and robot is in manual mode, motors stop automatically.
 
-### Obstacle Detection (30cm)
+### Obstacle Detection (30Cm)
 
 ESP32 checks ultrasonic sensor every 200ms. If obstacle < 30cm detected while moving, motors stop immediately.
 
