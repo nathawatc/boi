@@ -18,7 +18,7 @@ Based on your `config.h`, the default network is:
 
 ## Method 1: Full System Test (App + Robot)
 
-*Use this when you have both the Flutter app and the physical ESP32 ready.*
+_Use this when you have both the Flutter app and the physical ESP32 ready._
 
 1. **Start the Network:** Turn on a mobile hotspot with SSID `Boi` and password `12345678`.
 2. **Boot the ESP32:**
@@ -44,8 +44,8 @@ Based on your `config.h`, the default network is:
 
 ## Method 2: Test Flutter App (Without Robot)
 
-*Use this to verify the Flutter app is successfully broadcasting UDP packets,
-even if the robot is turned off.*
+_Use this to verify the Flutter app is successfully broadcasting UDP packets,
+even if the robot is turned off._
 
 1. Connect your computer to the same WiFi network as your phone/emulator.
 2. Create a file on your computer named `test_server.py` with the following Python code:
@@ -77,8 +77,8 @@ even if the robot is turned off.*
 
 ## Method 3: Test Robot (Without Flutter App)
 
-*Use this to test the ESP32 logic and motor controls without needing the Flutter
-app.*
+_Use this to test the ESP32 logic and motor controls without needing the Flutter
+app._
 
 1. Connect your computer to the `Boi` WiFi network.
 2. Get the ESP32's IP address from the Arduino Serial Monitor (e.g., `192.168.43.100`).
@@ -102,7 +102,7 @@ app.*
    echo -n "S" | nc -u -w1 <ESP32_IP_ADDRESS> 2001
    ```
 
-*(Replace `<ESP32_IP_ADDRESS>` with the actual IP address of the robot).*
+_(Replace `<ESP32_IP_ADDRESS>` with the actual IP address of the robot)._
 
 ---
 
