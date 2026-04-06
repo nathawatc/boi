@@ -580,13 +580,13 @@ class _RobotControlPageState extends State<RobotControlPage> {
   String _getStatusText(RobotConnectionStatus status) {
     switch (status) {
       case RobotConnectionStatus.connected:
-        return 'หุ่นยนต์พร้อมใช้งาน';
+        return 'พร้อมใช้งาน';
       case RobotConnectionStatus.connecting:
-        return 'กำลังเชื่อมต่อ...';
+        return 'กำลังเชื่อมต่อ';
       case RobotConnectionStatus.error:
-        return 'เกิดข้อผิดพลาด';
+        return 'ผิดพลาด';
       case RobotConnectionStatus.disconnected:
-        return 'ยังไม่เชื่อมต่อ';
+        return 'ไม่เชื่อมต่อ';
     }
   }
 }

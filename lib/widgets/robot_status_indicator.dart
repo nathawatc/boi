@@ -7,12 +7,14 @@ class RobotStatusIndicator extends StatelessWidget {
   final RobotApi robotApi;
   final bool showRefreshButton;
   final bool showTapToDiscover;
+  final bool showIp;
 
   const RobotStatusIndicator({
     super.key,
     required this.robotApi,
     this.showRefreshButton = true,
     this.showTapToDiscover = true,
+    this.showIp = true,
   });
 
   @override
@@ -40,31 +42,41 @@ class RobotStatusIndicator extends StatelessWidget {
                 // Status dot
                 _buildStatusDot(context),
                 const SizedBox(width: 8),
-                // Status text
-                Text(
-                  _getStatusText(robotApi.connectionStatus),
-                  style: TextStyle(
-                    color: _getStatusColor(robotApi.connectionStatus),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                // Status text - Flexible with ellipsis to prevent overflow
+                Flexible(
+                  flex: 3,
+                  child: Text(
+                    _getStatusText(robotApi.connectionStatus),
+                    style: TextStyle(
+                      color: _getStatusColor(robotApi.connectionStatus),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 if (showRefreshButton && robotApi.connectionStatus == RobotConnectionStatus.disconnected) ...[
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
                   Icon(
                     Icons.refresh,
                     size: 16,
                     color: _getStatusColor(robotApi.connectionStatus),
                   ),
                 ],
-                if (robotApi.lastKnownIp != null && robotApi.isConnected) ...[
-                  const SizedBox(width: 8),
-                  Text(
-                    robotApi.lastKnownIp!,
-                    style: TextStyle(
-                      color: _getStatusColor(robotApi.connectionStatus).withOpacity(0.7),
-                      fontSize: 10,
-                      fontFamily: 'monospace',
+                if (showIp && robotApi.lastKnownIp != null && robotApi.isConnected) ...[
+                  const SizedBox(width: 6),
+                  Flexible(
+                    flex: 2,
+                    child: Text(
+                      robotApi.lastKnownIp!,
+                      style: TextStyle(
+                        color: _getStatusColor(robotApi.connectionStatus).withOpacity(0.7),
+                        fontSize: 10,
+                        fontFamily: 'monospace',
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -124,13 +136,13 @@ class RobotStatusIndicator extends StatelessWidget {
   String _getStatusText(RobotConnectionStatus status) {
     switch (status) {
       case RobotConnectionStatus.connected:
-        return 'หุ่นยนต์พร้อมใช้งาน';
+        return 'พร้อมใช้งาน';
       case RobotConnectionStatus.connecting:
-        return 'กำลังเชื่อมต่อ...';
+        return 'กำลังเชื่อมต่อ';
       case RobotConnectionStatus.error:
-        return 'เกิดข้อผิดพลาด';
+        return 'ผิดพลาด';
       case RobotConnectionStatus.disconnected:
-        return 'ยังไม่เชื่อมต่อ';
+        return 'ไม่เชื่อมต่อ';
     }
   }
 

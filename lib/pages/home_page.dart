@@ -100,92 +100,116 @@ class HomeContent extends StatelessWidget {
               gradient: AppTheme.primaryGradient,
             ),
             child: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 1. Top Action Icons Row
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 18,
-                          backgroundColor: Colors.white.withOpacity(0.2),
-                          child: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 16),
-                        ),
-                        const Spacer(),
-                        // Robot Status Indicator
-                        RobotStatusIndicator(
-                          robotApi: context.read<RobotApi>(),
-                          showRefreshButton: true,
-                          showTapToDiscover: true,
-                        ),
-                        const SizedBox(width: 12),
-                        _CircularIcon(icon: Icons.favorite_border),
-                        const SizedBox(width: 12),
-                        _CircularIcon(label: 'TH'),
-                        const SizedBox(width: 12),
-                        _CircularIcon(icon: Icons.person_outline),
-                      ],
-                    ),
-                  ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final screenWidth = constraints.maxWidth;
+                  final isSmallScreen = screenWidth < 360;
 
-                  // 2. Delivery Info Column
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('ส่งทันที', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 4),
-                        Row(
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 1. Top Action Icons Row (Removed back button, Robot on left)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: Row(
                           children: [
-                            const Text('1 ตำบล นาป่า อำเภอเมืองชลบุรี ชลบุ...',
-                              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400)),
-                            const SizedBox(width: 4),
-                            Icon(Icons.keyboard_arrow_down, color: Colors.white.withOpacity(0.8), size: 18),
+                            // Robot Status Indicator - Responsive, on the left
+                            Flexible(
+                              child: RobotStatusIndicator(
+                                robotApi: context.read<RobotApi>(),
+                                showRefreshButton: !isSmallScreen,
+                                showTapToDiscover: true,
+                                showIp: !isSmallScreen,
+                              ),
+                            ),
+                            const Spacer(),
+                            _CircularIcon(icon: Icons.favorite_border),
+                            if (!isSmallScreen) ...[
+                              const SizedBox(width: 12),
+                              _CircularIcon(label: 'TH'),
+                              const SizedBox(width: 12),
+                            ],
+                            const SizedBox(width: 12),
+                            _CircularIcon(icon: Icons.person_outline),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
 
-                  // 3. Search Bar
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: CustomSearchBar(),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // 4. Main Service Cards (Food & Mart)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _ServiceCard(
-                            title: 'Drink',
-                            badge: 'ลด ฿100',
-                            badgeColor: Colors.redAccent,
-                            icon: Icons.local_drink_rounded,
-                            isSpecial: true,
-                          ),
+                      // 2. Delivery Info Column
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'ส่งทันที',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: isSmallScreen ? 20 : 24,
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    '1 ตำบล นาป่า อำเภอเมืองชลบุรี ชลบุรี',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: isSmallScreen ? 14 : 16,
+                                      fontWeight: FontWeight.w400
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Icon(Icons.keyboard_arrow_down, color: Colors.white.withOpacity(0.8), size: 18),
+                              ],
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _ServiceCard(
-                            title: 'Mart',
-                            badge: 'ส่งฟรี!',
-                            badgeColor: Colors.pinkAccent,
-                            icon: Icons.storefront_rounded,
-                            isSpecial: true,
-                          ),
+                      ),
+
+                      // 3. Search Bar
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: CustomSearchBar(),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // 4. Main Service Cards (Food & Mart)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _ServiceCard(
+                                title: 'Drink',
+                                badge: 'ลด ฿100',
+                                badgeColor: Colors.redAccent,
+                                icon: Icons.local_drink_rounded,
+                                isSpecial: true,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _ServiceCard(
+                                title: 'Mart',
+                                badge: 'ส่งฟรี!',
+                                badgeColor: Colors.pinkAccent,
+                                icon: Icons.storefront_rounded,
+                                isSpecial: true,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                ],
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),
