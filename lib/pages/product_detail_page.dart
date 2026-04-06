@@ -58,7 +58,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   background: widget.imageUrl != null && widget.imageUrl!.isNotEmpty
                       ? Image.network(widget.imageUrl!, fit: BoxFit.cover)
                       : Container(
-                          color: Colors.blue.shade50,
+                          color: Theme.of(context).colorScheme.primaryContainer,
                           child: Center(
                             child: Icon(
                               widget.icon ?? Icons.fastfood_rounded,
@@ -73,8 +73,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               SliverToBoxAdapter(
                 child: Container(
                   padding: const EdgeInsets.all(24),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
                   ),
                   child: Column(
@@ -102,9 +102,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         'พบกับเมนูยอดนิยมที่ผ่านการคัดสรรมาอย่างดีที่สุด วัตถุดิบคุณภาพดี สะอาด ปลอดภัย และอร่อย ถูกใจแน่นอน สั่งเลยวันนี้เพื่อรับโปรโมชั่นพิเศษ!',
-                        style: TextStyle(fontSize: 14, color: Colors.grey, height: 1.5),
+                        style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.5),
                       ),
                       const SizedBox(height: 32),
                       const Divider(),
@@ -130,9 +130,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       bottomSheet: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5)),
+            BoxShadow(color: Theme.of(context).colorScheme.shadow.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, -5)),
           ],
         ),
         child: SafeArea(
@@ -140,14 +140,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(color: Theme.of(context).colorScheme.outline),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   children: [
                     IconButton(
                       onPressed: _decrement,
-                      icon: const Icon(Icons.remove, color: Colors.grey)
+                      icon: const Icon(Icons.remove)
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -194,7 +194,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: Colors.grey)),
+          Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
           Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
         ],
       ),

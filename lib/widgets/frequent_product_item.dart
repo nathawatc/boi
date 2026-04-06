@@ -43,11 +43,11 @@ class FrequentProductItem extends StatelessWidget {
             width: itemWidth,
             margin: const EdgeInsets.only(right: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
+                  color: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
                   blurRadius: 10, offset: const Offset(0, 5)
                 ),
               ],
@@ -60,7 +60,11 @@ class FrequentProductItem extends StatelessWidget {
                   height: 100,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: imageUrl == null ? (icon != null ? Colors.blue.shade50 : Colors.grey.shade100) : Colors.grey.shade100,
+                    color: imageUrl == null
+                        ? (icon != null
+                            ? Theme.of(context).colorScheme.primaryContainer
+                            : Theme.of(context).colorScheme.surfaceContainerHighest)
+                        : Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                   ),
                   child: imageUrl != null
@@ -71,8 +75,10 @@ class FrequentProductItem extends StatelessWidget {
                       : Center(
                           child: Icon(
                             icon ?? Icons.shopping_bag_outlined,
-                            color: icon != null ? Colors.blue : Colors.grey,
-                            size: 45
+                            color: icon != null
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.onSurfaceVariant,
+                            size: 45,
                           ),
                         ),
                 ),
@@ -83,7 +89,11 @@ class FrequentProductItem extends StatelessWidget {
                     children: [
                       Text(
                         name,
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

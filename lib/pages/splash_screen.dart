@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'home_page.dart';
 import '../theme/app_theme.dart';
+import '../providers/settings_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,8 +26,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     _controller.forward();
 
-    // Navigate to HomePage after 3 seconds
-    Future.delayed(const Duration(seconds: 3), () {
+    // Initialize settings and navigate to HomePage after 3 seconds
+    Future.wait([
+      context.read<SettingsProvider>().initialize(),
+      Future.delayed(const Duration(seconds: 3)),
+    ]).then((_) {
       if (mounted) {
         Navigator.pushReplacement(
           context,

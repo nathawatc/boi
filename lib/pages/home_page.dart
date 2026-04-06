@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
 import '../providers/cart_provider.dart';
+import '../providers/settings_provider.dart';
 import '../services/robot_api.dart';
 import '../widgets/custom_search_bar.dart';
 import '../widgets/section_header.dart';
@@ -217,9 +218,9 @@ class HomeContent extends StatelessWidget {
 
         SliverToBoxAdapter(
           child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
             ),
             child: Column(
               children: [
@@ -231,7 +232,7 @@ class HomeContent extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('คูปองส่วนลด', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
+                    Text('คูปองส่วนลด', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
                     TextButton(
                       onPressed: () {},
                       child: const Row(
@@ -416,11 +417,11 @@ class _ServiceCard extends StatelessWidget {
     return Container(
       height: 120,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
             blurRadius: 15,
             offset: const Offset(0, 8)
           ),
@@ -512,11 +513,11 @@ class _CouponCard extends StatelessWidget {
           width: cardWidth,
           margin: const EdgeInsets.only(right: 16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
                 blurRadius: 15,
                 offset: const Offset(0, 5),
               ),
@@ -534,7 +535,10 @@ class _CouponCard extends StatelessWidget {
                       height: 90,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [AppTheme.primarySky.withOpacity(0.1), Colors.white],
+                          colors: [
+                            AppTheme.primarySky.withOpacity(0.1),
+                            Theme.of(context).colorScheme.surface,
+                          ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -622,12 +626,12 @@ class _CouponCard extends StatelessWidget {
                 Positioned(
                   left: 72,
                   top: -8,
-                  child: _buildCutOut(),
+                  child: _buildCutOut(context),
                 ),
                 Positioned(
                   left: 72,
                   bottom: -8,
-                  child: _buildCutOut(),
+                  child: _buildCutOut(context),
                 ),
               ],
             ),
@@ -637,12 +641,12 @@ class _CouponCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCutOut() {
+  Widget _buildCutOut(BuildContext context) {
     return Container(
       width: 16,
       height: 16,
-      decoration: const BoxDecoration(
-        color: Color(0xFFF8FAFC), // Same as background
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         shape: BoxShape.circle,
       ),
     );
@@ -676,111 +680,210 @@ class MoreMenuPage extends StatefulWidget {
 }
 
 class _MoreMenuPageState extends State<MoreMenuPage> {
-  bool _isThai = true;
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-      ),
-      child: ListView(
-        children: [
-          const SizedBox(height: 16),
-          // Language Toggle
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryGreen.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.language, color: AppTheme.primaryGreen),
-                ),
-                const SizedBox(width: 16),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('ภาษา / Language', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      Text('เลือกภาษา ไทย / อังกฤษ', style: TextStyle(color: Colors.grey, fontSize: 13)),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: _isThai ? AppTheme.primaryGreen : Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      GestureDetector(
-                        onTap: () => setState(() => _isThai = true),
-                        child: Text(
-                          'TH',
-                          style: TextStyle(
-                            color: _isThai ? Colors.white : Colors.grey,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
+    return Consumer<SettingsProvider>(
+      builder: (context, settings, _) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+          child: ListView(
+            children: [
+              const SizedBox(height: 16),
+              // Language Toggle
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryGreen.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: () => setState(() => _isThai = false),
-                        child: Text(
-                          'EN',
-                          style: TextStyle(
-                            color: !_isThai ? Colors.white : Colors.grey,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
+                      child: const Icon(Icons.language, color: AppTheme.primaryGreen),
+                    ),
+                    const SizedBox(width: 16),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('ภาษา / Language', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text('เลือกภาษา ไทย / อังกฤษ', style: TextStyle(color: Colors.grey, fontSize: 13)),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: settings.isThai ? AppTheme.primaryGreen : Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          GestureDetector(
+                            onTap: () => settings.setIsThai(true),
+                            child: Text(
+                              'TH',
+                              style: TextStyle(
+                                color: settings.isThai ? Colors.white : Colors.grey,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: () => settings.setIsThai(false),
+                            child: Text(
+                              'EN',
+                              style: TextStyle(
+                                color: !settings.isThai ? Colors.white : Colors.grey,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
+              const Divider(height: 1, indent: 72),
+              // Dark Mode Toggle
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryGreen.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.dark_mode_outlined, color: AppTheme.primaryGreen),
+                    ),
+                    const SizedBox(width: 16),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('ธีม / Theme', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text('เลือกธีมสว่างหรือมืด', style: TextStyle(color: Colors.grey, fontSize: 13)),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildThemeModeButton(
+                            icon: Icons.brightness_auto,
+                            label: 'Auto',
+                            isActive: settings.themeMode == ThemeModeSetting.auto,
+                            onTap: () => settings.setThemeMode(ThemeModeSetting.auto),
+                          ),
+                          const SizedBox(width: 4),
+                          _buildThemeModeButton(
+                            icon: Icons.light_mode,
+                            label: 'Light',
+                            isActive: settings.themeMode == ThemeModeSetting.light,
+                            onTap: () => settings.setThemeMode(ThemeModeSetting.light),
+                          ),
+                          const SizedBox(width: 4),
+                          _buildThemeModeButton(
+                            icon: Icons.dark_mode,
+                            label: 'Dark',
+                            isActive: settings.themeMode == ThemeModeSetting.dark,
+                            onTap: () => settings.setThemeMode(ThemeModeSetting.dark),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1, indent: 72),
+              _MoreMenuItem(
+                icon: Icons.gamepad,
+                iconColor: AppTheme.primaryGreen,
+                title: 'ควบคุมหุ่นยนต์ด้วยมือ',
+                subtitle: 'ควบคุมการเคลื่อนที่ของหุ่นยนต์',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RobotControlPage(),
+                    ),
+                  );
+                },
+              ),
+              const Divider(height: 1, indent: 72),
+              _MoreMenuItem(
+                icon: Icons.settings,
+                iconColor: Colors.grey,
+                title: 'ตั้งค่า',
+                subtitle: 'กำลังพัฒนาเร็วๆ นี้',
+                enabled: false,
+              ),
+              const Divider(height: 1, indent: 72),
+              _MoreMenuItem(
+                icon: Icons.help_outline,
+                iconColor: Colors.grey,
+                title: 'ช่วยเหลือ',
+                subtitle: 'กำลังพัฒนาเร็วๆ นี้',
+                enabled: false,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildThemeModeButton({
+    required IconData icon,
+    required String label,
+    required bool isActive,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: isActive ? AppTheme.primaryGreen : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isActive ? Colors.white : Colors.grey,
             ),
-          ),
-          const Divider(height: 1, indent: 72),
-          _MoreMenuItem(
-            icon: Icons.gamepad,
-            iconColor: AppTheme.primaryGreen,
-            title: 'ควบคุมหุ่นยนต์ด้วยมือ',
-            subtitle: 'ควบคุมการเคลื่อนที่ของหุ่นยนต์',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const RobotControlPage(),
-                ),
-              );
-            },
-          ),
-          const Divider(height: 1, indent: 72),
-          _MoreMenuItem(
-            icon: Icons.settings,
-            iconColor: Colors.grey,
-            title: 'ตั้งค่า',
-            subtitle: 'กำลังพัฒนาเร็วๆ นี้',
-            enabled: false,
-          ),
-          const Divider(height: 1, indent: 72),
-          _MoreMenuItem(
-            icon: Icons.help_outline,
-            iconColor: Colors.grey,
-            title: 'ช่วยเหลือ',
-            subtitle: 'กำลังพัฒนาเร็วๆ นี้',
-            enabled: false,
-          ),
-        ],
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(
+                color: isActive ? Colors.white : Colors.grey,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

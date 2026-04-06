@@ -131,7 +131,7 @@ class _RobotControlPageState extends State<RobotControlPage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppTheme.primaryGreen.withOpacity(0.1), Colors.white],
+            colors: [AppTheme.primaryGreen.withOpacity(0.1), Theme.of(context).colorScheme.surface],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -251,9 +251,9 @@ class _RobotControlPageState extends State<RobotControlPage> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             margin: const EdgeInsets.symmetric(horizontal: 24),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade300),
+              border: Border.all(color: Theme.of(context).colorScheme.outline),
             ),
             child: Row(
               children: [
@@ -263,19 +263,19 @@ class _RobotControlPageState extends State<RobotControlPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'โหมดกระจายสัญญาณ',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       Text(
                         'ส่งคำสั่งไปทุกหุ่นยนต์',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade600,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -295,12 +295,12 @@ class _RobotControlPageState extends State<RobotControlPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           margin: const EdgeInsets.symmetric(horizontal: 24),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppTheme.primaryGreen.withOpacity(0.3)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -366,7 +366,7 @@ class _RobotControlPageState extends State<RobotControlPage> {
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -442,8 +442,8 @@ class _RobotControlPageState extends State<RobotControlPage> {
                     height: centerSize,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.grey.shade200,
-                      border: Border.all(color: Colors.grey.shade300, width: 2),
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      border: Border.all(color: Theme.of(context).colorScheme.outline, width: 2),
                     ),
                     child: Center(
                       child: FittedBox(
@@ -510,17 +510,17 @@ class _RobotControlPageState extends State<RobotControlPage> {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: isPressed ? AppTheme.primaryGreen.withOpacity(0.3) : Colors.white,
+          color: isPressed ? AppTheme.primaryGreen.withOpacity(0.3) : Theme.of(context).colorScheme.surface,
           shape: BoxShape.circle,
           border: Border.all(
-            color: isPressed ? AppTheme.primaryGreen : Colors.grey.shade300,
+            color: isPressed ? AppTheme.primaryGreen : Theme.of(context).colorScheme.outline,
             width: 2,
           ),
           boxShadow: isPressed
               ? []
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -529,7 +529,7 @@ class _RobotControlPageState extends State<RobotControlPage> {
         child: Icon(
           icon,
           size: size * 0.6,
-          color: isPressed ? AppTheme.primaryGreen : Colors.grey.shade600,
+          color: isPressed ? AppTheme.primaryGreen : Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       ),
     );
@@ -617,7 +617,7 @@ class _ModeButton extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.grey,
+              color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),

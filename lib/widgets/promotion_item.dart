@@ -18,20 +18,29 @@ class PromotionItem extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: iconSize,
-                backgroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.surface,
                 child: Container(
                   margin: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.orange.shade50,
+                    color: Theme.of(context).colorScheme.primaryContainer,
                   ),
-                  child: Center(child: Icon(Icons.flash_on, color: Colors.orange, size: iconSize * 0.6)),
+                  child: Center(
+                    child: Icon(
+                      Icons.flash_on,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: iconSize * 0.6,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 'โปรแรง 1 แถม 1',
-                style: TextStyle(fontSize: fontSize),
+                style: TextStyle(
+                  fontSize: fontSize,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
               ),

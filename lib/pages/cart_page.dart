@@ -12,7 +12,7 @@ class CartPage extends StatelessWidget {
     final cart = context.watch<CartProvider>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('ตะกร้าสินค้า', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
@@ -29,9 +29,19 @@ class CartPage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey.shade300),
+                    Icon(
+                      Icons.shopping_cart_outlined,
+                      size: 80,
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                    ),
                     const SizedBox(height: 16),
-                    const Text('ไม่มีสินค้าในตระกร้า', style: TextStyle(color: Colors.grey, fontSize: 16)),
+                    Text(
+                      'ไม่มีสินค้าในตระกร้า',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                        fontSize: 16,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -48,9 +58,9 @@ class CartPage extends StatelessWidget {
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade100),
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
                         ),
                         child: Row(
                           children: [
@@ -58,10 +68,13 @@ class CartPage extends StatelessWidget {
                               width: 60,
                               height: 60,
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
+                                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Icon(Icons.shopping_bag_outlined, color: Colors.grey),
+                              child: Icon(
+                                Icons.shopping_bag_outlined,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
@@ -71,7 +84,13 @@ class CartPage extends StatelessWidget {
                                   FittedBox(
                                     fit: BoxFit.scaleDown,
                                     alignment: Alignment.centerLeft,
-                                    child: Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    child: Text(
+                                      item.name,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).colorScheme.onSurface,
+                                      ),
+                                    ),
                                   ),
                                   Text(item.price, style: TextStyle(color: AppTheme.primaryGreen, fontWeight: FontWeight.bold)),
                                 ],
@@ -96,11 +115,14 @@ class CartPage extends StatelessWidget {
                         child: TextField(
                           decoration: InputDecoration(
                             hintText: 'กรอกรหัสคูปอง',
-                            prefixIcon: const Icon(Icons.confirmation_num_outlined, color: Colors.blueGrey),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade200)),
+                            prefixIcon: Icon(Icons.confirmation_num_outlined, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                            ),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                             filled: true,
-                            fillColor: Colors.grey.shade50,
+                            fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
                           ),
                           onSubmitted: (value) {
                             if (cart.applyCoupon(value)) {
@@ -126,15 +148,25 @@ class CartPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(color: Colors.green.shade50, borderRadius: BorderRadius.circular(8)),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       child: Row(
                         children: [
-                          const Icon(Icons.check_circle, color: Colors.green, size: 16),
+                          Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary, size: 16),
                           const SizedBox(width: 8),
-                          Text('คูปองที่ใช้: ${cart.appliedCoupon!.title}', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 12)),
+                          Text(
+                            'คูปองที่ใช้: ${cart.appliedCoupon!.title}',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
                           const Spacer(),
                           IconButton(
-                            icon: const Icon(Icons.close, size: 16, color: Colors.green),
+                            icon: Icon(Icons.close, size: 16, color: Theme.of(context).colorScheme.primary),
                             onPressed: () => cart.removeCoupon(),
                           ),
                         ],
@@ -144,9 +176,13 @@ class CartPage extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5)),
+                      BoxShadow(
+                        color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
+                        blurRadius: 10,
+                        offset: const Offset(0, -5),
+                      ),
                     ],
                   ),
                   child: SafeArea(
@@ -155,8 +191,20 @@ class CartPage extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('ราคารวม', style: TextStyle(fontSize: 14, color: Colors.grey)),
-                            Text('${cart.subTotal.toStringAsFixed(2)} บาท', style: const TextStyle(fontSize: 14)),
+                            Text(
+                              'ราคารวม',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            Text(
+                              '${cart.subTotal.toStringAsFixed(2)} บาท',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
                           ],
                         ),
                         if (cart.discountAmount > 0)
@@ -165,8 +213,20 @@ class CartPage extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text('ส่วนลด', style: TextStyle(fontSize: 14, color: Colors.redAccent)),
-                                Text('-${cart.discountAmount.toStringAsFixed(2)} บาท', style: const TextStyle(fontSize: 14, color: Colors.redAccent)),
+                                Text(
+                                  'ส่วนลด',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                                ),
+                                Text(
+                                  '-${cart.discountAmount.toStringAsFixed(2)} บาท',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -177,9 +237,22 @@ class CartPage extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('ราคาสุทธิ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            Text('${cart.totalAmount.toStringAsFixed(2)} บาท',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen)),
+                            Text(
+                              'ราคาสุทธิ',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                            Text(
+                              '${cart.totalAmount.toStringAsFixed(2)} บาท',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.primaryGreen,
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 16),
@@ -227,7 +300,11 @@ class CartPage extends StatelessWidget {
                 const Center(
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 40),
-                    child: Text('คุณยังไม่มีคูปองที่เก็บไว้\nไปเลือกเก็บที่หน้าแรกได้เลย!', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
+                    child: Text(
+                      'คุณยังไม่มีคูปองที่เก็บไว้\nไปเลือกเก็บที่หน้าแรกได้เลย!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey),
+                    ),
                   ),
                 )
               else
@@ -241,24 +318,39 @@ class CartPage extends StatelessWidget {
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade100),
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
                         ),
                         child: Row(
                           children: [
                             Container(
                               padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(8)),
-                              child: const Icon(Icons.confirmation_num, color: Colors.blue),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primaryContainer,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(Icons.confirmation_num, color: Theme.of(context).colorScheme.primary),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(coupon.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                                  Text('รหัส: ${coupon.code}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                  Text(
+                                    coupon.title,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).colorScheme.onSurface,
+                                    ),
+                                  ),
+                                  Text(
+                                    'รหัส: ${coupon.code}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),

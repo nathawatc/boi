@@ -31,7 +31,7 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -70,7 +70,7 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
                         child: Text(
                           'กรุณารับสินค้าและกดยืนยัน',
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: screenWidth < 360 ? 14 : 16,
                             fontWeight: FontWeight.w500
                           ),
@@ -97,7 +97,7 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
                               height: logoSize,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.surface,
                                 boxShadow: [
                                   BoxShadow(
                                     color: AppTheme.primaryGreen.withOpacity(0.15),
@@ -105,7 +105,7 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
                                     spreadRadius: 5
                                   ),
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
+                                    color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
                                     blurRadius: 15,
                                     offset: const Offset(0, 5)
                                   ),
@@ -140,9 +140,12 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
                           final seconds = (cart.callTimeoutSeconds % 60).toString().padLeft(2, '0');
                           return Column(
                             children: [
-                              const Text(
+                              Text(
                                 'เวลารับสินค้าที่เหลือ:',
-                                style: TextStyle(fontSize: 14, color: Colors.grey),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
                               ),
                               const SizedBox(height: 4),
                               Text(
@@ -175,7 +178,14 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
                               child: const Icon(Icons.close, color: Colors.white, size: 40),
                             ),
                             const SizedBox(height: 12),
-                            const Text('ปิด', style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text(
+                              'ปิด',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                         ),
                       ),

@@ -30,17 +30,30 @@ class CategoryItem extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 24,
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.surface,
               child: Container(
                 margin: const EdgeInsets.all(4),
-                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade50),
-                child: Center(child: Icon(icon, color: Colors.blueGrey, size: 24)),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                ),
+                child: Center(
+                  child: Icon(
+                    icon,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    size: 24,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 4),
             Text(
               title,
-              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: Colors.black87),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
