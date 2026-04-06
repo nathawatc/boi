@@ -104,6 +104,7 @@ class HomeContent extends StatelessWidget {
                 builder: (context, constraints) {
                   final screenWidth = constraints.maxWidth;
                   final isSmallScreen = screenWidth < 360;
+                  final showIp = screenWidth >= 400; // Only show IP on larger screens
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,19 +118,18 @@ class HomeContent extends StatelessWidget {
                             Flexible(
                               child: RobotStatusIndicator(
                                 robotApi: context.read<RobotApi>(),
-                                showRefreshButton: !isSmallScreen,
+                                showRefreshButton: screenWidth >= 380,
                                 showTapToDiscover: true,
-                                showIp: !isSmallScreen,
+                                showIp: showIp,
                               ),
                             ),
                             const Spacer(),
                             _CircularIcon(icon: Icons.favorite_border),
-                            if (!isSmallScreen) ...[
-                              const SizedBox(width: 12),
+                            const SizedBox(width: 12),
+                            if (screenWidth >= 380) ...[
                               _CircularIcon(label: 'TH'),
                               const SizedBox(width: 12),
                             ],
-                            const SizedBox(width: 12),
                             _CircularIcon(icon: Icons.person_outline),
                           ],
                         ),

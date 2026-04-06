@@ -22,6 +22,12 @@ class RobotStatusIndicator extends StatelessWidget {
     return ListenableBuilder(
       listenable: robotApi,
       builder: (context, child) {
+        // Build display text - status only, or status + IP
+        String displayText = _getStatusText(robotApi.connectionStatus);
+        if (showIp && robotApi.lastKnownIp != null && robotApi.isConnected) {
+          displayText = '$displayText ${robotApi.lastKnownIp}';
+        }
+
         return GestureDetector(
           onTap: showTapToDiscover && !robotApi.isConnected
               ? () => _discoverRobot(context)
@@ -42,11 +48,10 @@ class RobotStatusIndicator extends StatelessWidget {
                 // Status dot
                 _buildStatusDot(context),
                 const SizedBox(width: 8),
-                // Status text - Flexible with ellipsis to prevent overflow
+                // Combined text - status + IP in one Text widget
                 Flexible(
-                  flex: 3,
                   child: Text(
-                    _getStatusText(robotApi.connectionStatus),
+                    displayText,
                     style: TextStyle(
                       color: _getStatusColor(robotApi.connectionStatus),
                       fontSize: 12,
@@ -62,22 +67,6 @@ class RobotStatusIndicator extends StatelessWidget {
                     Icons.refresh,
                     size: 16,
                     color: _getStatusColor(robotApi.connectionStatus),
-                  ),
-                ],
-                if (showIp && robotApi.lastKnownIp != null && robotApi.isConnected) ...[
-                  const SizedBox(width: 6),
-                  Flexible(
-                    flex: 2,
-                    child: Text(
-                      robotApi.lastKnownIp!,
-                      style: TextStyle(
-                        color: _getStatusColor(robotApi.connectionStatus).withOpacity(0.7),
-                        fontSize: 10,
-                        fontFamily: 'monospace',
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
                   ),
                 ],
               ],
