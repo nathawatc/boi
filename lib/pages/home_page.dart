@@ -419,9 +419,9 @@ class _ServiceCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
-            blurRadius: 15,
-            offset: const Offset(0, 8)
+            color: Theme.of(context).colorScheme.shadow.withOpacity(0.05),
+            blurRadius: 0.5,
+            offset: const Offset(0, 3)
           ),
         ],
       ),
@@ -508,9 +508,9 @@ class _CouponCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
+                color: Theme.of(context).colorScheme.shadow.withOpacity(0.05),
+                blurRadius: 5,
+                offset: const Offset(0, 3),
               ),
             ],
           ),

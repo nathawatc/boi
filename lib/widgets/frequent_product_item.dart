@@ -47,8 +47,8 @@ class FrequentProductItem extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
-                  blurRadius: 10, offset: const Offset(0, 5)
+                  color: Theme.of(context).colorScheme.shadow.withOpacity(0.06),
+                  blurRadius: 6, offset: const Offset(0, 3)
                 ),
               ],
             ),
