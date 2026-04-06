@@ -21,6 +21,7 @@ class Coupon {
   final String title;
   final double discountAmount;
   final double minSpend;
+  final DateTime expiryDate;
   bool isCollected;
 
   Coupon({
@@ -28,8 +29,13 @@ class Coupon {
     required this.title,
     required this.discountAmount,
     this.minSpend = 0,
+    required this.expiryDate,
     this.isCollected = false,
   });
+
+  bool get isExpired => DateTime.now().isAfter(expiryDate);
+
+  String get expiryDateFormatted => '${expiryDate.day}/${expiryDate.month}/${expiryDate.year + 543}';
 }
 
 class Order {
@@ -61,20 +67,28 @@ class CartProvider with ChangeNotifier {
 
   // Coupons
   final List<Coupon> _availableCoupons = [
-    Coupon(code: 'WELCOME50', title: 'ส่วนลดลูกค้าใหม่ 50.-', discountAmount: 50.0, minSpend: 0),
-    Coupon(code: 'SAVE10', title: 'ส่วนลดท้ายบิล 10.-', discountAmount: 10.0, minSpend: 0),
-    Coupon(code: 'MEMBER20', title: 'ส่วนลดสมาชิก 20.-', discountAmount: 20.0, minSpend: 0),
-    Coupon(code: 'COUPON30', title: 'ส่วนลดพิเศษ 30.-', discountAmount: 30.0, minSpend: 0),
+    Coupon(code: 'WELCOME50', title: 'ส่วนลดลูกค้าใหม่ 50.-', discountAmount: 50.0, minSpend: 0, expiryDate: DateTime(2026, 12, 31)),
+    Coupon(code: 'SAVE10', title: 'ส่วนลดท้ายบิล 10.-', discountAmount: 10.0, minSpend: 0, expiryDate: DateTime(2026, 12, 31)),
+    Coupon(code: 'MEMBER20', title: 'ส่วนลดสมาชิก 20.-', discountAmount: 20.0, minSpend: 0, expiryDate: DateTime(2026, 12, 31)),
+    Coupon(code: 'COUPON30', title: 'ส่วนลดพิเศษ 30.-', discountAmount: 30.0, minSpend: 0, expiryDate: DateTime(2026, 12, 31)),
   ];
-  
+
   Coupon? _appliedCoupon;
   Coupon? get appliedCoupon => _appliedCoupon;
   List<Coupon> get availableCoupons => _availableCoupons;
   List<Coupon> get collectedCoupons => _availableCoupons.where((c) => c.isCollected).toList();
 
   CartProvider() {
-    // Simulated countdown every 10 seconds for demo purposes
+    // Countdown timer that only runs when there are active orders
     _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      // Check if there are any active orders
+      final hasActiveOrders = _orders.any((o) => o.status == 'กำลังจัดส่ง' && o.estimatedMinutes > 1);
+
+      // Only process if there are active orders
+      if (!hasActiveOrders) {
+        return;
+      }
+
       bool changed = false;
       for (var order in _orders) {
         if (order.status == 'กำลังจัดส่ง' && order.estimatedMinutes > 1) {
@@ -115,15 +129,15 @@ class CartProvider with ChangeNotifier {
   void playNotificationSound({bool isLong = false}) async {
     try {
       if (isLong) {
-        // Reset timeout
-        _callTimeoutSeconds = 10;
-        
+        // Reset timeout to 3 minutes (180 seconds)
+        _callTimeoutSeconds = 180;
+
         // Wait 10 seconds after checkout before simulate the "Incoming Call"
         Future.delayed(const Duration(seconds: 10), () async {
           _isIncomingCall = true;
-          _callTimeoutSeconds = 10; // Ensure it starts at 10 (or 180 as you prefer)
+          _callTimeoutSeconds = 180; // 3 minutes to receive the call
           notifyListeners();
-          
+
           // 1. Start countdown timer FIRST so UI responds immediately
           _callTimer?.cancel();
           _callTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -201,8 +215,8 @@ class CartProvider with ChangeNotifier {
 
   bool applyCoupon(String code) {
     final coupon = _availableCoupons.firstWhere(
-      (c) => c.code.toUpperCase() == code.toUpperCase(), 
-      orElse: () => Coupon(code: '', title: '', discountAmount: 0),
+      (c) => c.code.toUpperCase() == code.toUpperCase(),
+      orElse: () => Coupon(code: '', title: '', discountAmount: 0, expiryDate: DateTime(2099, 12, 31)),
     );
 
     if (coupon.code.isNotEmpty) {
@@ -236,7 +250,7 @@ class CartProvider with ChangeNotifier {
 
   void checkout() {
     if (_items.isEmpty) return;
-    
+
     _orders.insert(0, Order(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       items: List.from(_items),
@@ -245,11 +259,11 @@ class CartProvider with ChangeNotifier {
       discount: discountAmount,
       couponCode: _appliedCoupon?.code,
     ));
-    
+
     _items.clear();
     _appliedCoupon = null;
+    // playNotificationSound already calls notifyListeners internally
     playNotificationSound(isLong: true);
-    notifyListeners();
   }
 
   void confirmOrderReceipt(String orderId) {

@@ -1,13 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/custom_search_bar.dart';
-import '../widgets/delivery_toggle.dart';
-import '../widgets/action_item.dart';
 import '../widgets/section_header.dart';
-import '../widgets/coupon_card.dart';
 import '../widgets/promotion_item.dart';
 import '../widgets/category_item.dart';
 import '../widgets/product_card.dart';
@@ -24,8 +20,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-
   static const List<Widget> _pages = [
     HomeContent(),
     OrderHistoryPage(),
@@ -145,7 +139,7 @@ class HomeContent extends StatelessWidget {
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            const Text('1 ตำบล นาป่า อำเภอเมืองชลบุรี ชลบุ...', 
+                            const Text('1 ตำบล นาป่า อำเภอเมืองชลบุรี ชลบุ...',
                               style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400)),
                             const SizedBox(width: 4),
                             Icon(Icons.keyboard_arrow_down, color: Colors.white.withOpacity(0.8), size: 18),
@@ -387,8 +381,8 @@ class _ServiceCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04), 
-            blurRadius: 15, 
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 15,
             offset: const Offset(0, 8)
           ),
         ],
@@ -404,8 +398,8 @@ class _ServiceCard extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 18, 
-                    fontWeight: FontWeight.bold, 
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                     color: Colors.blueGrey
                   ),
                 ),
@@ -422,15 +416,15 @@ class _ServiceCard extends StatelessWidget {
                 color: (title == 'Drink' ? Colors.blue.shade50 : Colors.pink.shade50).withOpacity(0.5),
                 shape: BoxShape.circle,
               ),
-              child: icon != null 
+              child: icon != null
                 ? Icon(
-                    icon, 
-                    size: 45, 
+                    icon,
+                    size: 45,
                     color: title == 'Drink' ? AppTheme.primarySky : Colors.pink,
                   )
                 : Image.network(
-                    iconUrl!, 
-                    width: 45, 
+                    iconUrl!,
+                    width: 45,
                     height: 45,
                     fit: BoxFit.contain,
                   ),
@@ -449,8 +443,8 @@ class _ServiceCard extends StatelessWidget {
               child: Text(
                 badge,
                 style: const TextStyle(
-                  color: Colors.white, 
-                  fontSize: 10, 
+                  color: Colors.white,
+                  fontSize: 10,
                   fontWeight: FontWeight.bold
                 ),
               ),
@@ -458,67 +452,6 @@ class _ServiceCard extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _SmallActionItem extends StatelessWidget {
-  final String title;
-  final String? badge;
-  final Color? badgeColor;
-  final String iconUrl;
-
-  const _SmallActionItem({
-    required this.title,
-    this.badge,
-    this.badgeColor,
-    required this.iconUrl,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              height: 64,
-              width: 64,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
-                ],
-              ),
-              child: Image.network(iconUrl),
-            ),
-            if (badge != null)
-              Positioned(
-                top: -8,
-                right: -4,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: badgeColor ?? Colors.red,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    badge!,
-                    style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          title,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.blueGrey),
-        ),
-      ],
     );
   }
 }
@@ -565,8 +498,8 @@ class _CouponCard extends StatelessWidget {
                     child: Text(
                       '${coupon.discountAmount.toInt()}.-',
                       style: TextStyle(
-                        color: AppTheme.primarySky, 
-                        fontWeight: FontWeight.w900, 
+                        color: AppTheme.primarySky,
+                        fontWeight: FontWeight.w900,
                         fontSize: 22,
                         letterSpacing: -1
                       ),
@@ -602,8 +535,8 @@ class _CouponCard extends StatelessWidget {
                         Align(
                           alignment: Alignment.centerRight,
                           child: ElevatedButton(
-                            onPressed: coupon.isCollected 
-                              ? null 
+                            onPressed: coupon.isCollected
+                              ? null
                               : () {
                                 context.read<CartProvider>().collectCoupon(coupon.code);
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -619,10 +552,10 @@ class _CouponCard extends StatelessWidget {
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
                             child: Text(
-                              coupon.isCollected ? 'เก็บแล้ว' : 'เก็บเลย', 
+                              coupon.isCollected ? 'เก็บแล้ว' : 'เก็บเลย',
                               style: TextStyle(
-                                fontSize: 11, 
-                                fontWeight: FontWeight.bold, 
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
                                 color: coupon.isCollected ? Colors.grey : Colors.white
                               ),
                             ),
@@ -674,7 +607,7 @@ class _CircularIcon extends StatelessWidget {
     return CircleAvatar(
       radius: 18,
       backgroundColor: Colors.white.withOpacity(0.2),
-      child: icon != null 
+      child: icon != null
         ? Icon(icon, color: Colors.white, size: 20)
         : Text(label!, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
     );

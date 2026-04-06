@@ -16,6 +16,14 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   int _selectedAddressIndex = 0; // 0 for Home, 1 for Office
   String _selectedPaymentMethod = 'QR';
+  late final List<CartItem> _orderItems;
+
+  @override
+  void initState() {
+    super.initState();
+    // Capture cart items before they're cleared
+    _orderItems = List.from(context.read<CartProvider>().items);
+  }
 
   final List<Map<String, String>> _addresses = [
     {
@@ -156,7 +164,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
-                children: context.watch<CartProvider>().items.map((item) {
+                children: _orderItems.map((item) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Row(
@@ -217,6 +225,9 @@ class _PaymentPageState extends State<PaymentPage> {
             // Bottom Action
             ElevatedButton(
               onPressed: () async {
+                // Store cart provider reference before async operation
+                final cartProvider = context.read<CartProvider>();
+
                 try {
                   // Send UDP Packet to Robot (Broadcast to local network)
                   final socket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, 0);
@@ -238,7 +249,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 }
 
                 if (!mounted) return;
-                _showSuccessDialog(context);
+                _showSuccessDialog(context, cartProvider);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryGreen,
@@ -291,7 +302,7 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  void _showSuccessDialog(BuildContext context) {
+  void _showSuccessDialog(BuildContext context, CartProvider cartProvider) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -312,13 +323,13 @@ class _PaymentPageState extends State<PaymentPage> {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                context.read<CartProvider>().checkout();
+                cartProvider.checkout();
                 // Sequence of pops
                 Navigator.pop(context); // Close dialog
                 Navigator.pop(context); // Back to cart
 
                 // Go to Order History Tab (Index 1)
-                context.read<CartProvider>().setTabIndex(1);
+                cartProvider.setTabIndex(1);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.gradientEnd.withOpacity(0.8),

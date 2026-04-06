@@ -22,7 +22,7 @@ class CouponPage extends StatelessWidget {
       body: Consumer<CartProvider>(
         builder: (context, cart, child) {
           final available = cart.availableCoupons;
-          
+
           return ListView(
             padding: const EdgeInsets.symmetric(vertical: 20),
             children: [
@@ -54,17 +54,17 @@ class CouponPage extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 24),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text('คูปองแนะนำสำหรับคุณ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ),
               const SizedBox(height: 12),
-              
+
               // Coupons List
               ...available.map((coupon) => _LargeCouponCard(coupon: coupon)).toList(),
-              
+
               const SizedBox(height: 20),
               Center(
                 child: Text(
@@ -120,14 +120,14 @@ class _LargeCouponCard extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               // Divider (Dashed)
               Container(
                 width: 1,
                 height: 70,
                 color: Colors.grey.shade200,
               ),
-              
+
               // Right Details Part
               Expanded(
                 child: Padding(
@@ -152,22 +152,28 @@ class _LargeCouponCard extends StatelessWidget {
                         children: [
                           Icon(Icons.history, color: Colors.grey.shade400, size: 14),
                           const SizedBox(width: 4),
-                          Text('ใช้ได้ถึง 31 มี.ค. 67', style: TextStyle(color: Colors.grey.shade400, fontSize: 10)),
+                          Text(
+                            coupon.isExpired ? 'หมดอายุแล้ว' : 'ใช้ได้ถึง ${coupon.expiryDateFormatted}',
+                            style: TextStyle(
+                              color: coupon.isExpired ? Colors.red : Colors.grey.shade400,
+                              fontSize: 10
+                            ),
+                          ),
                           const Spacer(),
                           TextButton(
-                            onPressed: coupon.isCollected 
-                              ? null 
+                            onPressed: (coupon.isCollected || coupon.isExpired)
+                              ? null
                               : () {
                                 context.read<CartProvider>().collectCoupon(coupon.code);
                               },
                             style: TextButton.styleFrom(
-                              backgroundColor: coupon.isCollected ? Colors.grey.shade100 : AppTheme.primarySky.withOpacity(0.1),
-                              foregroundColor: coupon.isCollected ? Colors.grey : AppTheme.primarySky,
+                              backgroundColor: coupon.isCollected ? Colors.grey.shade100 : (coupon.isExpired ? Colors.grey.shade300 : AppTheme.primarySky.withOpacity(0.1)),
+                              foregroundColor: coupon.isCollected ? Colors.grey : (coupon.isExpired ? Colors.grey.shade500 : AppTheme.primarySky),
                               padding: const EdgeInsets.symmetric(horizontal: 16),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                             ),
                             child: Text(
-                              coupon.isCollected ? 'เก็บแล้ว' : 'เก็บคูปอง',
+                              coupon.isCollected ? 'เก็บแล้ว' : (coupon.isExpired ? 'หมดอายุ' : 'เก็บคูปอง'),
                               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                             ),
                           ),
@@ -179,7 +185,7 @@ class _LargeCouponCard extends StatelessWidget {
               ),
             ],
           ),
-          
+
           // Ticket Cutouts (Half circles on top and bottom of divider)
           Positioned(
             left: 95,

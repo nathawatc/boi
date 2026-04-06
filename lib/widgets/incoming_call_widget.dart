@@ -51,9 +51,9 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
               style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: 40),
-            
+
             // Fixed Size Container for Ripple
             SizedBox(
               height: 320,
@@ -65,7 +65,7 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
                   _buildRipple(scale: 1.0, opacity: 0.15),
                   _buildRipple(scale: 1.4, opacity: 0.1),
                   _buildRipple(scale: 1.8, opacity: 0.05),
-                  
+
                   // Enlarge Rounded Logo Container
                   Container(
                     width: 250,
@@ -75,13 +75,13 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.primaryGreen.withOpacity(0.15), 
-                          blurRadius: 35, 
+                          color: AppTheme.primaryGreen.withOpacity(0.15),
+                          blurRadius: 35,
                           spreadRadius: 5
                         ),
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05), 
-                          blurRadius: 15, 
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 15,
                           offset: const Offset(0, 5)
                         ),
                       ],
@@ -98,9 +98,9 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 40),
-            
+
             const Text(
               'กรุณารับสินค้าภายในเวลาที่กำหนด',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
@@ -110,20 +110,29 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
               builder: (context, cart, child) {
                 final minutes = (cart.callTimeoutSeconds ~/ 60).toString().padLeft(2, '0');
                 final seconds = (cart.callTimeoutSeconds % 60).toString().padLeft(2, '0');
-                return Text(
-                  '$minutes:$seconds',
-                  style: TextStyle(
-                    fontSize: 24, 
-                    fontWeight: FontWeight.bold,
-                    color: cart.callTimeoutSeconds <= 10 ? Colors.red : Colors.black
-                  ),
-                  textAlign: TextAlign.center,
+                return Column(
+                  children: [
+                    const Text(
+                      'เวลารับสินค้าที่เหลือ:',
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '$minutes:$seconds',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: cart.callTimeoutSeconds <= 30 ? Colors.red : AppTheme.primaryGreen
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 );
               },
             ),
-            
+
             const SizedBox(height: 30),
-            
+
             GestureDetector(
               onTap: () {
                 context.read<CartProvider>().stopCall();
@@ -156,7 +165,7 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
         final progress = (_controller.value + (scale - 1.0) / 0.8) % 1.0;
         final currentScale = 1.0 + (progress * 0.8);
         final currentOpacity = (1.0 - progress) * opacity;
-        
+
         return Container(
           width: 200 * currentScale,
           height: 200 * currentScale,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../pages/product_detail_page.dart';
 import '../providers/cart_provider.dart';
-import '../theme/app_theme.dart';
 
 class ProductCard extends StatelessWidget {
   final String name;
@@ -59,15 +58,15 @@ class ProductCard extends StatelessWidget {
                 color: imageUrl == null ? (icon != null ? Colors.blue.shade50 : (color ?? Colors.grey.shade100)) : (color ?? Colors.grey.shade200),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
               ),
-              child: imageUrl != null 
+              child: imageUrl != null
                   ? ClipRRect(
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                       child: Image.network(imageUrl!, fit: BoxFit.cover),
                     )
                   : Center(
                       child: Icon(
-                        icon ?? Icons.image_outlined, 
-                        color: icon != null ? Colors.blue : Colors.grey, 
+                        icon ?? Icons.image_outlined,
+                        color: icon != null ? Colors.blue : Colors.grey,
                         size: 50
                       ),
                     ),
@@ -99,8 +98,8 @@ class ProductCard extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         context.read<CartProvider>().addItem(
-                          name, 
-                          name, 
+                          name,
+                          name,
                           price
                         );
                         ScaffoldMessenger.of(context).showSnackBar(

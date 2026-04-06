@@ -87,7 +87,7 @@ class CategoryProductsPage extends StatelessWidget {
               ),
             ),
           ),
-          
+
           const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
       ),
@@ -95,16 +95,14 @@ class CategoryProductsPage extends StatelessWidget {
         elevation: 10,
         currentIndex: 0, // Default to home icon
         onTap: (index) {
-          // In a real app, you would use a global state or callback to change HomePage index
-          // For now, we pop back to home or navigate to pages
-          if (index == 0) {
-            Navigator.pop(context);
-          } else {
-            // Signal HomePage to show the correct index
-            // We'll just pop back and let the user click from HomePage
-            // But to make it work immediately:
-            Navigator.pop(context);
-          }
+          // Navigate to home page first
+          Navigator.pop(context);
+          // Then set the tab index using microtask to ensure proper sequencing
+          Future.microtask(() {
+            if (context.mounted) {
+              context.read<CartProvider>().setTabIndex(index);
+            }
+          });
         },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: AppTheme.primaryGreen,
@@ -174,7 +172,33 @@ class _ProductCard extends StatelessWidget {
               },
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                child: Image.network(imageUrl, width: double.infinity, fit: BoxFit.cover),
+                child: Image.network(
+                  imageUrl,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.blue.shade50,
+                      child: const Center(
+                        child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+                      ),
+                    );
+                  },
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      color: Colors.blue.shade50,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                              : null,
+                          color: AppTheme.primarySky,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),

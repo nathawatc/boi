@@ -3,8 +3,7 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'theme/app_theme.dart';
-import 'pages/home_page.dart';
-import 'pages/splash_screen.dart'; // Add this import
+import 'pages/splash_screen.dart';
 import 'providers/cart_provider.dart';
 import 'widgets/incoming_call_widget.dart';
 
@@ -37,7 +36,7 @@ class BoiApp extends StatelessWidget {
       builder: (context, child) {
         // Apply DevicePreview.appBuilder as base
         final previewChild = DevicePreview.appBuilder(context, child);
-        
+
         return Stack(
           children: [
             previewChild,

@@ -5,26 +5,18 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:customer/main.dart';
+import 'package:customer/providers/cart_provider.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('CartProvider can be created and disposed', (WidgetTester tester) async {
+    // Test that CartProvider can be instantiated and disposed properly
+    final cartProvider = CartProvider();
+    expect(cartProvider, isNotNull);
+    expect(cartProvider.items, isEmpty);
+    expect(cartProvider.orders, isEmpty);
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Dispose to clean up timers
+    cartProvider.dispose();
   });
 }
