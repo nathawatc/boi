@@ -435,10 +435,12 @@ class _ServiceCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blueGrey
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.blueGrey,
                   ),
                 ),
               ],
@@ -451,7 +453,9 @@ class _ServiceCard extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: (title == 'Drink' ? Colors.blue.shade50 : Colors.pink.shade50).withOpacity(0.5),
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white.withOpacity(0.15)
+                    : (title == 'Drink' ? Colors.blue.shade50 : Colors.pink.shade50).withOpacity(0.5),
                 shape: BoxShape.circle,
               ),
               child: Icon(
