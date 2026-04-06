@@ -91,7 +91,29 @@ void loop() {
   if (WiFi.status() != WL_CONNECTED && (currentMillis - previousWiFiCheckMillis >= WIFI_CHECK_INTERVAL)) {
     Serial.println("WiFi Disconnected. Attempting to reconnect...");
     WiFi.disconnect();
-    WiFi.reconnect();
+    delay(500);
+    // Use WiFi.begin for reconnection (more reliable than WiFi.reconnect on ESP32 Core 3.x)
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+    // Wait up to 3 seconds for reconnection
+    unsigned long reconnectStart = millis();
+    while (WiFi.status() != WL_CONNECTED && (millis() - reconnectStart < 3000)) {
+      delay(200);
+      Serial.print(".");
+    }
+
+    if (WiFi.status() == WL_CONNECTED) {
+      Serial.println("\nWiFi Reconnected Successfully!");
+      Serial.print("IP Address: ");
+      Serial.println(WiFi.localIP());
+      // Restart UDP on new connection
+      udp.stop();
+      udp.begin(UDP_PORT);
+      Serial.printf("Re-listening on UDP port %d\n", UDP_PORT);
+    } else {
+      Serial.println("\nWiFi Reconnect Failed");
+    }
+
     previousWiFiCheckMillis = currentMillis;
 
     // Safety: Stop the robot immediately if WiFi drops
@@ -126,9 +148,15 @@ void loop() {
     IPAddress remoteIp = udp.remoteIP();
     int remotePort = udp.remotePort();
 
-    int len = udp.read(packetBuffer, 255);
-    if (len > 0) {
+    // Read with bounds checking (buffer is 255 bytes, leave room for null terminator)
+    int maxRead = min(packetSize, (int)sizeof(packetBuffer) - 1);
+    int len = udp.read(packetBuffer, maxRead);
+    if (len > 0 && len < (int)sizeof(packetBuffer)) {
       packetBuffer[len] = 0; // null-terminate the string
+    } else if (len >= (int)sizeof(packetBuffer)) {
+      // Safety: shouldn't happen, but ensure null termination
+      packetBuffer[sizeof(packetBuffer) - 1] = 0;
+      len = sizeof(packetBuffer) - 1;
     }
 
     String command = String(packetBuffer);

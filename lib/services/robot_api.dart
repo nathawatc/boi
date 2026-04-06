@@ -165,6 +165,7 @@ class RobotApi extends ChangeNotifier {
     // Don't clear _selectedRobotIp if robots were discovered
     if (_discoveredRobots.isEmpty) {
       _selectedRobotIp = null;
+      _lastKnownIp = null;
     }
     debugPrint('[RobotApi] Cleared manual IP configuration');
     notifyListeners();
@@ -324,7 +325,26 @@ class RobotApi extends ChangeNotifier {
       try {
         socket.broadcastEnabled = true;
 
-        // Send discovery command (stop command as ping)
+        // Start listening BEFORE sending discovery packet
+        // This ensures we don't miss the response
+        Datagram? response;
+        final completer = Completer<void>();
+        final subscription = socket.listen(
+          (event) {
+            if (!completer.isCompleted) {
+              final datagram = socket.receive();
+              if (datagram != null) {
+                response = datagram;
+                completer.complete();
+              }
+            }
+          },
+          onError: (_) {
+            if (!completer.isCompleted) completer.complete();
+          },
+        );
+
+        // Send discovery command (stop command as ping) - 3x for redundancy
         for (int i = 0; i < 3; i++) {
           socket.send(
             RobotCommand.stop.value.codeUnits,
@@ -335,30 +355,14 @@ class RobotApi extends ChangeNotifier {
         }
 
         // Wait for response with timeout
-        Datagram? response;
         try {
-          final completer = Completer<void>();
-          final subscription = socket.listen(
-            (event) {
-              if (!completer.isCompleted) {
-                final datagram = socket.receive();
-                if (datagram != null) {
-                  response = datagram;
-                  completer.complete();
-                }
-              }
-            },
-            onError: (_) {
-              if (!completer.isCompleted) completer.complete();
-            },
-          );
-
           await completer.future.timeout(effectiveTimeout);
-          await subscription.cancel();
         } on TimeoutException {
           // Expected timeout - robot not found
           debugPrint('[Discovery] No robot responded within timeout');
         }
+
+        await subscription.cancel();
 
         if (response != null) {
           final ip = response!.address.address;
@@ -428,7 +432,23 @@ class RobotApi extends ChangeNotifier {
       try {
         socket.broadcastEnabled = true;
 
-        // Send discovery command multiple times
+        // Start listening BEFORE sending discovery packets
+        final stopwatch = Stopwatch()..start();
+        final completer = Completer<void>();
+        final subscription = socket.listen(
+          (event) {
+            final datagram = socket.receive();
+            if (datagram != null) {
+              foundIps.add(datagram.address.address);
+              debugPrint('[Discovery] Found robot at: ${datagram.address.address}');
+            }
+          },
+          onError: (_) {
+            if (!completer.isCompleted) completer.complete();
+          },
+        );
+
+        // Send discovery command multiple times for redundancy
         for (int i = 0; i < 5; i++) {
           socket.send(
             RobotCommand.stop.value.codeUnits,
@@ -438,36 +458,15 @@ class RobotApi extends ChangeNotifier {
           await Future.delayed(const Duration(milliseconds: 100));
         }
 
-        // Listen for responses with timeout
-        final stopwatch = Stopwatch()..start();
+        // Wait for all responses with timeout
         try {
-          final completer = Completer<void>();
-          final subscription = socket.listen(
-            (event) {
-              final datagram = socket.receive();
-              if (datagram != null) {
-                foundIps.add(datagram.address.address);
-                debugPrint('[Discovery] Found robot at: ${datagram.address.address}');
-              }
-            },
-            onError: (_) {
-              if (!completer.isCompleted) completer.complete();
-            },
-          );
-
-          try {
-            await completer.future.timeout(effectiveTimeout);
-          } on TimeoutException {
-            // Expected timeout, stop listening
-            debugPrint('[Discovery] Discovery timeout reached (${stopwatch.elapsedMilliseconds}ms)');
-          }
-
-          await subscription.cancel();
-        } catch (e) {
-          debugPrint('[Discovery] Error during discovery: $e');
-        } finally {
-          stopwatch.stop();
+          await completer.future.timeout(effectiveTimeout);
+        } on TimeoutException {
+          debugPrint('[Discovery] Discovery timeout reached (${stopwatch.elapsedMilliseconds}ms)');
         }
+
+        await subscription.cancel();
+        stopwatch.stop();
       } finally {
         socket.close();
       }
