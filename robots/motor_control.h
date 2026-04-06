@@ -13,21 +13,18 @@ void initMotors() {
     pinMode(MOTOR_B_IN4, OUTPUT);
 
     // Setup PWM channels for ENA and ENB (Speed Control)
-    ledcSetup(PWM_CH_A_EN, PWM_FREQ, PWM_RESOLUTION);
-    ledcSetup(PWM_CH_B_EN, PWM_FREQ, PWM_RESOLUTION);
-
-    // Attach ENA and ENB pins to the PWM channels
-    ledcAttachPin(MOTOR_A_EN, PWM_CH_A_EN);
-    ledcAttachPin(MOTOR_B_EN, PWM_CH_B_EN);
+    // New ESP32 Arduino Core 3.x API - combines setup and attach
+    ledcAttachChannel(MOTOR_A_EN, PWM_FREQ, PWM_RESOLUTION, PWM_CH_A_EN);
+    ledcAttachChannel(MOTOR_B_EN, PWM_FREQ, PWM_RESOLUTION, PWM_CH_B_EN);
 
     // Ensure motors are stopped initially
     digitalWrite(MOTOR_A_IN1, LOW);
     digitalWrite(MOTOR_A_IN2, LOW);
     digitalWrite(MOTOR_B_IN3, LOW);
     digitalWrite(MOTOR_B_IN4, LOW);
-    
-    ledcWrite(PWM_CH_A_EN, 0);
-    ledcWrite(PWM_CH_B_EN, 0);
+
+    ledcWrite(MOTOR_A_EN, 0);
+    ledcWrite(MOTOR_B_EN, 0);
 }
 
 // Control Left Motor (Motor A)
@@ -38,17 +35,17 @@ void setMotorLeft(int speed) {
         // Forward
         digitalWrite(MOTOR_A_IN1, HIGH);
         digitalWrite(MOTOR_A_IN2, LOW);
-        ledcWrite(PWM_CH_A_EN, speed);
+        ledcWrite(MOTOR_A_EN, speed);
     } else if (speed < 0) {
         // Reverse
         digitalWrite(MOTOR_A_IN1, LOW);
         digitalWrite(MOTOR_A_IN2, HIGH);
-        ledcWrite(PWM_CH_A_EN, -speed);
+        ledcWrite(MOTOR_A_EN, -speed);
     } else {
         // Stop
         digitalWrite(MOTOR_A_IN1, LOW);
         digitalWrite(MOTOR_A_IN2, LOW);
-        ledcWrite(PWM_CH_A_EN, 0);
+        ledcWrite(MOTOR_A_EN, 0);
     }
 }
 
@@ -60,17 +57,17 @@ void setMotorRight(int speed) {
         // Forward
         digitalWrite(MOTOR_B_IN3, HIGH);
         digitalWrite(MOTOR_B_IN4, LOW);
-        ledcWrite(PWM_CH_B_EN, speed);
+        ledcWrite(MOTOR_B_EN, speed);
     } else if (speed < 0) {
         // Reverse
         digitalWrite(MOTOR_B_IN3, LOW);
         digitalWrite(MOTOR_B_IN4, HIGH);
-        ledcWrite(PWM_CH_B_EN, -speed);
+        ledcWrite(MOTOR_B_EN, -speed);
     } else {
         // Stop
         digitalWrite(MOTOR_B_IN3, LOW);
         digitalWrite(MOTOR_B_IN4, LOW);
-        ledcWrite(PWM_CH_B_EN, 0);
+        ledcWrite(MOTOR_B_EN, 0);
     }
 }
 
