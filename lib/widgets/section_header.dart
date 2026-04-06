@@ -27,13 +27,6 @@ class SectionHeader extends StatelessWidget {
                   const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
                 ],
               ),
-            )
-          else
-            const Row(
-              children: [
-                const Text('ดูทั้งหมด', style: TextStyle(color: Colors.grey, fontSize: 14)),
-                const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
-              ],
             ),
         ],
       ),

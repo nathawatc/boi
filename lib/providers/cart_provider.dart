@@ -80,8 +80,8 @@ class CartProvider with ChangeNotifier {
   List<Coupon> get collectedCoupons => _availableCoupons.where((c) => c.isCollected).toList();
 
   CartProvider() {
-    // Countdown timer that only runs when there are active orders
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    // Countdown timer: fires every 60 seconds (1 real minute per estimated minute)
+    _timer = Timer.periodic(const Duration(seconds: 60), (timer) {
       // Check if there are any active orders
       final hasActiveOrders = _orders.any((o) => o.status == 'กำลังจัดส่ง' && o.estimatedMinutes > 1);
 

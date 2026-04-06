@@ -466,18 +466,17 @@ class _PaymentPageState extends State<PaymentPage> {
 
   /// Safely navigate back to the home page by popping until reaching root
   void _navigateToHomePage(BuildContext context) {
+    // Capture the CartProvider BEFORE popping routes (context becomes unmounted after pop)
+    final cartProvider = context.read<CartProvider>();
+
     // Pop until we reach the root (HomePage), using a safe approach
     int popCount = 0;
     while (Navigator.of(context).canPop() && popCount < 3) {
       Navigator.of(context).pop();
       popCount++;
     }
-    // Set tab index to 0 (Home) after navigation, since the button says 'back to home'
-    Future.microtask(() {
-      if (context.mounted) {
-        context.read<CartProvider>().setTabIndex(0);
-      }
-    });
+    // Set tab index to 0 (Home) after navigation
+    cartProvider.setTabIndex(0);
   }
 
   void _handlePaymentConfirmation(BuildContext context) {

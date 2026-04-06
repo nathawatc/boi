@@ -127,16 +127,6 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
       bottomNavigationBar: BottomNavigationBar(
         elevation: 10,
         currentIndex: 0, // Default to home icon
-        onTap: (index) {
-          // Navigate to home page first
-          Navigator.pop(context);
-          // Then set the tab index using microtask to ensure proper sequencing
-          Future.microtask(() {
-            if (context.mounted) {
-              context.read<CartProvider>().setTabIndex(index);
-            }
-          });
-        },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: AppTheme.primaryGreen,
         items: [
@@ -167,6 +157,11 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
           const BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'คูปอง'),
           const BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: 'อื่น ๆ'),
         ],
+        onTap: (index) {
+          // Set tab index BEFORE popping so it executes reliably
+          context.read<CartProvider>().setTabIndex(index);
+          Navigator.pop(context);
+        },
       ),
     );
   }
