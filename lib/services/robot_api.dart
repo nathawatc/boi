@@ -71,15 +71,23 @@ class RobotResponse {
 /// - Connection status tracking
 /// - Network discovery capabilities
 /// - Proper error handling
+/// - Multiple robot support
 class RobotApi extends ChangeNotifier {
   RobotConnectionStatus _connectionStatus = RobotConnectionStatus.disconnected;
   String? _lastKnownIp;
   RobotConfig _config = RobotConfig.defaults;
 
+  // Multiple robot support
+  final List<String> _discoveredRobots = [];
+  String? _selectedRobotIp;
+
   // Getters
   RobotConnectionStatus get connectionStatus => _connectionStatus;
   String? get lastKnownIp => _lastKnownIp;
   bool get isConnected => _connectionStatus == RobotConnectionStatus.connected;
+  List<String> get discoveredRobots => List.unmodifiable(_discoveredRobots);
+  String? get selectedRobotIp => _selectedRobotIp;
+  bool get hasMultipleRobots => _discoveredRobots.length > 1;
 
   /// Update configuration
   void configure(RobotConfig config) {
@@ -101,8 +109,8 @@ class RobotApi extends ChangeNotifier {
       _connectionStatus = RobotConnectionStatus.connecting;
       notifyListeners();
 
-      // Determine target IP address
-      String? targetIp = effectiveConfig.ipAddress ?? _lastKnownIp;
+      // Determine target IP address (use selected robot if available)
+      String? targetIp = effectiveConfig.ipAddress ?? _selectedRobotIp ?? _lastKnownIp;
 
       // Create UDP socket
       final socket = await RawDatagramSocket.bind(
@@ -288,6 +296,94 @@ class RobotApi extends ChangeNotifier {
     }).catchError((e) {
       debugPrint('Auto-discovery error: $e');
     });
+  }
+
+  /// Discover all robots on network by sending broadcast ping
+  /// Returns list of IP addresses of all responding robots
+  Future<List<String>> discoverAllRobots({Duration? timeout}) async {
+    final effectiveTimeout = timeout ?? const Duration(seconds: 3);
+    final Set<String> foundIps = {};
+
+    try {
+      // Get broadcast address
+      final broadcastAddress = await _getBroadcastAddress();
+
+      // Create UDP socket
+      final socket = await RawDatagramSocket.bind(
+        InternetAddress.anyIPv4,
+        _config.port,
+      );
+
+      try {
+        socket.broadcastEnabled = true;
+
+        // Send discovery command multiple times
+        for (int i = 0; i < 5; i++) {
+          socket.send(
+            RobotCommand.stop.value.codeUnits,
+            InternetAddress(broadcastAddress),
+            _config.port,
+          );
+          await Future.delayed(const Duration(milliseconds: 100));
+        }
+
+        // Listen for responses with timeout
+        final stopwatch = Stopwatch()..start();
+        await for (final event in socket.timeout(effectiveTimeout)) {
+          if (event == RawSocketEvent.read) {
+            final datagram = socket.receive();
+            if (datagram != null) {
+              foundIps.add(datagram.address.address);
+              debugPrint('[Discovery] Found robot at: ${datagram.address.address}');
+            }
+          }
+        }
+        stopwatch.stop();
+      } on TimeoutException {
+        // Expected timeout, not an error
+        debugPrint('[Discovery] Discovery timeout reached');
+      } finally {
+        socket.close();
+      }
+
+      _discoveredRobots.clear();
+      _discoveredRobots.addAll(foundIps);
+
+      // Auto-select first robot if only one found
+      if (foundIps.length == 1) {
+        _selectedRobotIp = foundIps.first;
+      }
+
+      debugPrint('[Discovery] Found ${foundIps.length} robot(s): ${foundIps.join(", ")}');
+      notifyListeners();
+
+      return List.unmodifiable(foundIps);
+    } catch (e) {
+      debugPrint('Error during robot discovery: $e');
+      return [];
+    }
+  }
+
+  /// Select a specific robot by IP address
+  void selectRobot(String ip) {
+    if (_discoveredRobots.contains(ip)) {
+      _selectedRobotIp = ip;
+      _lastKnownIp = ip;
+      debugPrint('[RobotApi] Selected robot at: $ip');
+      notifyListeners();
+    }
+  }
+
+  /// Clear selected robot (revert to broadcast mode)
+  void clearSelectedRobot() {
+    _selectedRobotIp = null;
+    debugPrint('[RobotApi] Cleared robot selection (broadcast mode)');
+    notifyListeners();
+  }
+
+  /// Refresh discovered robots list
+  Future<void> refreshRobots() async {
+    await discoverAllRobots();
   }
 
   /// Reset connection status

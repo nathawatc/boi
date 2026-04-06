@@ -75,6 +75,41 @@ class _RobotControlPageState extends State<RobotControlPage> {
     setState(() => _pressedButtons.remove(buttonId));
   }
 
+  Future<void> _refreshRobots() async {
+    final robotApi = context.read<RobotApi>();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('กำลังค้นหาหุ่นยนต์...'),
+        duration: Duration(seconds: 3),
+        backgroundColor: Colors.blue,
+      ),
+    );
+
+    final robots = await robotApi.discoverAllRobots();
+
+    if (!mounted) return;
+
+    if (robots.isNotEmpty) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('พบหุ่นยนต์ ${robots.length} ตัว'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      setState(() {}); // Refresh UI
+    } else {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('ไม่พบหุ่นยนต์บนเครือข่าย'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,6 +119,14 @@ class _RobotControlPageState extends State<RobotControlPage> {
         backgroundColor: AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          // Refresh button
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _refreshRobots,
+            tooltip: 'ค้นหาหุ่นยนต์ใหม่',
+          ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -100,6 +143,11 @@ class _RobotControlPageState extends State<RobotControlPage> {
 
               // Connection Status Header
               _buildConnectionStatus(),
+
+              const SizedBox(height: 16),
+
+              // Robot Selector Dropdown
+              _buildRobotSelector(),
 
               const SizedBox(height: 24),
 
@@ -171,10 +219,10 @@ class _RobotControlPageState extends State<RobotControlPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              if (robotApi.lastKnownIp != null) ...[
+              if (robotApi.selectedRobotIp != null) ...[
                 const SizedBox(width: 12),
                 Text(
-                  robotApi.lastKnownIp!,
+                  robotApi.selectedRobotIp!,
                   style: TextStyle(
                     color: _getStatusColor(status).withOpacity(0.6),
                     fontSize: 12,
@@ -182,6 +230,130 @@ class _RobotControlPageState extends State<RobotControlPage> {
                   ),
                 ),
               ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildRobotSelector() {
+    return ListenableBuilder(
+      listenable: context.read<RobotApi>(),
+      builder: (context, child) {
+        final robotApi = context.read<RobotApi>();
+        final robots = robotApi.discoveredRobots;
+        final selectedIp = robotApi.selectedRobotIp;
+
+        // If no robots discovered, show broadcast mode
+        if (robots.isEmpty) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.wifi_tethering, color: Colors.grey, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'โหมดกระจายสัญญาณ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Text(
+                        'ส่งคำสั่งไปทุกหุ่นยนต์',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                TextButton(
+                  onPressed: _refreshRobots,
+                  child: const Text('ค้นหา'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        // Show dropdown for multiple robots
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          margin: const EdgeInsets.symmetric(horizontal: 24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppTheme.primaryGreen.withOpacity(0.3)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.smart_toy, color: AppTheme.primaryGreen, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: selectedIp,
+                    hint: const Text('เลือกหุ่นยนต์'),
+                    isExpanded: true,
+                    icon: const Icon(Icons.arrow_drop_down),
+                    items: [
+                      // Broadcast option
+                      const DropdownMenuItem<String>(
+                        value: null,
+                        child: Text(
+                          'ทั้งหมด (กระจายสัญญาณ)',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                      // Individual robots
+                      ...robots.map((ip) {
+                        return DropdownMenuItem<String>(
+                          value: ip,
+                          child: Text(
+                            ip,
+                            style: const TextStyle(fontSize: 13),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      }),
+                    ],
+                    onChanged: (ip) {
+                      if (ip != null) {
+                        robotApi.selectRobot(ip);
+                      } else {
+                        robotApi.clearSelectedRobot();
+                      }
+                    },
+                  ),
+                ),
+              ),
+              if (selectedIp != null)
+                IconButton(
+                  icon: const Icon(Icons.clear, size: 20),
+                  onPressed: () => robotApi.clearSelectedRobot(),
+                  tooltip: 'ยกเลิกการเลือก',
+                ),
             ],
           ),
         );
