@@ -927,15 +927,18 @@ class _MoreMenuItem extends StatelessWidget {
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: enabled ? Colors.black87 : Colors.grey,
+          color: enabled ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: const TextStyle(fontSize: 13),
+        style: TextStyle(
+          fontSize: 13,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
       ),
       trailing: enabled
-          ? const Icon(Icons.chevron_right, color: Colors.grey)
+          ? Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurfaceVariant)
           : null,
       enabled: enabled,
     );
