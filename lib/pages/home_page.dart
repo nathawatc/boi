@@ -13,6 +13,7 @@ import '../widgets/robot_status_indicator.dart';
 import 'cart_page.dart';
 import 'order_history_page.dart';
 import 'coupon_page.dart';
+import 'robot_control_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,21 +23,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static const List<Widget> _pages = [
-    HomeContent(),
-    OrderHistoryPage(),
-    CartPage(),
-    CouponPage(),
-    Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.more_horiz, size: 80, color: Colors.grey),
-          SizedBox(height: 16),
-          Text('เมนูอื่น ๆ กำลังตามมาเร็วๆ นี้', style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.bold)),
-        ],
-      ),
-    ),
+  List<Widget> get _pages => [
+    const HomeContent(),
+    const OrderHistoryPage(),
+    const CartPage(),
+    const CouponPage(),
+    const MoreMenuPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -619,6 +611,109 @@ class _CircularIcon extends StatelessWidget {
       child: icon != null
         ? Icon(icon, color: Colors.white, size: 20)
         : Text(label!, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+    );
+  }
+}
+
+/// More menu page with list of options
+class MoreMenuPage extends StatelessWidget {
+  const MoreMenuPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      ),
+      child: ListView(
+        children: [
+          const SizedBox(height: 16),
+          _MoreMenuItem(
+            icon: Icons.gamepad,
+            iconColor: AppTheme.primaryGreen,
+            title: 'ควบคุมหุ่นยนต์ด้วยมือ',
+            subtitle: 'ควบคุมการเคลื่อนที่ของหุ่นยนต์',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const RobotControlPage(),
+                ),
+              );
+            },
+          ),
+          const Divider(height: 1, indent: 72),
+          _MoreMenuItem(
+            icon: Icons.settings,
+            iconColor: Colors.grey,
+            title: 'ตั้งค่า',
+            subtitle: 'กำลังพัฒนาเร็วๆ นี้',
+            enabled: false,
+          ),
+          const Divider(height: 1, indent: 72),
+          _MoreMenuItem(
+            icon: Icons.help_outline,
+            iconColor: Colors.grey,
+            title: 'ช่วยเหลือ',
+            subtitle: 'กำลังพัฒนาเร็วๆ นี้',
+            enabled: false,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MoreMenuItem extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String subtitle;
+  final VoidCallback? onTap;
+  final bool enabled;
+
+  const _MoreMenuItem({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.subtitle,
+    this.onTap,
+    this.enabled = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: enabled ? onTap : null,
+      leading: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: iconColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(
+          icon,
+          color: iconColor,
+          size: 24,
+        ),
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: enabled ? Colors.black87 : Colors.grey,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: const TextStyle(fontSize: 13),
+      ),
+      trailing: enabled
+          ? const Icon(Icons.chevron_right, color: Colors.grey)
+          : null,
+      enabled: enabled,
     );
   }
 }
