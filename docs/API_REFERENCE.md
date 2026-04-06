@@ -14,7 +14,8 @@ lib/services/robot_api.dart
 
 ## Overview
 
-The `RobotApi` service provides a clean, type-safe interface for sending commands to the ESP32 robot via UDP. It handles connection tracking, error handling, and automatic broadcast address detection.
+The `RobotApi` service provides a clean, type-safe interface for sending commands to the ESP32 robot via UDP. It handles
+connection tracking, error handling, and automatic broadcast address detection.
 
 ---
 
@@ -289,7 +290,7 @@ await robotApi.turnRight();
 
 ---
 
-#### stop()
+#### Stop()
 
 ```dart
 Future<RobotResponse> stop({RobotConfig? config})
@@ -352,7 +353,7 @@ if (ip != null) {
 
 ---
 
-### configure()
+### Configure()
 
 Update robot configuration.
 
@@ -373,7 +374,7 @@ robotApi.configure(RobotConfig(
 
 ---
 
-### reset()
+### Reset()
 
 Reset connection status.
 

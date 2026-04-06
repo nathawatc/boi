@@ -55,7 +55,7 @@ RobotConfig config = RobotConfig(
 
 ---
 
-## Setting Up Phone Hotspot
+## Setting up Phone Hotspot
 
 ### Android
 

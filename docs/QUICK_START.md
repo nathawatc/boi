@@ -31,7 +31,7 @@ Get your Boi delivery robot system up and running in 5 minutes.
 
 ## Step-by-Step Setup
 
-### Step 1: Set Up WiFi Hotspot
+### Step 1: Set up WiFi Hotspot
 
 1. On your smartphone, go to **Settings > Hotspot & Tethering**
 2. Turn on **WiFi Hotspot**
@@ -70,7 +70,7 @@ Get your Boi delivery robot system up and running in 5 minutes.
    - Set baud rate to **115200**
    - You should see:
 
-     ```
+     ```text
      Connecting to WiFi: Boi....
      WiFi Connected
      IP Address: 192.168.43.XXX
@@ -107,7 +107,7 @@ Get your Boi delivery robot system up and running in 5 minutes.
 
 ```bash
    flutter run
-   ```
+```
 
 ---
 
@@ -129,9 +129,9 @@ Get your Boi delivery robot system up and running in 5 minutes.
 3. **Alternative: Test with Serial Monitor**
    - In Arduino Serial Monitor, you should see:
 
-   ```
+   ```text
      Received UDP command: F
-     ```
+   ```
 
 ---
 

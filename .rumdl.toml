@@ -1,0 +1,13 @@
+[global]
+
+# Add opt-in rules on top of defaults (additive)
+extend-enable = ["MD060", "MD063"]
+
+# Set global line length (used by MD013 and other line-length rules)
+line_length = 120
+
+# Disable specific rules for specific files
+[per-file-ignores]
+"docs/*.md" = ["MD036"]
+"docs/SYSTEM_OVERVIEW.md" = ["MD013"]
+"docs/CODE_STRUCTURE.md" = ["MD013"]

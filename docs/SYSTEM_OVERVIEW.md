@@ -1,6 +1,6 @@
 # System Overview
 
-## What is Boi?
+## What Is Boi?
 
 Boi is an autonomous delivery robot system consisting of:
 
