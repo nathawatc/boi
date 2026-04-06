@@ -223,7 +223,7 @@ class HomeContent extends StatelessWidget {
               Consumer<CartProvider>(
                 builder: (context, cart, child) {
                   return SizedBox(
-                    height: 100,
+                    height: 110,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
