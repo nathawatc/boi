@@ -6,7 +6,7 @@ Complete documentation for the `RobotApi` service layer that handles communicati
 
 ## Location
 
-```
+```text
 lib/services/robot_api.dart
 ```
 
@@ -682,14 +682,14 @@ The API includes built-in debug logging:
 
 ### Example Debug Output
 
-```
+```text
 Sending command "F" to 255.255.255.255:2001
 Command "F" sent successfully (3x redundancy)
 ```
 
 Or on error:
 
-```
+```text
 Socket error sending command: SocketException: Permission denied
 ```
 

@@ -8,7 +8,7 @@ Complete guide to configuring network communication between Flutter app and ESP3
 
 ### Network Type: Phone WiFi Hotspot (Local Ad-Hoc Network)
 
-```
+```text
 ┌──────────────────────────────────────┐
 │      Phone (Flutter App)                                                     │
 │                                                                                                │
@@ -150,7 +150,7 @@ If using a standard WiFi router instead of phone hotspot:
 
 Check Arduino Serial Monitor after boot:
 
-```
+```text
 WiFi Connected
 IP Address: 192.168.43.156
 ```
@@ -236,7 +236,7 @@ if (command.startsWith("F:") && verifyToken(token)) {
 
 **Symptoms**:
 
-```
+```text
 Connecting to WiFi: Boi..............
 (retries forever)
 ```
@@ -312,9 +312,11 @@ Connecting to WiFi: Boi..............
 
 1. **Check Signal Strength**
    - Serial Monitor shows RSSI:
+
      ```cpp
      Serial.println(WiFi.RSSI());
      ```
+
    - Should be > -70 dBm
    - -50 is excellent, -90 is unusable
 
@@ -324,6 +326,7 @@ Connecting to WiFi: Boi..............
    - Use hotspot instead of router
 
 3. **Increase Redundancy**
+
    ```dart
    // In robot_api.dart
    RobotConfig config = RobotConfig(

@@ -263,11 +263,11 @@ class CartProvider with ChangeNotifier {
 - ✅ Incoming call notification UI
 - ✅ Rating dialog after delivery
 - ✅ Loading states and error dialogs
+- ✅ Robot connection status indicator
+- ✅ Manual robot control page
 
 ### In Progress
 
-- ⏳ Robot connection status indicator
-- ⏳ Manual robot control page
 - ⏳ Real-time order tracking on map
 
 ---
