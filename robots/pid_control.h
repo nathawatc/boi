@@ -8,6 +8,7 @@
 // Variables for PID control
 float previous_error = 0;
 float integral = 0;
+const float INTEGRAL_MAX = 100.0; // Clamp to prevent integral windup
 
 // Function to read line sensors and calculate error
 // Assuming 3 sensors (Left, Center, Right) returning 1 on black line, 0 on white
@@ -45,6 +46,9 @@ void updatePID() {
     // Calculate PID terms
     float proportional = error;
     integral += error;
+    // Clamp integral to prevent windup
+    if (integral > INTEGRAL_MAX) integral = INTEGRAL_MAX;
+    if (integral < -INTEGRAL_MAX) integral = -INTEGRAL_MAX;
     float derivative = error - previous_error;
 
     // Calculate control output

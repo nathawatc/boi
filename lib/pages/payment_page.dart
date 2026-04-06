@@ -472,10 +472,10 @@ class _PaymentPageState extends State<PaymentPage> {
       Navigator.of(context).pop();
       popCount++;
     }
-    // Set tab index after navigation
+    // Set tab index to 0 (Home) after navigation, since the button says 'back to home'
     Future.microtask(() {
       if (context.mounted) {
-        context.read<CartProvider>().setTabIndex(1);
+        context.read<CartProvider>().setTabIndex(0);
       }
     });
   }

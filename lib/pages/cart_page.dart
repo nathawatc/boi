@@ -36,7 +36,7 @@ class CartPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'ไม่มีสินค้าในตระกร้า',
+                      'ไม่มีสินค้าในตะกร้า',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                         fontSize: 16,
@@ -357,8 +357,8 @@ class CartPage extends StatelessWidget {
                             ElevatedButton(
                               onPressed: () {
                                 cart.applyCoupon(coupon.code);
-                                Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ใช้คูปองสำเร็จ!'), backgroundColor: Colors.green));
+                                Navigator.pop(context);
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppTheme.primarySky,

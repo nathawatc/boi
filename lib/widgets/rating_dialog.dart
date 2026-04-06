@@ -14,6 +14,12 @@ class _RatingDialogState extends State<RatingDialog> {
   final TextEditingController _commentController = TextEditingController();
 
   @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(

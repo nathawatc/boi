@@ -61,7 +61,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           color: Theme.of(context).colorScheme.primaryContainer,
                           child: Center(
                             child: Icon(
-                              widget.icon ?? Icons.fastfood_rounded,
+                              widget.icon ?? Icons.fastfood,
                               size: (expandedHeight * 0.5).clamp(100.0, 150.0),
                               color: AppTheme.primarySky,
                             ),

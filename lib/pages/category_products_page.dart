@@ -82,7 +82,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
               builder: (context, constraints) {
                 // Calculate cross axis count based on available width
                 final width = constraints.crossAxisExtent;
-                final crossAxisCount = width > 600 ? 3 : (width > 400 ? 2 : 2);
+                final crossAxisCount = width > 600 ? 3 : 2;
                 final childAspectRatio = width > 600 ? 0.85 : 0.75;
 
                 // Generate products

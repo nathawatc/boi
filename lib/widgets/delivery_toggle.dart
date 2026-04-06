@@ -24,6 +24,14 @@ class _DeliveryToggleState extends State<DeliveryToggle> {
   }
 
   @override
+  void didUpdateWidget(DeliveryToggle oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.immediateDelivery != widget.immediateDelivery) {
+      _immediateDelivery = widget.immediateDelivery;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       height: 46,
