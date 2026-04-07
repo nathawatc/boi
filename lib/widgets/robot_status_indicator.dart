@@ -34,9 +34,7 @@ class RobotStatusIndicator extends StatelessWidget {
           onTap: showTapToDiscover && !robotApi.isConnected
               ? () => _discoverRobot(context)
               : null,
-          onLongPress: onSettingsTap != null
-              ? onSettingsTap
-              : () => _showManualIpDialog(context),
+          onLongPress: onSettingsTap ?? () => _showManualIpDialog(context),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
