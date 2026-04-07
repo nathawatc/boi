@@ -17,7 +17,7 @@ float calculateLineError() {
     int left = digitalRead(SENSOR_LINE_LEFT);
     int center = digitalRead(SENSOR_LINE_CENTER);
     int right = digitalRead(SENSOR_LINE_RIGHT);
-    
+
     static bool line_found = true;
 
     if (left == 0 && center == 1 && right == 0) {
@@ -40,12 +40,12 @@ float calculateLineError() {
         return 0; // Intersection or all black
     } else if (left == 0 && center == 0 && right == 0) {
         static unsigned long line_lost_time = 0;
-        
+
         if (line_found) {
             line_lost_time = millis();
             line_found = false;
         }
-        
+
         // Alternate direction every 500ms for proper search pattern
         unsigned long elapsed = millis() - line_lost_time;
         return ((elapsed / 500) % 2 == 0) ? 3 : -3;
@@ -60,14 +60,14 @@ void updatePID() {
 
     // Calculate PID terms
     float proportional = error;
-    
+
     if (PID_KI > 0.0f) {
         integral += error;
         // Clamp integral to prevent windup
         if (integral > INTEGRAL_MAX) integral = INTEGRAL_MAX;
         if (integral < -INTEGRAL_MAX) integral = -INTEGRAL_MAX;
     }
-    
+
     float derivative = error - previous_error;
 
     // Calculate control output

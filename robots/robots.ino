@@ -103,7 +103,7 @@ void loop() {
     isLineFollowing = false;
     isMovingManually = false;
     Serial.println("Motors stopped for safety during WiFi reconnection.");
-    
+
     WiFi.disconnect();
     delay(500);
     // Use WiFi.begin for reconnection (more reliable than WiFi.reconnect on ESP32 Core 3.x)
@@ -173,7 +173,7 @@ void loop() {
     }
 
     Serial.printf("Received UDP command: %s from %s:%d\n", packetBuffer, remoteIp.toString().c_str(), remotePort);
-    
+
     bool validCommand = false;
 
     if (strcmp(packetBuffer, "F") == 0) {
@@ -217,7 +217,7 @@ void loop() {
       Serial.println("Unknown Command ignored");
       sendResponse("ERR", remoteIp, remotePort);
     }
-    
+
     // Only reset safety timer for valid commands
     if (validCommand) {
       lastCommandTime = millis();
