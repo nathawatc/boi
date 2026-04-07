@@ -17,11 +17,12 @@ void initMotors() {
     ledcAttachChannel(MOTOR_A_EN, PWM_FREQ, PWM_RESOLUTION, PWM_CH_A_EN);
     ledcAttachChannel(MOTOR_B_EN, PWM_FREQ, PWM_RESOLUTION, PWM_CH_B_EN);
 
-    // Ensure motors are stopped initially
-    digitalWrite(MOTOR_A_IN1, LOW);
-    digitalWrite(MOTOR_A_IN2, LOW);
-    digitalWrite(MOTOR_B_IN3, LOW);
-    digitalWrite(MOTOR_B_IN4, LOW);
+    // FIX: Use brake mode (HIGH, HIGH) for consistency with stopMotors()
+    // Previously used coast mode (LOW, LOW) which was inconsistent
+    digitalWrite(MOTOR_A_IN1, HIGH);
+    digitalWrite(MOTOR_A_IN2, HIGH);
+    digitalWrite(MOTOR_B_IN3, HIGH);
+    digitalWrite(MOTOR_B_IN4, HIGH);
 
     ledcWrite(MOTOR_A_EN, 0);
     ledcWrite(MOTOR_B_EN, 0);

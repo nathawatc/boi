@@ -123,13 +123,15 @@ void loop() {
       Serial.println("\nWiFi Reconnected Successfully!");
       Serial.print("IP Address: ");
       Serial.println(WiFi.localIP());
-      // Restart UDP on new connection
-      udp.stop();
-      udp.begin(UDP_PORT);
-      Serial.printf("Re-listening on UDP port %d\n", UDP_PORT);
     } else {
       Serial.println("\nWiFi Reconnect Failed");
     }
+    
+    // FIX: Always restart UDP to ensure clean state
+    // Previously only restarted on successful reconnect
+    udp.stop();
+    udp.begin(UDP_PORT);
+    Serial.printf("UDP restarted on port %d\n", UDP_PORT);
 
     previousWiFiCheckMillis = currentMillis;
   }
@@ -179,35 +181,44 @@ void loop() {
     }
 
     Serial.printf("Received UDP command: %s from %s:%d\n", packetBuffer, remoteIp.toString().c_str(), remotePort);
-    lastCommandTime = millis(); // Reset safety timer
+    
+    // FIX: Only reset safety timer on valid commands
+    // Previously reset on all packets, preventing timeout if garbage floods in
+    bool validCommand = false;
 
     // Process commands using strcmp() instead of String comparison
     if (strcmp(packetBuffer, "F") == 0) {
+      validCommand = true;
       isLineFollowing = false;
       isMovingManually = true;
       moveRobot(MAX_SPEED, MAX_SPEED);
       sendResponse("F", remoteIp, remotePort);
     } else if (strcmp(packetBuffer, "B") == 0) {
+      validCommand = true;
       isLineFollowing = false;
       isMovingManually = true;
       moveRobot(-MAX_SPEED, -MAX_SPEED);
       sendResponse("B", remoteIp, remotePort);
     } else if (strcmp(packetBuffer, "L") == 0) {
+      validCommand = true;
       isLineFollowing = false;
       isMovingManually = true;
       moveRobot(-BASE_SPEED, BASE_SPEED);
       sendResponse("L", remoteIp, remotePort);
     } else if (strcmp(packetBuffer, "R") == 0) {
+      validCommand = true;
       isLineFollowing = false;
       isMovingManually = true;
       moveRobot(BASE_SPEED, -BASE_SPEED);
       sendResponse("R", remoteIp, remotePort);
     } else if (strcmp(packetBuffer, "S") == 0) {
+      validCommand = true;
       isLineFollowing = false;
       isMovingManually = false;
       stopMotors();
       sendResponse("S", remoteIp, remotePort);
     } else if (strcmp(packetBuffer, "LF") == 0) {
+      validCommand = true;
       isLineFollowing = true;
       isMovingManually = false;
       resetPID();
@@ -216,6 +227,11 @@ void loop() {
     } else {
       Serial.println("Unknown Command ignored");
       sendResponse("ERR", remoteIp, remotePort);
+    }
+    
+    // Only reset safety timer for valid commands
+    if (validCommand) {
+      lastCommandTime = millis();
     }
   }
 
@@ -242,11 +258,16 @@ void loop() {
   }
 
   // ---------------------------------------------------------
-  // 6. PID CONTINUOUS EXECUTION
+  // 6. PID CONTINUOUS EXECUTION (Non-blocking)
   // ---------------------------------------------------------
-  // If in line following mode, continuously update PID control
+  // FIX: Use non-blocking timing instead of delay(10)
+  // Previously, delay(10) blocked all other processing (WiFi, obstacles, UDP)
+  // Now PID updates at ~100Hz while keeping loop responsive
   if (isLineFollowing) {
-    updatePID();
-    delay(10); // Small delay for PID stability calculation
+    static unsigned long lastPidUpdate = 0;
+    if (currentMillis - lastPidUpdate >= 10) {
+      updatePID();
+      lastPidUpdate = currentMillis;
+    }
   }
 }

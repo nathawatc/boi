@@ -66,10 +66,15 @@ void updatePID() {
 
     // Calculate PID terms
     float proportional = error;
-    integral += error;
-    // Clamp integral to prevent windup
-    if (integral > INTEGRAL_MAX) integral = INTEGRAL_MAX;
-    if (integral < -INTEGRAL_MAX) integral = -INTEGRAL_MAX;
+    
+    // FIX: Only compute integral if KI > 0 (saves CPU when using P-only or PD control)
+    if (PID_KI > 0.0f) {
+        integral += error;
+        // Clamp integral to prevent windup
+        if (integral > INTEGRAL_MAX) integral = INTEGRAL_MAX;
+        if (integral < -INTEGRAL_MAX) integral = -INTEGRAL_MAX;
+    }
+    
     float derivative = error - previous_error;
 
     // Calculate control output
