@@ -45,7 +45,7 @@ class OrderDetailPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.error_outline, size: 80, color: Colors.grey.withOpacity(0.5)),
+                  Icon(Icons.error_outline, size: 80, color: Colors.grey.withValues(alpha: 0.5)),
                   const SizedBox(height: 16),
                   const Text('ไม่พบคำสั่งซื้อนี้',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -91,7 +91,7 @@ class OrderDetailPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
+                        color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.15),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),

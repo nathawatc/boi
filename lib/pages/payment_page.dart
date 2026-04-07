@@ -82,7 +82,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.3)),
+                          border: Border.all(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3)),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -120,7 +120,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
-                  BoxShadow(color: Theme.of(context).colorScheme.shadow.withOpacity(0.15), blurRadius: 20, offset: const Offset(0, 10)),
+                  BoxShadow(color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.15), blurRadius: 20, offset: const Offset(0, 10)),
                 ],
               ),
               child: Column(
@@ -167,7 +167,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryGreen.withOpacity(0.1),
+                          color: AppTheme.primaryGreen.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -284,7 +284,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       ? () => _handlePaymentConfirmation(context)
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isConnected ? AppTheme.primaryGreen : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                    backgroundColor: isConnected ? AppTheme.primaryGreen : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 56),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -363,7 +363,7 @@ class _PaymentPageState extends State<PaymentPage> {
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: color),
@@ -404,7 +404,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 _navigateToHomePage(context);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.gradientEnd.withOpacity(0.8),
+                backgroundColor: AppTheme.gradientEnd.withValues(alpha: 0.8),
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 56),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

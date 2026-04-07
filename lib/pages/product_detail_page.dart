@@ -132,7 +132,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           boxShadow: [
-            BoxShadow(color: Theme.of(context).colorScheme.shadow.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, -5)),
+            BoxShadow(color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.15), blurRadius: 10, offset: const Offset(0, -5)),
           ],
         ),
         child: SafeArea(

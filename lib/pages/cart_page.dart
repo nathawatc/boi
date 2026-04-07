@@ -32,13 +32,13 @@ class CartPage extends StatelessWidget {
                     Icon(
                       Icons.shopping_cart_outlined,
                       size: 80,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
                     ),
                     const SizedBox(height: 16),
                     Text(
                       'ไม่มีสินค้าในตะกร้า',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                         fontSize: 16,
                       ),
                     ),
@@ -179,7 +179,7 @@ class CartPage extends StatelessWidget {
                     color: Theme.of(context).colorScheme.surface,
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
+                        color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.15),
                         blurRadius: 10,
                         offset: const Offset(0, -5),
                       ),

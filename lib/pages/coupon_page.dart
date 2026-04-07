@@ -94,7 +94,7 @@ class _LargeCouponCard extends StatelessWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Theme.of(context).colorScheme.shadow.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.15), blurRadius: 10, offset: const Offset(0, 4)),
         ],
       ),
       child: Stack(
@@ -106,7 +106,7 @@ class _LargeCouponCard extends StatelessWidget {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: AppTheme.primarySky.withOpacity(0.1),
+                  color: AppTheme.primarySky.withValues(alpha: 0.1),
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), bottomLeft: Radius.circular(16)),
                 ),
                 child: Column(
@@ -167,7 +167,7 @@ class _LargeCouponCard extends StatelessWidget {
                                 context.read<CartProvider>().collectCoupon(coupon.code);
                               },
                             style: TextButton.styleFrom(
-                              backgroundColor: coupon.isCollected ? Theme.of(context).colorScheme.surfaceContainerHighest : (coupon.isExpired ? Theme.of(context).colorScheme.surfaceContainerHighest : AppTheme.primarySky.withOpacity(0.1)),
+                              backgroundColor: coupon.isCollected ? Theme.of(context).colorScheme.surfaceContainerHighest : (coupon.isExpired ? Theme.of(context).colorScheme.surfaceContainerHighest : AppTheme.primarySky.withValues(alpha: 0.1)),
                               foregroundColor: coupon.isCollected ? Theme.of(context).colorScheme.onSurfaceVariant : (coupon.isExpired ? Theme.of(context).colorScheme.onSurfaceVariant : AppTheme.primarySky),
                               padding: const EdgeInsets.symmetric(horizontal: 16),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),

@@ -100,12 +100,12 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
                                 color: Theme.of(context).colorScheme.surface,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppTheme.primaryGreen.withOpacity(0.15),
+                                    color: AppTheme.primaryGreen.withValues(alpha: 0.15),
                                     blurRadius: 35,
                                     spreadRadius: 5
                                   ),
                                   BoxShadow(
-                                    color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
+                                    color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.15),
                                     blurRadius: 15,
                                     offset: const Offset(0, 5)
                                   ),
@@ -214,7 +214,7 @@ class _IncomingCallWidgetState extends State<IncomingCallWidget> with SingleTick
           height: baseSize * currentScale,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppTheme.primaryGreen.withOpacity(currentOpacity),
+            color: AppTheme.primaryGreen.withValues(alpha: currentOpacity),
           ),
         );
       },

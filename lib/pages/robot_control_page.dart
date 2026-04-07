@@ -147,7 +147,7 @@ class _RobotControlPageState extends State<RobotControlPage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppTheme.primaryGreen.withOpacity(0.1), Theme.of(context).colorScheme.surface],
+            colors: [AppTheme.primaryGreen.withValues(alpha: 0.1), Theme.of(context).colorScheme.surface],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -201,7 +201,7 @@ class _RobotControlPageState extends State<RobotControlPage> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           margin: const EdgeInsets.symmetric(horizontal: 24),
           decoration: BoxDecoration(
-            color: _getStatusColor(status).withOpacity(0.1),
+            color: _getStatusColor(status).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: _getStatusColor(status),
@@ -219,7 +219,7 @@ class _RobotControlPageState extends State<RobotControlPage> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: _getStatusColor(status).withOpacity(0.5),
+                      color: _getStatusColor(status).withValues(alpha: 0.5),
                       blurRadius: 8,
                       spreadRadius: 2,
                     ),
@@ -240,7 +240,7 @@ class _RobotControlPageState extends State<RobotControlPage> {
                 Text(
                   robotApi.selectedRobotIp!,
                   style: TextStyle(
-                    color: _getStatusColor(status).withOpacity(0.6),
+                    color: _getStatusColor(status).withValues(alpha: 0.6),
                     fontSize: 12,
                     fontFamily: 'monospace',
                   ),
@@ -313,10 +313,10 @@ class _RobotControlPageState extends State<RobotControlPage> {
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.primaryGreen.withOpacity(0.3)),
+            border: Border.all(color: AppTheme.primaryGreen.withValues(alpha: 0.3)),
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
+                color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.15),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -524,7 +524,7 @@ class _RobotControlPageState extends State<RobotControlPage> {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: isPressed ? AppTheme.primaryGreen.withOpacity(0.3) : Theme.of(context).colorScheme.surface,
+          color: isPressed ? AppTheme.primaryGreen.withValues(alpha: 0.3) : Theme.of(context).colorScheme.surface,
           shape: BoxShape.circle,
           border: Border.all(
             color: isPressed ? AppTheme.primaryGreen : Theme.of(context).colorScheme.outline,
@@ -534,7 +534,7 @@ class _RobotControlPageState extends State<RobotControlPage> {
               ? []
               : [
                   BoxShadow(
-                    color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
+                    color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.15),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),

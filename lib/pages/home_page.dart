@@ -166,7 +166,7 @@ class HomeContent extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 4),
-                                Icon(Icons.keyboard_arrow_down, color: Colors.white.withOpacity(0.8), size: 18),
+                                Icon(Icons.keyboard_arrow_down, color: Colors.white.withValues(alpha: 0.8), size: 18),
                               ],
                             ),
                           ],
@@ -428,7 +428,7 @@ class _ServiceCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withOpacity(0.05),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 0.5,
             offset: const Offset(0, 3)
           ),
@@ -463,8 +463,8 @@ class _ServiceCard extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white.withOpacity(0.15)
-                    : (title == 'Drink' ? Colors.blue.shade50 : Colors.pink.shade50).withOpacity(0.5),
+                    ? Colors.white.withValues(alpha: 0.15)
+                    : (title == 'Drink' ? Colors.blue.shade50 : Colors.pink.shade50).withValues(alpha: 0.5),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -481,7 +481,7 @@ class _ServiceCard extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: (badgeColor ?? Colors.red).withOpacity(0.9),
+                color: (badgeColor ?? Colors.red).withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -521,7 +521,7 @@ class _CouponCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).colorScheme.shadow.withOpacity(0.05),
+                color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
                 blurRadius: 5,
                 offset: const Offset(0, 3),
               ),
@@ -540,7 +540,7 @@ class _CouponCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            AppTheme.primarySky.withOpacity(0.1),
+                            AppTheme.primarySky.withValues(alpha: 0.1),
                             Theme.of(context).colorScheme.surface,
                           ],
                           begin: Alignment.topLeft,
@@ -666,7 +666,7 @@ class _CircularIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: 18,
-      backgroundColor: Colors.white.withOpacity(0.2),
+      backgroundColor: Colors.white.withValues(alpha: 0.2),
       child: Icon(icon, color: Colors.white, size: 20),
     );
   }
@@ -701,7 +701,7 @@ class _MoreMenuPageState extends State<MoreMenuPage> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryGreen.withOpacity(0.1),
+                        color: AppTheme.primaryGreen.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(Icons.language, color: AppTheme.primaryGreen),
@@ -781,7 +781,7 @@ class _MoreMenuPageState extends State<MoreMenuPage> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryGreen.withOpacity(0.1),
+                        color: AppTheme.primaryGreen.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(Icons.dark_mode_outlined, color: AppTheme.primaryGreen),
@@ -932,7 +932,7 @@ class _MoreMenuItem extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: iconColor.withOpacity(0.1),
+          color: iconColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(
@@ -946,7 +946,7 @@ class _MoreMenuItem extends StatelessWidget {
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: enabled ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+          color: enabled ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
         ),
       ),
       subtitle: Text(

@@ -29,7 +29,7 @@ class OrderHistoryPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.history, size: 80, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
+                  Icon(Icons.history, size: 80, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
                   const SizedBox(height: 16),
                   Text('ยังไม่มีประวัติการซื้อ', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                 ],
@@ -54,7 +54,7 @@ class OrderHistoryPage extends StatelessWidget {
                       color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
-                        BoxShadow(color: Theme.of(context).colorScheme.shadow.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 4)),
+                        BoxShadow(color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.15), blurRadius: 10, offset: const Offset(0, 4)),
                       ],
                     ),
                     child: Column(
@@ -71,8 +71,8 @@ class OrderHistoryPage extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
                                 color: order.status == 'สำเร็จ'
-                                    ? Colors.green.withOpacity(0.1)
-                                    : (order.status == 'คำสั่งซื้อไม่สำเร็จ' ? Colors.red.withOpacity(0.1) : Colors.orange.withOpacity(0.1)),
+                                    ? Colors.green.withValues(alpha: 0.1)
+                                    : (order.status == 'คำสั่งซื้อไม่สำเร็จ' ? Colors.red.withValues(alpha: 0.1) : Colors.orange.withValues(alpha: 0.1)),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(

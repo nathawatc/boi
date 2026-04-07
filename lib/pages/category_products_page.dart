@@ -53,7 +53,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                   color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
-                    BoxShadow(color: Theme.of(context).colorScheme.shadow.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 4)),
+                    BoxShadow(color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.15), blurRadius: 10, offset: const Offset(0, 4)),
                   ],
                 ),
                 child: TextField(
@@ -182,7 +182,7 @@ class _ProductCard extends StatelessWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Theme.of(context).colorScheme.shadow.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.15), blurRadius: 10, offset: const Offset(0, 4)),
         ],
       ),
       child: Column(
@@ -270,7 +270,7 @@ class _ProductCard extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: AppTheme.primarySky.withOpacity(0.1),
+                          color: AppTheme.primarySky.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(Icons.add, color: AppTheme.primarySky, size: 18),

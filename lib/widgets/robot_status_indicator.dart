@@ -40,7 +40,7 @@ class RobotStatusIndicator extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: _getStatusColor(robotApi.connectionStatus).withOpacity(0.1),
+              color: _getStatusColor(robotApi.connectionStatus).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: _getStatusColor(robotApi.connectionStatus),
@@ -95,7 +95,7 @@ class RobotStatusIndicator extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.5),
+            color: color.withValues(alpha: 0.5),
             blurRadius: 6,
             spreadRadius: 2,
           ),
