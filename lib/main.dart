@@ -9,23 +9,28 @@ import 'providers/settings_provider.dart';
 import 'services/robot_api.dart';
 import 'widgets/incoming_call_widget.dart';
 
-void main() {
+void main() async {
+  // Ensure Flutter bindings are initialized
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize RobotApi before app starts
+  final robotApi = RobotApi();
+  try {
+    await robotApi.initialize();
+    debugPrint('[main] RobotApi initialized successfully');
+    // Auto-discover robot
+    robotApi.autoDiscover();
+  } catch (e) {
+    debugPrint('[main] RobotApi initialization failed: $e');
+  }
+
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
       builder: (context) => MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => CartProvider()),
-          ChangeNotifierProvider(create: (_) {
-            final robotApi = RobotApi();
-            // Initialize socket and auto-discover robot after app starts
-            robotApi.initialize().then((_) {
-              robotApi.autoDiscover();
-            }).catchError((e) {
-              debugPrint('[main] RobotApi initialization error: $e');
-            });
-            return robotApi;
-          }),
+          ChangeNotifierProvider.value(value: robotApi),
           ChangeNotifierProvider(create: (_) => SettingsProvider()),
         ],
         child: const BoiApp(),

@@ -18,6 +18,12 @@ const unsigned long COMMAND_TIMEOUT = 1500; // 1.5 seconds safety stop
 unsigned long previousWiFiCheckMillis = 0;
 const long WIFI_CHECK_INTERVAL = 5000; // Check WiFi every 5 seconds
 
+// Non-blocking WiFi reconnection state
+bool isReconnectingWiFi = false;
+unsigned long wifiReconnectStartTime = 0;
+const unsigned long WIFI_RECONNECT_TIMEOUT = 3500; // 3.5 seconds max for reconnect
+int wifiReconnectAttempt = 0;
+
 // Ultrasonic obstacle detection
 unsigned long lastObstacleCheck = 0;
 const long OBSTACLE_CHECK_INTERVAL = 200; // Check every 200ms
@@ -96,7 +102,33 @@ void loop() {
   // ---------------------------------------------------------
   // 1. ROBUSTNESS: Auto-Reconnect WiFi if connection is lost
   // ---------------------------------------------------------
-  if (WiFi.status() != WL_CONNECTED && (currentMillis - previousWiFiCheckMillis >= WIFI_CHECK_INTERVAL)) {
+
+  // Handle ongoing WiFi reconnection (non-blocking state machine)
+  if (isReconnectingWiFi) {
+    unsigned long elapsed = millis() - wifiReconnectStartTime;
+
+    if (WiFi.status() == WL_CONNECTED) {
+      // Reconnection successful
+      Serial.println("\nWiFi Reconnected Successfully!");
+      Serial.print("IP Address: ");
+      Serial.println(WiFi.localIP());
+      isReconnectingWiFi = false;
+      udp.stop();
+      udp.begin(UDP_PORT);
+      Serial.printf("UDP restarted on port %d\n", UDP_PORT);
+      previousWiFiCheckMillis = currentMillis;
+    } else if (elapsed > WIFI_RECONNECT_TIMEOUT) {
+      // Reconnection failed - timeout
+      Serial.println("\nWiFi Reconnect Failed");
+      isReconnectingWiFi = false;
+      previousWiFiCheckMillis = currentMillis;
+    }
+    // Continue processing UDP commands even while reconnecting
+    // (WiFi may reconnect in background while we process commands)
+  }
+
+  // Check if WiFi needs reconnection (start non-blocking reconnection)
+  if (!isReconnectingWiFi && WiFi.status() != WL_CONNECTED && (currentMillis - previousWiFiCheckMillis >= WIFI_CHECK_INTERVAL)) {
     Serial.println("WiFi Disconnected. Attempting to reconnect...");
 
     stopMotors();
@@ -105,29 +137,11 @@ void loop() {
     Serial.println("Motors stopped for safety during WiFi reconnection.");
 
     WiFi.disconnect();
-    delay(500);
-    // Use WiFi.begin for reconnection (more reliable than WiFi.reconnect on ESP32 Core 3.x)
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-    // Wait up to 3 seconds for reconnection
-    unsigned long reconnectStart = millis();
-    while (WiFi.status() != WL_CONNECTED && (millis() - reconnectStart < 3000)) {
-      delay(200);
-      Serial.print(".");
-    }
-
-    if (WiFi.status() == WL_CONNECTED) {
-      Serial.println("\nWiFi Reconnected Successfully!");
-      Serial.print("IP Address: ");
-      Serial.println(WiFi.localIP());
-    } else {
-      Serial.println("\nWiFi Reconnect Failed");
-    }
-
-    udp.stop();
-    udp.begin(UDP_PORT);
-    Serial.printf("UDP restarted on port %d\n", UDP_PORT);
-
+    // Start non-blocking reconnection
+    isReconnectingWiFi = true;
+    wifiReconnectStartTime = millis();
     previousWiFiCheckMillis = currentMillis;
   }
 

@@ -189,13 +189,11 @@ class CartProvider with ChangeNotifier {
   int get callTimeoutSeconds => _callTimeoutSeconds;
   Timer? _callTimer;
   Timer? _pendingCallTimer; // Tracks the delayed future before incoming call starts
+  String? _activeCallOrderId; // Tracks which order triggered the call
 
   void playNotificationSound({bool isLong = false}) async {
     try {
       if (isLong) {
-        // Reset timeout to 3 minutes (180 seconds)
-        _callTimeoutSeconds = 180;
-
         // Cancel any pending call that was already scheduled
         _pendingCallTimer?.cancel();
 
@@ -206,9 +204,10 @@ class CartProvider with ChangeNotifier {
 
           _isIncomingCall = true;
           _callTimeoutSeconds = 180; // 3 minutes to receive the call
+          _activeCallOrderId = _orders.isNotEmpty ? _orders.first.id : null;
           _safeNotifyListeners();
 
-          // 1. Start countdown timer FIRST so UI responds immediately
+          // Cancel any existing countdown timer before starting a new one
           _callTimer?.cancel();
           _callTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
             if (_callTimeoutSeconds > 0) {
@@ -220,7 +219,7 @@ class CartProvider with ChangeNotifier {
             }
           });
 
-          // 2. Play sound in a try-catch so it doesn't block the timer if it fails
+          // Play sound in a try-catch so it doesn't block the timer if it fails
           try {
             await _audioPlayer.setReleaseMode(ReleaseMode.loop);
             await _audioPlayer.play(AssetSource('sounds/notification.mp3'));
@@ -235,10 +234,12 @@ class CartProvider with ChangeNotifier {
   }
 
   void _handleCallTimeout() {
-    if (_isIncomingCall) {
-      // Mark the latest order as failed/incomplete
-      if (_orders.isNotEmpty && _orders.first.status == 'กำลังจัดส่ง') {
-        _orders[0] = _orders.first.copyWith(status: 'คำสั่งซื้อไม่สำเร็จ');
+    if (_isIncomingCall && _activeCallOrderId != null) {
+      // Mark the specific order associated with the call as failed
+      final index = _orders.indexWhere((o) => o.id == _activeCallOrderId);
+      if (index >= 0 && _orders[index].status == 'กำลังจัดส่ง') {
+        _orders[index] = _orders[index].copyWith(status: 'คำสั่งซื้อไม่สำเร็จ');
+        _safeNotifyListeners();
       }
       stopCall();
     }
@@ -246,6 +247,7 @@ class CartProvider with ChangeNotifier {
 
   void stopCall() {
     _isIncomingCall = false;
+    _activeCallOrderId = null;
     _callTimer?.cancel();
     _pendingCallTimer?.cancel();
     _audioPlayer.stop();
@@ -334,6 +336,8 @@ class CartProvider with ChangeNotifier {
     _appliedCoupon = null;
 
     if (simulateIncomingCall) {
+      // Notify listeners immediately so UI updates with cleared cart
+      _safeNotifyListeners();
       playNotificationSound(isLong: true);
     } else {
       _safeNotifyListeners();

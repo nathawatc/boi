@@ -466,6 +466,13 @@ class RobotApi extends ChangeNotifier {
             if (datagram != null) {
               foundIps.add(datagram.address.address);
               debugPrint('[Discovery] Found robot at: ${datagram.address.address}');
+              // Complete after finding at least one robot and a short grace period
+              if (foundIps.length == 1 && !completer.isCompleted) {
+                // Wait 500ms to collect any additional robots
+                Timer(const Duration(milliseconds: 500), () {
+                  if (!completer.isCompleted) completer.complete();
+                });
+              }
             }
           },
           onError: (_) {
