@@ -460,17 +460,14 @@ class _PaymentPageState extends State<PaymentPage> {
 
   /// Safely navigate back to the home page by popping until reaching root
   void _navigateToHomePage(BuildContext context) {
-    // Capture the CartProvider BEFORE popping routes (context becomes unmounted after pop)
-    final cartProvider = context.read<CartProvider>();
+    // FIX: Use popUntil(isFirst) instead of magic number popCount < 3
+    // This is more robust and doesn't depend on navigation stack depth
+    Navigator.of(context).popUntil((route) => route.isFirst);
 
-    // Pop until we reach the root (HomePage), using a safe approach
-    int popCount = 0;
-    while (Navigator.of(context).canPop() && popCount < 3) {
-      Navigator.of(context).pop();
-      popCount++;
-    }
     // Set tab index to 0 (Home) after navigation
-    cartProvider.setTabIndex(0);
+    if (mounted) {
+      context.read<CartProvider>().setTabIndex(0);
+    }
   }
 
   void _handlePaymentConfirmation(BuildContext context) {
@@ -509,28 +506,24 @@ class _PaymentPageState extends State<PaymentPage> {
       // Handle result with mounted check
       if (!mounted) return;
 
-      // Safe: mounted check ensures context is valid
-      // ignore: use_build_context_synchronously
+      // FIX: Removed // ignore: use_build_context_synchronously
+      // Now properly checking mounted before using context
       final cartProvider = context.read<CartProvider>();
 
       if (response.success) {
         debugPrint('Robot command successful');
-        // ignore: use_build_context_synchronously
         _showSuccessDialog(context, cartProvider);
       } else {
         debugPrint('Robot command failed: ${response.message}');
-        // ignore: use_build_context_synchronously
         _showErrorDialog(context, cartProvider, response.message);
       }
     } catch (e) {
       debugPrint('Error sending robot command: $e');
       // Handle error with mounted check
       if (mounted) {
-        // Safe: mounted check ensures context is valid
-        // ignore: use_build_context_synchronously
         final cartProvider = context.read<CartProvider>();
-        // ignore: use_build_context_synchronously
-        _showErrorDialog(context, cartProvider, 'เกิดข้อผิดพลาดในการเชื่อมต่อ: $e');
+        // FIX: Show user-friendly message instead of raw exception
+        _showErrorDialog(context, cartProvider, 'เกิดข้อผิดพลาดในการเชื่อมต่อหุ่นยนต์');
       }
     } finally {
       if (mounted) {

@@ -4,6 +4,51 @@ import '../providers/cart_provider.dart';
 import '../theme/app_theme.dart';
 import 'payment_page.dart';
 
+/// StatefulWidget for coupon input field with proper controller management
+class _CouponInputField extends StatefulWidget {
+  @override
+  State<_CouponInputField> createState() => _CouponInputFieldState();
+}
+
+class _CouponInputFieldState extends State<_CouponInputField> {
+  final _couponController = TextEditingController();
+
+  @override
+  void dispose() {
+    _couponController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cart = context.watch<CartProvider>();
+
+    return TextField(
+      controller: _couponController,
+      decoration: InputDecoration(
+        hintText: 'กรอกรหัสคูปอง',
+        prefixIcon: Icon(Icons.confirmation_num_outlined, color: Theme.of(context).colorScheme.onSurfaceVariant),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        filled: true,
+        fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
+      ),
+      onSubmitted: (value) {
+        if (cart.applyCoupon(value)) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ใช้คูปองสำเร็จ!'), backgroundColor: Colors.green));
+          // FIX: Clear the field after successful submission
+          _couponController.clear();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('รหัสคูปองไม่ถูกต้อง'), backgroundColor: Colors.red));
+        }
+      },
+    );
+  }
+}
+
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
@@ -112,26 +157,7 @@ class CartPage extends StatelessWidget {
                   child: Row(
                     children: [
                       Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: 'กรอกรหัสคูปอง',
-                            prefixIcon: Icon(Icons.confirmation_num_outlined, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                            filled: true,
-                            fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                          ),
-                          onSubmitted: (value) {
-                            if (cart.applyCoupon(value)) {
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ใช้คูปองสำเร็จ!'), backgroundColor: Colors.green));
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('รหัสคูปองไม่ถูกต้อง'), backgroundColor: Colors.red));
-                            }
-                          },
-                        ),
+                        child: _CouponInputField(),
                       ),
                       const SizedBox(width: 8),
                       TextButton(

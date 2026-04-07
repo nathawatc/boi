@@ -41,15 +41,21 @@ void setup() {
   Serial.print("Connecting to WiFi: ");
   Serial.print(WIFI_SSID);
 
-  // Wait for initial connection
-  while (WiFi.status() != WL_CONNECTED) {
+  // Wait for initial connection with timeout (10 seconds max)
+  // SAFETY FIX: Don't block forever - allow robot to start even if WiFi unavailable
+  unsigned long wifiConnectStart = millis();
+  while (WiFi.status() != WL_CONNECTED && (millis() - wifiConnectStart < 10000)) {
     delay(500);
     Serial.print(".");
   }
 
-  Serial.println("\nWiFi Connected Successfully!");
-  Serial.print("IP Address: ");
-  Serial.println(WiFi.localIP());
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("\nWiFi Connected Successfully!");
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.localIP());
+  } else {
+    Serial.println("\nWiFi connection timeout. Starting anyway - will retry in loop.");
+  }
 
   // Start UDP listening
   udp.begin(UDP_PORT);
@@ -85,11 +91,22 @@ void sendResponse(const char* response, IPAddress remoteIp, int remotePort) {
 void loop() {
   unsigned long currentMillis = millis();
 
+  // Clear packet buffer at start of each iteration to prevent stale data
+  packetBuffer[0] = 0;
+
   // ---------------------------------------------------------
   // 1. ROBUSTNESS: Auto-Reconnect WiFi if connection is lost
   // ---------------------------------------------------------
   if (WiFi.status() != WL_CONNECTED && (currentMillis - previousWiFiCheckMillis >= WIFI_CHECK_INTERVAL)) {
     Serial.println("WiFi Disconnected. Attempting to reconnect...");
+    
+    // SAFETY FIX: Stop motors BEFORE attempting reconnection
+    // Previously, motors kept running during 3-second reconnect attempt
+    stopMotors();
+    isLineFollowing = false;
+    isMovingManually = false;
+    Serial.println("Motors stopped for safety during WiFi reconnection.");
+    
     WiFi.disconnect();
     delay(500);
     // Use WiFi.begin for reconnection (more reliable than WiFi.reconnect on ESP32 Core 3.x)
@@ -115,11 +132,6 @@ void loop() {
     }
 
     previousWiFiCheckMillis = currentMillis;
-
-    // Safety: Stop the robot immediately if WiFi drops
-    isLineFollowing = false;
-    isMovingManually = false;
-    stopMotors();
   }
 
   // ---------------------------------------------------------
@@ -159,39 +171,43 @@ void loop() {
       len = sizeof(packetBuffer) - 1;
     }
 
-    String command = String(packetBuffer);
-    command.trim(); // Remove trailing newline or whitespace
+    // PERFORMANCE FIX: Avoid String heap fragmentation by using strcmp()
+    // Trim whitespace manually instead of String.trim()
+    int cmdLen = strlen(packetBuffer);
+    while (cmdLen > 0 && (packetBuffer[cmdLen-1] == '\r' || packetBuffer[cmdLen-1] == '\n' || packetBuffer[cmdLen-1] == ' ')) {
+      packetBuffer[--cmdLen] = 0;
+    }
 
-    Serial.printf("Received UDP command: %s from %s:%d\n", command.c_str(), remoteIp.toString().c_str(), remotePort);
+    Serial.printf("Received UDP command: %s from %s:%d\n", packetBuffer, remoteIp.toString().c_str(), remotePort);
     lastCommandTime = millis(); // Reset safety timer
 
-    // Process command and send single response
-    if (command == "F") {
+    // Process commands using strcmp() instead of String comparison
+    if (strcmp(packetBuffer, "F") == 0) {
       isLineFollowing = false;
       isMovingManually = true;
       moveRobot(MAX_SPEED, MAX_SPEED);
       sendResponse("F", remoteIp, remotePort);
-    } else if (command == "B") {
+    } else if (strcmp(packetBuffer, "B") == 0) {
       isLineFollowing = false;
       isMovingManually = true;
       moveRobot(-MAX_SPEED, -MAX_SPEED);
       sendResponse("B", remoteIp, remotePort);
-    } else if (command == "L") {
+    } else if (strcmp(packetBuffer, "L") == 0) {
       isLineFollowing = false;
       isMovingManually = true;
       moveRobot(-BASE_SPEED, BASE_SPEED);
       sendResponse("L", remoteIp, remotePort);
-    } else if (command == "R") {
+    } else if (strcmp(packetBuffer, "R") == 0) {
       isLineFollowing = false;
       isMovingManually = true;
       moveRobot(BASE_SPEED, -BASE_SPEED);
       sendResponse("R", remoteIp, remotePort);
-    } else if (command == "S") {
+    } else if (strcmp(packetBuffer, "S") == 0) {
       isLineFollowing = false;
       isMovingManually = false;
       stopMotors();
       sendResponse("S", remoteIp, remotePort);
-    } else if (command == "LF") {
+    } else if (strcmp(packetBuffer, "LF") == 0) {
       isLineFollowing = true;
       isMovingManually = false;
       resetPID();
@@ -215,7 +231,18 @@ void loop() {
   }
 
   // ---------------------------------------------------------
-  // 5. PID CONTINUOUS EXECUTION
+  // 5. SAFETY: Dead-man's Switch for Line-Follow Mode
+  // ---------------------------------------------------------
+  // SAFETY FIX: Previously, line-follow mode had NO timeout
+  // Robot could run indefinitely if line was lost or robot got stuck
+  if (isLineFollowing && (currentMillis - lastCommandTime > COMMAND_TIMEOUT)) {
+    Serial.println("Safety Timeout in Line-Follow: Stopping motors.");
+    isLineFollowing = false;
+    stopMotors();
+  }
+
+  // ---------------------------------------------------------
+  // 6. PID CONTINUOUS EXECUTION
   // ---------------------------------------------------------
   // If in line following mode, continuously update PID control
   if (isLineFollowing) {

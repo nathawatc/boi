@@ -318,7 +318,7 @@ class CartProvider with ChangeNotifier {
     _safeNotifyListeners();
   }
 
-  void checkout() {
+  void checkout({bool simulateIncomingCall = false}) {
     if (_items.isEmpty) return;
 
     _orders.insert(0, Order(
@@ -332,8 +332,15 @@ class CartProvider with ChangeNotifier {
 
     _items.clear();
     _appliedCoupon = null;
-    // playNotificationSound already calls notifyListeners internally
-    playNotificationSound(isLong: true);
+
+    // FIX: Only simulate incoming call if explicitly requested (for testing)
+    // This was previously always called, causing a fake incoming call after every checkout
+    if (simulateIncomingCall) {
+      // playNotificationSound already calls notifyListeners internally
+      playNotificationSound(isLong: true);
+    } else {
+      _safeNotifyListeners();
+    }
   }
 
   void confirmOrderReceipt(String orderId) {

@@ -18,9 +18,11 @@ void main() {
           ChangeNotifierProvider(create: (_) => CartProvider()),
           ChangeNotifierProvider(create: (_) {
             final robotApi = RobotApi();
-            // Auto-discover robot after app starts
-            WidgetsBinding.instance.addPostFrameCallback((_) {
+            // Initialize socket and auto-discover robot after app starts
+            robotApi.initialize().then((_) {
               robotApi.autoDiscover();
+            }).catchError((e) {
+              debugPrint('[main] RobotApi initialization error: $e');
             });
             return robotApi;
           }),

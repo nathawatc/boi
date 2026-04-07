@@ -42,9 +42,10 @@ void setMotorLeft(int speed) {
         digitalWrite(MOTOR_A_IN2, HIGH);
         ledcWrite(MOTOR_A_EN, -speed);
     } else {
-        // Stop
-        digitalWrite(MOTOR_A_IN1, LOW);
-        digitalWrite(MOTOR_A_IN2, LOW);
+        // SAFETY FIX: Use brake mode (HIGH, HIGH) instead of coast mode (LOW, LOW)
+        // Brake mode provides faster, safer emergency stops
+        digitalWrite(MOTOR_A_IN1, HIGH);
+        digitalWrite(MOTOR_A_IN2, HIGH);
         ledcWrite(MOTOR_A_EN, 0);
     }
 }
@@ -64,9 +65,10 @@ void setMotorRight(int speed) {
         digitalWrite(MOTOR_B_IN4, HIGH);
         ledcWrite(MOTOR_B_EN, -speed);
     } else {
-        // Stop
-        digitalWrite(MOTOR_B_IN3, LOW);
-        digitalWrite(MOTOR_B_IN4, LOW);
+        // SAFETY FIX: Use brake mode (HIGH, HIGH) instead of coast mode (LOW, LOW)
+        // Brake mode provides faster, safer emergency stops
+        digitalWrite(MOTOR_B_IN3, HIGH);
+        digitalWrite(MOTOR_B_IN4, HIGH);
         ledcWrite(MOTOR_B_EN, 0);
     }
 }

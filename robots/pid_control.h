@@ -6,8 +6,10 @@
 #include "motor_control.h"
 
 // Variables for PID control
-float previous_error = 0;
-float integral = 0;
+// FIX: Made static to prevent ODR (One Definition Rule) violations
+// if this header is included in multiple translation units
+static float previous_error = 0;
+static float integral = 0;
 const float INTEGRAL_MAX = 100.0; // Clamp to prevent integral windup
 
 // Function to read line sensors and calculate error
@@ -17,23 +19,42 @@ float calculateLineError() {
     int left = digitalRead(SENSOR_LINE_LEFT);
     int center = digitalRead(SENSOR_LINE_CENTER);
     int right = digitalRead(SENSOR_LINE_RIGHT);
+    
+    // FIX: Track when line is found to reset search timer
+    static bool line_found = true;
 
     // Simple error calculation logic based on sensor states
     if (left == 0 && center == 1 && right == 0) {
+        line_found = true;
         return 0; // Centered
     } else if (left == 1 && center == 1 && right == 0) {
+        line_found = true;
         return -1; // Slightly off to the right
     } else if (left == 1 && center == 0 && right == 0) {
+        line_found = true;
         return -2; // Off to the right
     } else if (left == 0 && center == 1 && right == 1) {
+        line_found = true;
         return 1; // Slightly off to the left
     } else if (left == 0 && center == 0 && right == 1) {
+        line_found = true;
         return 2; // Off to the left
     } else if (left == 1 && center == 1 && right == 1) {
+        line_found = true;
         return 0; // Intersection or all black
     } else if (left == 0 && center == 0 && right == 0) {
-        // Lost the line, maybe use previous error to turn back
-        return (previous_error > 0) ? 3 : -3;
+        // FIX: Lost the line - alternate search direction instead of always turning same way
+        static unsigned long line_lost_time = 0;
+        
+        // Reset timer when line is first lost
+        if (line_found) {
+            line_lost_time = millis();
+            line_found = false;
+        }
+        
+        // Alternate direction every 500ms for proper search pattern
+        unsigned long elapsed = millis() - line_lost_time;
+        return ((elapsed / 500) % 2 == 0) ? 3 : -3;
     }
 
     return 0; // Default case

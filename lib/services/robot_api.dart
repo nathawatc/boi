@@ -118,6 +118,10 @@ class RobotApi extends ChangeNotifier {
   String? _selectedRobotIp;
   bool _isManualIpConfigured = false;
 
+  // PERFORMANCE FIX: Reuse socket instead of creating/destroying on every command
+  RawDatagramSocket? _socket;
+  bool _isInitialized = false;
+
   // Getters
   RobotConnectionStatus get connectionStatus => _connectionStatus;
   String? get lastKnownIp => _lastKnownIp;
@@ -126,6 +130,34 @@ class RobotApi extends ChangeNotifier {
   String? get selectedRobotIp => _selectedRobotIp;
   bool get hasMultipleRobots => _discoveredRobots.length > 1;
   bool get isManualIpConfigured => _isManualIpConfigured;
+
+  /// Initialize the API and create the reusable socket
+  /// Must be called before using sendCommand or other methods
+  Future<void> initialize() async {
+    if (_isInitialized) return;
+
+    try {
+      _socket = await RawDatagramSocket.bind(
+        InternetAddress.anyIPv4,
+        0, // Let OS assign ephemeral port
+      );
+      _socket!.broadcastEnabled = true;
+      _isInitialized = true;
+      debugPrint('[RobotApi] Socket initialized and ready');
+    } catch (e) {
+      debugPrint('[RobotApi] Failed to initialize socket: $e');
+      _isInitialized = false;
+    }
+  }
+
+  @override
+  void dispose() {
+    _socket?.close();
+    _socket = null;
+    _isInitialized = false;
+    debugPrint('[RobotApi] Socket closed');
+    super.dispose();
+  }
 
   /// Get the effective target IP (manual > selected > last known > null for broadcast)
   String? get effectiveTargetIp {
@@ -176,6 +208,12 @@ class RobotApi extends ChangeNotifier {
     RobotCommand command, {
     RobotConfig? config,
   }) async {
+    // Check if socket is initialized
+    if (!_isInitialized || _socket == null) {
+      debugPrint('[RobotApi] ERROR: Socket not initialized. Call initialize() first.');
+      return RobotResponse.errorInstance('RobotApi not initialized');
+    }
+
     final effectiveConfig = config ?? _config;
 
     try {
@@ -185,49 +223,37 @@ class RobotApi extends ChangeNotifier {
       // Determine target IP address (use selected robot if available)
       String? targetIp = effectiveConfig.ipAddress ?? _selectedRobotIp ?? _lastKnownIp;
 
-      // Create UDP socket with ephemeral port
-      final socket = await RawDatagramSocket.bind(
-        InternetAddress.anyIPv4,
-        0, // Let OS assign ephemeral port
-      );
-
-      try {
-        socket.broadcastEnabled = true;
-
-        // If no specific IP, use broadcast
-        if (targetIp == null) {
-          targetIp = await _getBroadcastAddress();
-        } else {
-          _lastKnownIp ??= targetIp;
-        }
-
-        debugPrint('Sending command "${command.value}" to $targetIp:${effectiveConfig.port}');
-
-        // Send command multiple times for reliability (UDP is fire-and-forget)
-        for (int i = 0; i < effectiveConfig.resendCount; i++) {
-          socket.send(
-            command.value.codeUnits,
-            InternetAddress(targetIp),
-            effectiveConfig.port,
-          );
-
-          if (i < effectiveConfig.resendCount - 1) {
-            await Future.delayed(const Duration(milliseconds: 50));
-          }
-        }
-
-        debugPrint('Command "${command.value}" sent successfully (${effectiveConfig.resendCount}x redundancy)');
-
-        _connectionStatus = RobotConnectionStatus.connected;
-        if (targetIp != '255.255.255.255') {
-          _lastKnownIp = targetIp;
-        }
-        notifyListeners();
-
-        return RobotResponse.successInstance();
-      } finally {
-        socket.close();
+      // If no specific IP, use broadcast
+      if (targetIp == null) {
+        targetIp = await _getBroadcastAddress();
+      } else {
+        _lastKnownIp ??= targetIp;
       }
+
+      debugPrint('Sending command "${command.value}" to $targetIp:${effectiveConfig.port}');
+
+      // Send command multiple times for reliability (UDP is fire-and-forget)
+      for (int i = 0; i < effectiveConfig.resendCount; i++) {
+        _socket!.send(
+          command.value.codeUnits,
+          InternetAddress(targetIp),
+          effectiveConfig.port,
+        );
+
+        if (i < effectiveConfig.resendCount - 1) {
+          await Future.delayed(const Duration(milliseconds: 50));
+        }
+      }
+
+      debugPrint('Command "${command.value}" sent successfully (${effectiveConfig.resendCount}x redundancy)');
+
+      _connectionStatus = RobotConnectionStatus.connected;
+      if (targetIp != '255.255.255.255') {
+        _lastKnownIp = targetIp;
+      }
+      notifyListeners();
+
+      return RobotResponse.successInstance();
     } on SocketException catch (e) {
       debugPrint('Socket error sending command: $e');
       _connectionStatus = RobotConnectionStatus.error;

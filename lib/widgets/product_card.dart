@@ -107,6 +107,8 @@ class ProductCard extends StatelessWidget {
                     ),
                     InkWell(
                       onTap: () {
+                        // WARNING: Using name as product ID can cause collisions if products have duplicate names
+                        // TODO: Add unique ID field to product data model
                         context.read<CartProvider>().addItem(
                           name,
                           name,
