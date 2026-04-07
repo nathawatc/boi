@@ -387,83 +387,40 @@ main.dart
 
 ---
 
-## State Management Deep Dive
+## State Management
 
-### CartProvider Structure
+### CartProvider
+
+**Location**: `lib/providers/cart_provider.dart`
+
+**Purpose**: Centralized app state using ChangeNotifier pattern. Manages cart items, orders, coupons, robot call state, and tab navigation.
+
+**Usage**:
 
 ```dart
-class CartProvider with ChangeNotifier {
-  // ========== DATA ==========
-  final List<CartItem> _items = [];
-  final List<Order> _orders = [];
-  final List<Coupon> _availableCoupons = [...];
+// Watch for changes
+final cart = context.watch<CartProvider>();
+Text('Items: ${cart.itemCount}');
 
-  Coupon? _appliedCoupon;
-  int _currentTabIndex = 0;
-  bool _isIncomingCall = false;
-  int _callTimeoutSeconds = 180;
-
-  // ========== COMPUTED ==========
-  int get itemCount => ...
-  double get subTotal => ...
-  double get totalAmount => ...
-  List<Coupon> get collectedCoupons => ...
-
-  // ========== ACTIONS ==========
-  void addItem(String id, String name, String price, {int quantity});
-  void removeItem(String id);
-  void checkout();
-  bool applyCoupon(String code);
-  void collectCoupon(String code);
-  void setTabIndex(int index);
-  void confirmOrderReceipt(String orderId);
-
-  // ========== ROBOT ==========
-  void playNotificationSound({bool isLong});
-  void stopCall();
-}
+// Trigger updates
+context.read<CartProvider>().addItem(...);
 ```
 
 ### Model Classes (Immutable)
 
-All model classes use immutable fields with copyWith patterns:
+All model classes (`CartItem`, `Order`, `Coupon`) use immutable final fields with `copyWith` methods for safe state updates.
+
+**Example**:
 
 ```dart
-class CartItem {
-  final String id;
-  final String name;
-  final String price;
-  final int quantity;
+// Update cart item quantity
+_items[index] = _items[index].copyWith(quantity: newQuantity);
 
-  CartItem copyWith({...});
-}
-
-class Order {
-  final String id;
-  final List<CartItem> items;
-  final double totalAmount;
-  final String status;
-  final int estimatedMinutes;
-
-  Order copyWith({...});
-}
-
-class Coupon {
-  final String code;
-  final String title;
-  final double discountAmount;
-  final bool isCollected;
-
-  Coupon copyWith({...});
-}
+// Update order status
+_orders[i] = _orders[i].copyWith(status: 'สำเร็จ');
 ```
 
-This approach ensures:
-
-- Predictable state changes
-- Easy debugging
-- Better testability
-- No accidental mutations
+See source code for full class definitions.
 
 ---
 

@@ -232,88 +232,21 @@ final response = await robotApi.sendCommand(RobotCommand.forward);
 
 ### Convenience Methods
 
-Shortcut methods for common commands.
+Shortcut methods for common commands. All methods accept optional `RobotConfig` and return `Future<RobotResponse>`.
 
-#### moveForward()
-
-```dart
-Future<RobotResponse> moveForward({RobotConfig? config})
-```
+| Method               | Command                   | Description       |
+| -------------------- | ------------------------- | ----------------- |
+| `moveForward()`      | `RobotCommand.forward`    | Send "F" command  |
+| `moveBackward()`     | `RobotCommand.backward`   | Send "B" command  |
+| `turnLeft()`         | `RobotCommand.left`       | Send "L" command  |
+| `turnRight()`        | `RobotCommand.right`      | Send "R" command  |
+| `stop()`             | `RobotCommand.stop`       | Send "S" command  |
+| `enableLineFollow()` | `RobotCommand.lineFollow` | Send "LF" command |
 
 **Example**:
 
 ```dart
 await robotApi.moveForward();
-```
-
----
-
-#### moveBackward()
-
-```dart
-Future<RobotResponse> moveBackward({RobotConfig? config})
-```
-
-**Example**:
-
-```dart
-await robotApi.moveBackward();
-```
-
----
-
-#### turnLeft()
-
-```dart
-Future<RobotResponse> turnLeft({RobotConfig? config})
-```
-
-**Example**:
-
-```dart
-await robotApi.turnLeft();
-```
-
----
-
-#### turnRight()
-
-```dart
-Future<RobotResponse> turnRight({RobotConfig? config})
-```
-
-**Example**:
-
-```dart
-await robotApi.turnRight();
-```
-
----
-
-#### Stop()
-
-```dart
-Future<RobotResponse> stop({RobotConfig? config})
-```
-
-**Example**:
-
-```dart
-await robotApi.stop();
-```
-
----
-
-#### enableLineFollow()
-
-```dart
-Future<RobotResponse> enableLineFollow({RobotConfig? config})
-```
-
-**Example**:
-
-```dart
-await robotApi.enableLineFollow();
 ```
 
 ---
@@ -543,99 +476,6 @@ class RobotStatusWidget extends StatelessWidget {
 
 ---
 
-### Complete Robot Control Page
-
-```dart
-class RobotControlPage extends StatefulWidget {
-  @override
-  _RobotControlPageState createState() => _RobotControlPageState();
-}
-
-class _RobotControlPageState extends State<RobotControlPage> {
-  final RobotApi _robotApi = RobotApi();
-  bool _isLoading = false;
-
-  Future<void> _sendCommand(RobotCommand command) async {
-    setState(() => _isLoading = true);
-
-    try {
-      final response = await _robotApi.sendCommand(command);
-
-      if (!mounted) return;
-
-      if (response.success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Command sent: ${command.value}')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed: ${response.message}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-      );
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Robot Control')),
-      body: Column(
-        children: [
-          // Status
-          ListenableBuilder(
-            listenable: _robotApi,
-            builder: (context, child) => Text(
-              'Status: ${_robotApi.connectionStatus}',
-            ),
-          ),
-
-          // Controls
-          if (!_isLoading) ...[
-            ElevatedButton(
-              onPressed: () => _sendCommand(RobotCommand.forward),
-              child: Text('Forward'),
-            ),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () => _sendCommand(RobotCommand.left),
-                  child: Text('Left'),
-                ),
-                ElevatedButton(
-                  onPressed: () => _sendCommand(RobotCommand.stop),
-                  child: Text('Stop'),
-                ),
-                ElevatedButton(
-                  onPressed: () => _sendCommand(RobotCommand.right),
-                  child: Text('Right'),
-                ),
-              ],
-            ),
-            ElevatedButton(
-              onPressed: () => _sendCommand(RobotCommand.backward),
-              child: Text('Backward'),
-            ),
-          ] else ...[
-            CircularProgressIndicator(),
-          ],
-        ],
-      ),
-    );
-  }
-}
-```
-
----
-
 ## Error Handling
 
 ### Common Errors
@@ -653,14 +493,11 @@ try {
   final response = await robotApi.moveForward();
 
   if (!response.success) {
-    // Command failed but no exception
     logError(response.message);
   }
 } on SocketException catch (e) {
-  // Network-level error
   showError('Network error: ${e.message}');
 } catch (e) {
-  // Unexpected error
   showError('Unexpected error: $e');
 }
 ```
@@ -669,19 +506,14 @@ try {
 
 ## Debugging
 
-### Enable Debug Logging
+The API includes built-in debug logging that prints:
 
-The API includes built-in debug logging:
+- Command being sent
+- Target IP and port
+- Success/failure status
+- Error details
 
-```dart
-// Automatically prints to console:
-// - Command being sent
-// - Target IP and port
-// - Success/failure status
-// - Error details
-```
-
-### Example Debug Output
+**Example Output**:
 
 ```text
 Sending command "F" to 255.255.255.255:2001
@@ -693,14 +525,6 @@ Or on error:
 ```text
 Socket error sending command: SocketException: Permission denied
 ```
-
----
-
-## Related Documentation
-
-- [System Overview](./SYSTEM_OVERVIEW.md) - Architecture
-- [Debug Guide](./DEBUG_GUIDE.md) - Testing UDP communication
-- [Network Setup](./NETWORK_SETUP.md) - Network configuration
 
 ---
 

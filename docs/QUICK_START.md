@@ -148,43 +148,14 @@ Get your Boi delivery robot system up and running in 5 minutes.
 
 ## Troubleshooting
 
-### ESP32 Won't Connect to WiFi
+If you encounter issues, see the [Debug Guide](./DEBUG_GUIDE.md) for comprehensive troubleshooting.
 
-**Symptoms**: Stuck on "Connecting to WiFi: Boi...."
+**Common quick fixes**:
 
-**Solutions**:
-
-1. Verify hotspot is ON
-2. Check password is exactly `12345678`
-3. Ensure hotspot is broadcasting on **2.4GHz** (not 5GHz)
-4. Move ESP32 closer to phone
-5. Restart hotspot
-
-### Robot Doesn't Move When Command Sent
-
-**Symptoms**: App shows success, but robot doesn't move
-
-**Check**:
-
-1. Motors properly connected to L298N?
-2. Battery charged and connected?
-3. L298N enable pins receiving PWM?
-4. Serial Monitor shows "Received UDP command: F"?
-
-**Debug Steps**:
-
-1. See [Debug Guide](./DEBUG_GUIDE.md) for full troubleshooting
-2. Test with manual `netcat` command (Method 3 in Debug Guide)
-
-### Flutter App Crashes on Startup
-
-**Solutions**:
-
-```bash
-flutter clean
-flutter pub get
-flutter run
-```
+- Verify hotspot is ON and broadcasting on 2.4GHz
+- Check password is exactly `12345678`
+- Ensure both devices are on the same network
+- Restart ESP32 and hotspot if connection fails
 
 ---
 
