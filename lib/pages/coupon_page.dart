@@ -63,7 +63,7 @@ class CouponPage extends StatelessWidget {
               const SizedBox(height: 12),
 
               // Coupons List
-              ...available.map((coupon) => _LargeCouponCard(coupon: coupon)).toList(),
+              ...available.map((coupon) => _LargeCouponCard(coupon: coupon)),
 
               const SizedBox(height: 20),
               Center(
