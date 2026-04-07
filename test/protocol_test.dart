@@ -195,8 +195,10 @@ void main() {
   group('Protocol: RobotApi Command Flow', () {
     late RobotApi api;
 
-    setUp(() {
+    setUp(() async {
       api = RobotApi();
+      // FIX: Initialize socket before running command tests
+      await api.initialize();
     });
 
     tearDown(() {
