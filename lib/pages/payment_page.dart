@@ -504,26 +504,25 @@ class _PaymentPageState extends State<PaymentPage> {
       final response = await robotApi.moveForward();
 
       // Handle result with mounted check
+      // FIX: Use this.context instead of parameter context after async gap
       if (!mounted) return;
 
-      // FIX: Removed // ignore: use_build_context_synchronously
-      // Now properly checking mounted before using context
-      final cartProvider = context.read<CartProvider>();
+      final cartProvider = this.context.read<CartProvider>();
 
       if (response.success) {
         debugPrint('Robot command successful');
-        _showSuccessDialog(context, cartProvider);
+        _showSuccessDialog(this.context, cartProvider);
       } else {
         debugPrint('Robot command failed: ${response.message}');
-        _showErrorDialog(context, cartProvider, response.message);
+        _showErrorDialog(this.context, cartProvider, response.message);
       }
     } catch (e) {
       debugPrint('Error sending robot command: $e');
       // Handle error with mounted check
       if (mounted) {
-        final cartProvider = context.read<CartProvider>();
+        final cartProvider = this.context.read<CartProvider>();
         // FIX: Show user-friendly message instead of raw exception
-        _showErrorDialog(context, cartProvider, 'เกิดข้อผิดพลาดในการเชื่อมต่อหุ่นยนต์');
+        _showErrorDialog(this.context, cartProvider, 'เกิดข้อผิดพลาดในการเชื่อมต่อหุ่นยนต์');
       }
     } finally {
       if (mounted) {
