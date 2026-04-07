@@ -63,10 +63,12 @@ const int SENSOR_LINE_RIGHT = 39;
 // ==========================================
 // PID Control Configuration
 // ==========================================
-// These values need to be tuned based on the robot's physical characteristics
-const float PID_KP = 1.0f;
-const float PID_KI = 0.0f;
-const float PID_KD = 0.0f;
+// KP: Proportional gain - controls response strength to error
+// KI: Integral gain - eliminates steady-state error (start small)
+// KD: Derivative gain - dampens oscillations and improves stability
+const float PID_KP = 0.8f;
+const float PID_KI = 0.02f;
+const float PID_KD = 0.5f;
 
 const int BASE_SPEED = 150; // Default base speed for motors (0-255)
 const int MAX_SPEED = 255;  // Maximum speed limit
