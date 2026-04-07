@@ -59,7 +59,8 @@ Flutter                                ESP32
   (no response validation in Flutter)    |
 ```
 
-**Note**: Flutter does NOT wait for or validate command responses. Commands are fire-and-forget. The 3x resend compensates for UDP packet loss.
+**Note**: Flutter does NOT wait for or validate command responses. Commands are fire-and-forget. The 3x resend
+compensates for UDP packet loss.
 
 ### 3. Multi-Robot Discovery
 

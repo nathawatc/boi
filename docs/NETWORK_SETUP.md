@@ -4,7 +4,7 @@ Complete guide to configuring network communication between Flutter app and ESP3
 
 ---
 
-## 📡 Current Network Architecture
+## Network Architecture
 
 ### Network Type: Phone WiFi Hotspot (Local Ad-Hoc Network)
 
@@ -68,7 +68,7 @@ RobotConfig config = RobotConfig(
    - Set **Hotspot name**: `Boi`
    - Set **Password**: `12345678`
    - Set **Security**: `WPA2-Personal`
-   - Set **Band**: `2.4 GHz` (⚠️ NOT 5 GHz!)
+   - Set **Band**: `2.4 GHz` (IMPORTANT: NOT 5 GHz!)
 
 3. **Turn On**
    - Toggle `Wi-Fi hotspot` to ON
@@ -87,7 +87,7 @@ RobotConfig config = RobotConfig(
 3. **Turn On**
    - Toggle `Allow Others to Join` to ON
 
-> ⚠️ **iPhone Users**: You'll need to update ESP32 config to match your iPhone's hotspot name!
+> **NOTE for iPhone Users**: You'll need to update ESP32 config to match your iPhone's hotspot name!
 
 ---
 
@@ -116,10 +116,10 @@ If using a standard WiFi router instead of phone hotspot:
 
 ### Router Settings to Check
 
-- ✅ **AP Isolation**: DISABLED (allows devices to communicate)
-- ✅ **Client Isolation**: DISABLED
-- ✅ **Firewall**: Allow local UDP on port 2001
-- ✅ **Band**: 2.4GHz (ESP32 doesn't support 5GHz)
+- **AP Isolation**: DISABLED (allows devices to communicate)
+- **Client Isolation**: DISABLED
+- **Firewall**: Allow local UDP on port 2001
+- **Band**: 2.4GHz (ESP32 doesn't support 5GHz)
 
 ---
 
@@ -178,7 +178,7 @@ IP Address: 192.168.43.156
 
 ## Security Considerations
 
-### Current State ⚠️
+### Current State (WARNING)
 
 ```cpp
 // Hardcoded in config.h
@@ -212,10 +212,10 @@ void setup() {
 
 **Benefits**:
 
-- ✅ No hardcoded credentials
-- ✅ User configures via phone
-- ✅ Saves to ESP32 EEPROM
-- ✅ Works on any network
+- NO hardcoded credentials
+- User configures via phone
+- Saves to ESP32 EEPROM
+- Works on any network
 
 #### 2. Add Command Authentication
 
@@ -390,4 +390,4 @@ nc -u 192.168.43.XXX 2001
 
 ---
 
-_Last Updated: 2026-04-06_
+Last Updated: 2026-04-07

@@ -10,24 +10,24 @@ A complete autonomous delivery robot system with Flutter mobile app, ESP32 robot
 
 Comprehensive documentation is available in the [`docs/`](./docs/) directory:
 
-| Document                                        | Description                      |
-| ----------------------------------------------- | -------------------------------- |
-| [📖 Docs Home](./docs/README.md)                | Documentation index and overview |
-| [⚡ Quick Start](./docs/QUICK_START.md)         | 5-minute setup guide             |
-| [🏗️ System Overview](./docs/SYSTEM_OVERVIEW.md) | Architecture and features        |
-| [📡 Network Setup](./docs/NETWORK_SETUP.md)     | WiFi configuration               |
-| [🐛 Debug Guide](./docs/DEBUG_GUIDE.md)         | Troubleshooting & testing        |
-| [🔌 API Reference](./docs/API_REFERENCE.md)     | Robot API documentation          |
-| [📁 Code Structure](./docs/CODE_STRUCTURE.md)   | Project organization             |
+| Document                                     | Description                      |
+| -------------------------------------------- | -------------------------------- |
+| [Docs Home](./docs/README.md)                | Documentation index and overview |
+| [Quick Start](./docs/QUICK_START.md)         | 5-minute setup guide             |
+| [System Overview](./docs/SYSTEM_OVERVIEW.md) | Architecture and features        |
+| [Network Setup](./docs/NETWORK_SETUP.md)     | WiFi configuration               |
+| [Debug Guide](./docs/DEBUG_GUIDE.md)         | Troubleshooting & testing        |
+| [API Reference](./docs/API_REFERENCE.md)     | Robot API documentation          |
+| [Code Structure](./docs/CODE_STRUCTURE.md)   | Project organization             |
 
 ## What Is Boi?
 
 Boi is an autonomous delivery robot system that allows users to:
 
-- 🛒 Browse products and place orders via mobile app
-- 🤖 Trigger physical robot delivery via UDP commands
-- 📦 Track orders and delivery status in real-time
-- 🎟️ Collect and apply discount coupons
+- Browse products and place orders via mobile app
+- Trigger physical robot delivery via UDP commands
+- Track orders and delivery status in real-time
+- Collect and apply discount coupons
 
 The system consists of:
 
@@ -44,13 +44,13 @@ boi/
 │   ├── pages/              # UI screens
 │   ├── widgets/            # Reusable components
 │   ├── providers/          # State management
-│   ├── services/           # Business logic (Robot API ⭐)
+│   ├── services/           # Business logic (Robot API)
 │   └── theme/              # Styling
 ├── robots/                 # ESP32 firmware
 │   ├── robots.ino          # Main program
 │   ├── config.h            # Configuration
 │   └── *.h                 # Motor & PID control
-├── docs/                   # Documentation ⭐
+├── docs/                   # Documentation
 ├── assets/                 # Images & sounds
 └── test/                   # Unit tests
 ```
@@ -85,6 +85,23 @@ boi/
 - UDP broadcast with 3x redundancy
 - Automatic IP discovery
 - Connection status tracking
+
+## Code Quality
+
+This codebase follows modern Dart/Flutter best practices (2024-2025):
+
+- Immutable state management with copyWith patterns
+- Type-safe data classes instead of maps
+- Proper const constructors for performance
+- Modern async/await patterns
+- Collection package utilities
+- DRY principles with shared widgets
+
+Run code analysis:
+
+```bash
+flutter analyze
+```
 
 ## Getting Started
 
@@ -140,10 +157,10 @@ boi/
 Phone (Flutter App)
   Creates Hotspot: "Boi"
   IP: 192.168.43.1
-        │
-        │ WiFi (UDP Port 2001)
-        │
-        ▼
+        |
+        | WiFi (UDP Port 2001)
+        |
+        v
   ESP32 Robot
   IP: 192.168.43.XXX
   Commands: F, B, L, R, S, LF
@@ -163,8 +180,6 @@ Test robot communication:
 
 - See [Debug Guide](./docs/DEBUG_GUIDE.md) for UDP testing methods
 - Use Python mock server or netcat to verify communication
-
----
 
 ## Development
 
@@ -186,24 +201,22 @@ flutter build ios --release
 flutter analyze
 ```
 
----
-
 ## Current Status
 
-| Component         | Status         | Notes                                     |
-| ----------------- | -------------- | ----------------------------------------- |
-| Flutter UI        | ✅ Production  | Full ordering system                      |
-| Robot API         | ✅ Production  | Service layer with error handling         |
-| ESP32 Firmware    | ✅ Production  | Motor control + PID                       |
-| UDP Communication | ✅ Tested      | 3x redundancy implemented                 |
-| WiFi Config       | ⚠️ In Progress | Hardcoded credentials (needs WiFiManager) |
+| Component         | Status      | Notes                                     |
+| ----------------- | ----------- | ----------------------------------------- |
+| Flutter UI        | Production  | Full ordering system                      |
+| Robot API         | Production  | Service layer with error handling         |
+| ESP32 Firmware    | Production  | Motor control + PID                       |
+| UDP Communication | Tested      | 3x redundancy implemented                 |
+| WiFi Config       | In Progress | Hardcoded credentials (needs WiFiManager) |
 
 ## Roadmap
 
 ### Short Term
 
 - [ ] WiFiManager integration for ESP32
-- [ ] Command acknowledgment (ESP32 → App)
+- [ ] Command acknowledgment (ESP3 to App)
 
 ### Medium Term
 
@@ -213,4 +226,4 @@ flutter analyze
 
 ---
 
-Last Updated: _2026-04-06_
+Last Updated: 2026-04-07

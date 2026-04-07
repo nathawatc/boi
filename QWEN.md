@@ -8,11 +8,14 @@
 2. **ESP32 Robot Firmware** (`robots/`) - Embedded firmware for motor control, sensors, and WiFi communication
 3. **UDP Network Communication** - Real-time command transmission over phone WiFi hotspot
 
-The app enables users to browse products, manage shopping carts, place orders with payment processing, collect coupons, and trigger physical robot delivery via UDP commands. The robot responds to movement commands (forward, backward, left, right, stop, line-follow) sent over UDP.
+The app enables users to browse products, manage shopping carts, place orders with payment processing, collect coupons,
+and trigger physical robot delivery via UDP commands. The robot responds to movement commands (forward, backward, left,
+right, stop, line-follow) sent over UDP.
 
 ## Tech Stack
 
 ### Flutter App
+
 - **Framework**: Flutter SDK ^3.11.1, Dart ^3.11.1
 - **State Management**: Provider (`CartProvider`, `SettingsProvider`, `RobotApi`)
 - **Key Dependencies**:
@@ -23,12 +26,13 @@ The app enables users to browse products, manage shopping carts, place orders wi
 - **Linting**: `flutter_lints` with `flutter analyze`
 
 ### ESP32 Firmware
+
 - **Platform**: Arduino/ESP32
 - **Key Components**: WiFi UDP, Motor PWM (L298N driver), PID line following, Ultrasonic sensor
 
 ## Project Structure
 
-```
+```text
 boi/
 ├── lib/                        # Flutter application source
 │   ├── main.dart               # App entry point with DevicePreview and Providers
@@ -81,6 +85,7 @@ boi/
 ## Building and Running
 
 ### Prerequisites
+
 - Flutter SDK 3.11.1+
 - Android device/emulator or iOS simulator
 - Arduino IDE with ESP32 support (for robot firmware)
@@ -112,11 +117,13 @@ flutter test
 ```
 
 ### ESP32 Firmware
+
 1. Open `robots/robots.ino` in Arduino IDE
 2. Configure WiFi credentials in `config.h`
 3. Upload to ESP32 board
 
 ### Network Setup
+
 - Phone creates WiFi hotspot: SSID `Boi`, Password `12345678`, Band `2.4GHz`
 - ESP32 connects as station to this hotspot
 - Communication via UDP on port `2001`
@@ -125,7 +132,8 @@ flutter test
 ## Architecture
 
 ### Communication Flow
-```
+
+```text
 Phone (Flutter App)
   Creates Hotspot: "Boi"
   IP: 192.168.43.1
@@ -139,12 +147,14 @@ Phone (Flutter App)
 ```
 
 ### Key Design Patterns
+
 - **Provider Pattern**: State management via `ChangeNotifierProvider`
 - **Service Layer**: `RobotApi` handles all UDP communication with retry mechanism (3x redundancy)
 - **Auto-Discovery**: Robot automatically discovers ESP32 on network via UDP broadcast
 - **Dead-man's Switch**: 1.5s safety timeout on ESP32 stops robot if no commands received
 
 ### RobotApi Service (`lib/services/robot_api.dart`)
+
 - Type-safe commands via `RobotCommand` enum
 - Connection status tracking (`RobotConnectionStatus`)
 - UDP socket communication with `RawDatagramSocket`
@@ -162,21 +172,23 @@ Phone (Flutter App)
 
 ## Current Status
 
-| Component         | Status         | Notes                                     |
-| ----------------- | -------------- | ----------------------------------------- |
-| Flutter UI        | ✅ Production  | Full ordering system                      |
-| Robot API         | ✅ Production  | Service layer with error handling         |
-| ESP32 Firmware    | ✅ Production  | Motor control + PID                       |
-| UDP Communication | ✅ Tested      | 3x redundancy implemented                 |
-| WiFi Config       | ⚠️ In Progress | Hardcoded credentials (needs WiFiManager) |
+| Component         | Status      | Notes                                     |
+| ----------------- | ----------- | ----------------------------------------- |
+| Flutter UI        | Production  | Full ordering system                      |
+| Robot API         | Production  | Service layer with error handling         |
+| ESP32 Firmware    | Production  | Motor control + PID                       |
+| UDP Communication | Tested      | 3x redundancy implemented                 |
+| WiFi Config       | In Progress | Hardcoded credentials (needs WiFiManager) |
 
 ## Roadmap
 
 ### Short Term
+
 - WiFiManager integration for ESP32
 - Command acknowledgment (ESP32 → App)
 
 ### Medium Term
+
 - Battery monitoring
 - Delivery route planning
 - Push notifications
@@ -200,12 +212,12 @@ flutter build ios --release    # Build iOS app
 
 ## Key Files
 
-| File | Description |
-|------|-------------|
-| `lib/main.dart` | App entry point with Providers and DevicePreview |
-| `lib/services/robot_api.dart` | UDP communication service with robot |
-| `lib/providers/cart_provider.dart` | Shopping cart and order state management |
-| `lib/providers/settings_provider.dart` | App settings (theme, etc.) |
-| `robots/robots.ino` | Main ESP32 firmware |
-| `robots/config.h` | ESP32 configuration (WiFi, pins) |
-| `pubspec.yaml` | Flutter dependencies and assets configuration |
+| File                                   | Description                                      |
+| -------------------------------------- | ------------------------------------------------ |
+| `lib/main.dart`                        | App entry point with Providers and DevicePreview |
+| `lib/services/robot_api.dart`          | UDP communication service with robot             |
+| `lib/providers/cart_provider.dart`     | Shopping cart and order state management         |
+| `lib/providers/settings_provider.dart` | App settings (theme, etc.)                       |
+| `robots/robots.ino`                    | Main ESP32 firmware                              |
+| `robots/config.h`                      | ESP32 configuration (WiFi, pins)                 |
+| `pubspec.yaml`                         | Flutter dependencies and assets configuration    |

@@ -154,9 +154,9 @@ class RobotResponse {
 final response = await robotApi.moveForward();
 
 if (response.success) {
-  print('✅ ${response.message}');
+  print('SUCCESS: ${response.message}');
 } else {
-  print('❌ ${response.message}');
+  print('FAILED: ${response.message}');
 }
 ```
 
@@ -602,27 +602,27 @@ class _RobotControlPageState extends State<RobotControlPage> {
           if (!_isLoading) ...[
             ElevatedButton(
               onPressed: () => _sendCommand(RobotCommand.forward),
-              child: Text('⬆️ Forward'),
+              child: Text('Forward'),
             ),
             Row(
               children: [
                 ElevatedButton(
                   onPressed: () => _sendCommand(RobotCommand.left),
-                  child: Text('⬅️ Left'),
+                  child: Text('Left'),
                 ),
                 ElevatedButton(
                   onPressed: () => _sendCommand(RobotCommand.stop),
-                  child: Text('⏹️ Stop'),
+                  child: Text('Stop'),
                 ),
                 ElevatedButton(
                   onPressed: () => _sendCommand(RobotCommand.right),
-                  child: Text('➡️ Right'),
+                  child: Text('Right'),
                 ),
               ],
             ),
             ElevatedButton(
               onPressed: () => _sendCommand(RobotCommand.backward),
-              child: Text('⬇️ Backward'),
+              child: Text('Backward'),
             ),
           ] else ...[
             CircularProgressIndicator(),
@@ -704,4 +704,4 @@ Socket error sending command: SocketException: Permission denied
 
 ---
 
-_Last Updated: 2026-04-06_
+Last Updated: 2026-04-07

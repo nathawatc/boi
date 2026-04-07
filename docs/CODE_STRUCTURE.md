@@ -20,13 +20,15 @@ boi/
 │   │   ├── coupon_page.dart      # Coupon management
 │   │   ├── product_detail_page.dart  # Product info
 │   │   ├── category_products_page.dart  # Products by category
+│   │   ├── robot_control_page.dart    # Manual robot control
 │   │   └── splash_screen.dart    # Loading screen
 │   │
 │   ├── services/                 # Business Logic Services
-│   │   └── robot_api.dart        # UDP robot communication ⭐
+│   │   └── robot_api.dart        # UDP robot communication
 │   │
 │   ├── providers/                # State Management
 │   │   └── cart_provider.dart    # Cart, orders, coupons, robot state
+│   │                             # (Immutable models with copyWith)
 │   │
 │   ├── widgets/                  # Reusable UI Components
 │   │   ├── custom_search_bar.dart
@@ -39,7 +41,8 @@ boi/
 │   │   ├── rating_dialog.dart
 │   │   ├── delivery_toggle.dart
 │   │   ├── action_item.dart
-│   │   └── incoming_call_widget.dart  # Robot arrival UI
+│   │   ├── incoming_call_widget.dart  # Robot arrival UI
+│   │   └── manual_ip_input_dialog.dart  # Shared IP input dialog
 │   │
 │   └── theme/                    # Styling
 │       └── app_theme.dart        # Colors, gradients, text styles
@@ -51,7 +54,7 @@ boi/
 │   ├── pid_control.h             # Line following algorithm
 │   └── wifi_manager_example.ino  # Dynamic WiFi config example
 │
-├── docs/                         # Documentation ⭐
+├── docs/                         # Documentation
 │   ├── README.md                 # Documentation index
 │   ├── QUICK_START.md            # 5-minute setup guide
 │   ├── SYSTEM_OVERVIEW.md        # Architecture & features
@@ -352,8 +355,8 @@ enum RobotCommand {
 }
 
 // Usage prevents typos
-await robotApi.sendCommand(RobotCommand.forward);  // ✅
-await robotApi.sendCommand("F");                   // ❌ Not allowed
+await robotApi.sendCommand(RobotCommand.forward);  // CORRECT
+await robotApi.sendCommand("F");                   // INCORRECT - Not allowed
 ```
 
 ---
@@ -421,6 +424,47 @@ class CartProvider with ChangeNotifier {
 }
 ```
 
+### Model Classes (Immutable)
+
+All model classes use immutable fields with copyWith patterns:
+
+```dart
+class CartItem {
+  final String id;
+  final String name;
+  final String price;
+  final int quantity;
+
+  CartItem copyWith({...});
+}
+
+class Order {
+  final String id;
+  final List<CartItem> items;
+  final double totalAmount;
+  final String status;
+  final int estimatedMinutes;
+
+  Order copyWith({...});
+}
+
+class Coupon {
+  final String code;
+  final String title;
+  final double discountAmount;
+  final bool isCollected;
+
+  Coupon copyWith({...});
+}
+```
+
+This approach ensures:
+
+- Predictable state changes
+- Easy debugging
+- Better testability
+- No accidental mutations
+
 ---
 
 ## Theme Structure
@@ -464,8 +508,8 @@ test/
 
 **Current Coverage**:
 
-- ✅ App instantiation
-- ✅ CartProvider creation/disposal
+- App instantiation
+- CartProvider creation/disposal
 
 **Future Tests Needed**:
 
@@ -567,4 +611,4 @@ void loop() {
 
 ---
 
-_Last Updated: 2026-04-06_
+Last Updated: 2026-04-07

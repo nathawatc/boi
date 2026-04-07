@@ -41,7 +41,7 @@ Get your Boi delivery robot system up and running in 5 minutes.
    - **Security**: WPA2
    - **Band**: 2.4GHz (ESP32 doesn't support 5GHz)
 
-> ⚠️ **Important**: ESP32 only supports 2.4GHz WiFi networks!
+> **Important**: ESP32 only supports 2.4GHz WiFi networks!
 
 ---
 
@@ -114,8 +114,8 @@ Get your Boi delivery robot system up and running in 5 minutes.
 ### Step 4: Test Communication
 
 1. **Ensure Both Devices on Same Network**
-   - ESP32 connected to "Boi" hotspot ✅
-   - Phone IS the "Boi" hotspot ✅
+   - ESP32 connected to "Boi" hotspot (verified)
+   - Phone IS the "Boi" hotspot (verified)
 
 2. **Test from Flutter App**
    - Open the app
@@ -217,4 +217,4 @@ After verifying basic functionality:
 
 ---
 
-_Last Updated: 2026-04-06_
+Last Updated: 2026-04-07

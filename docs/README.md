@@ -58,16 +58,30 @@
 
 ---
 
-## Current Status
+## Code Standards
 
-| Component         | Status              | Notes                                     |
-| ----------------- | ------------------- | ----------------------------------------- |
-| Flutter UI        | ✅ Production Ready | Full ordering system                      |
-| Robot API         | ✅ Production Ready | Service layer with error handling         |
-| ESP32 Firmware    | ✅ Production Ready | Motor control + PID                       |
-| UDP Communication | ✅ Tested           | 3x redundancy implemented                 |
-| Network Config    | ⚠️ In Progress      | Hardcoded credentials (needs WiFiManager) |
+This project follows modern Dart/Flutter conventions (2024-2025):
+
+- Immutable state management with copyWith patterns
+- Type-safe data classes
+- Proper const constructors
+- Modern async/await patterns
+- DRY principles with shared widgets
+
+Run `flutter analyze` to verify code quality.
 
 ---
 
-_Last Updated: 2026-04-06_
+## Current Status
+
+| Component         | Status      | Notes                                     |
+| ----------------- | ----------- | ----------------------------------------- |
+| Flutter UI        | Production  | Full ordering system                      |
+| Robot API         | Production  | Service layer with error handling         |
+| ESP32 Firmware    | Production  | Motor control + PID                       |
+| UDP Communication | Tested      | 3x redundancy implemented                 |
+| Network Config    | In Progress | Hardcoded credentials (needs WiFiManager) |
+
+---
+
+Last Updated: 2026-04-07
