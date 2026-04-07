@@ -28,7 +28,8 @@ void main() {
       const config = RobotConfig.defaults;
       expect(config.ipAddress, isNull);
       expect(config.port, 2001);
-      expect(config.timeout, const Duration(seconds: 2));
+      // Increased to 5s for ESP32 WiFi stack initialization
+      expect(config.timeout, const Duration(seconds: 5));
       expect(config.resendCount, 3);
     });
 

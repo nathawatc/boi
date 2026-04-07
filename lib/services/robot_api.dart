@@ -33,7 +33,7 @@ class RobotConfig {
   const RobotConfig({
     this.ipAddress,
     this.port = 2001,
-    this.timeout = const Duration(seconds: 2),
+    this.timeout = const Duration(seconds: 5),
     this.resendCount = 3,
   });
 
@@ -333,7 +333,7 @@ class RobotApi extends ChangeNotifier {
   /// Discover robot on network by sending ping
   /// Returns IP address if robot responds, null otherwise
   Future<String?> discoverRobot({Duration? timeout}) async {
-    final effectiveTimeout = timeout ?? const Duration(seconds: 2);
+    final effectiveTimeout = timeout ?? const Duration(seconds: 5);
 
     try {
       _connectionStatus = RobotConnectionStatus.connecting;
@@ -442,7 +442,7 @@ class RobotApi extends ChangeNotifier {
   /// Discover all robots on network by sending broadcast ping
   /// Returns list of IP addresses of all responding robots
   Future<List<String>> discoverAllRobots({Duration? timeout}) async {
-    final effectiveTimeout = timeout ?? const Duration(seconds: 3);
+    final effectiveTimeout = timeout ?? const Duration(seconds: 6);
     final Set<String> foundIps = {};
 
     try {

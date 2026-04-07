@@ -71,8 +71,9 @@ void main() {
       expect(RobotConfig.defaults.resendCount, 3);
     });
 
-    test('timeout is reasonable for local network', () {
-      expect(RobotConfig.defaults.timeout, const Duration(seconds: 2));
+    test('timeout is reasonable for local network with slow ESP32 responses', () {
+      // Increased from 2s to 5s to accommodate ESP32 WiFi stack initialization
+      expect(RobotConfig.defaults.timeout, const Duration(seconds: 5));
     });
 
     test('custom config overrides are preserved', () {
