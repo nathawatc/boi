@@ -6,7 +6,7 @@ class CartItem {
   final String id;
   final String name;
   final String price;
-  int quantity;
+  final int quantity;
 
   CartItem({
     required this.id,
@@ -14,6 +14,20 @@ class CartItem {
     required this.price,
     this.quantity = 1,
   });
+
+  CartItem copyWith({
+    String? id,
+    String? name,
+    String? price,
+    int? quantity,
+  }) {
+    return CartItem(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      price: price ?? this.price,
+      quantity: quantity ?? this.quantity,
+    );
+  }
 }
 
 class Coupon {
@@ -22,7 +36,7 @@ class Coupon {
   final double discountAmount;
   final double minSpend;
   final DateTime expiryDate;
-  bool isCollected;
+  final bool isCollected;
 
   Coupon({
     required this.code,
@@ -36,6 +50,24 @@ class Coupon {
   bool get isExpired => DateTime.now().isAfter(expiryDate);
 
   String get expiryDateFormatted => '${expiryDate.day}/${expiryDate.month}/${expiryDate.year + 543}';
+
+  Coupon copyWith({
+    String? code,
+    String? title,
+    double? discountAmount,
+    double? minSpend,
+    DateTime? expiryDate,
+    bool? isCollected,
+  }) {
+    return Coupon(
+      code: code ?? this.code,
+      title: title ?? this.title,
+      discountAmount: discountAmount ?? this.discountAmount,
+      minSpend: minSpend ?? this.minSpend,
+      expiryDate: expiryDate ?? this.expiryDate,
+      isCollected: isCollected ?? this.isCollected,
+    );
+  }
 }
 
 class Order {
@@ -45,8 +77,8 @@ class Order {
   final double discount;
   final String? couponCode;
   final DateTime date;
-  String status;
-  int estimatedMinutes;
+  final String status;
+  final int estimatedMinutes;
 
   Order({
     required this.id,
@@ -58,6 +90,28 @@ class Order {
     this.status = 'กำลังจัดส่ง',
     this.estimatedMinutes = 15,
   });
+
+  Order copyWith({
+    String? id,
+    List<CartItem>? items,
+    double? totalAmount,
+    double? discount,
+    String? couponCode,
+    DateTime? date,
+    String? status,
+    int? estimatedMinutes,
+  }) {
+    return Order(
+      id: id ?? this.id,
+      items: items ?? this.items,
+      totalAmount: totalAmount ?? this.totalAmount,
+      discount: discount ?? this.discount,
+      couponCode: couponCode ?? this.couponCode,
+      date: date ?? this.date,
+      status: status ?? this.status,
+      estimatedMinutes: estimatedMinutes ?? this.estimatedMinutes,
+    );
+  }
 }
 
 class CartProvider with ChangeNotifier {
@@ -91,9 +145,9 @@ class CartProvider with ChangeNotifier {
       }
 
       bool changed = false;
-      for (var order in _orders) {
-        if (order.status == 'กำลังจัดส่ง' && order.estimatedMinutes > 1) {
-          order.estimatedMinutes--;
+      for (int i = 0; i < _orders.length; i++) {
+        if (_orders[i].status == 'กำลังจัดส่ง' && _orders[i].estimatedMinutes > 1) {
+          _orders[i] = _orders[i].copyWith(estimatedMinutes: _orders[i].estimatedMinutes - 1);
           changed = true;
         }
       }
@@ -184,7 +238,7 @@ class CartProvider with ChangeNotifier {
     if (_isIncomingCall) {
       // Mark the latest order as failed/incomplete
       if (_orders.isNotEmpty && _orders.first.status == 'กำลังจัดส่ง') {
-        _orders.first.status = 'คำสั่งซื้อไม่สำเร็จ';
+        _orders[0] = _orders.first.copyWith(status: 'คำสั่งซื้อไม่สำเร็จ');
       }
       stopCall();
     }
@@ -225,7 +279,7 @@ class CartProvider with ChangeNotifier {
   void collectCoupon(String code) {
     final index = _availableCoupons.indexWhere((c) => c.code == code);
     if (index >= 0) {
-      _availableCoupons[index].isCollected = true;
+      _availableCoupons[index] = _availableCoupons[index].copyWith(isCollected: true);
       _safeNotifyListeners();
     }
   }
@@ -251,7 +305,7 @@ class CartProvider with ChangeNotifier {
   void addItem(String id, String name, String price, {int quantity = 1}) {
     int index = _items.indexWhere((item) => item.id == id);
     if (index >= 0) {
-      _items[index].quantity += quantity;
+      _items[index] = _items[index].copyWith(quantity: _items[index].quantity + quantity);
     } else {
       _items.add(CartItem(id: id, name: name, price: price, quantity: quantity));
     }
@@ -285,7 +339,7 @@ class CartProvider with ChangeNotifier {
   void confirmOrderReceipt(String orderId) {
     int index = _orders.indexWhere((o) => o.id == orderId);
     if (index >= 0) {
-      _orders[index].status = 'สำเร็จ';
+      _orders[index] = _orders[index].copyWith(status: 'สำเร็จ');
       _safeNotifyListeners();
     }
   }

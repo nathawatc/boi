@@ -12,32 +12,34 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _fadeAnimation;
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1500),
+  );
+  late final Animation<double> _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
-
     _controller.forward();
 
     // Initialize settings and navigate to HomePage after 3 seconds
-    Future.wait([
-      context.read<SettingsProvider>().initialize(),
-      Future.delayed(const Duration(seconds: 3)),
-    ]).then((_) {
+    _navigateAfterDelay();
+  }
+
+  Future<void> _navigateAfterDelay() async {
+    try {
+      await Future.wait([
+        context.read<SettingsProvider>().initialize(),
+        Future.delayed(const Duration(seconds: 3)),
+      ]);
       if (mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomePage()),
         );
       }
-    }).catchError((error) {
+    } catch (error) {
       debugPrint('Error during splash initialization: $error');
       // Still navigate to home even if settings fail to load
       if (mounted) {
@@ -46,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           MaterialPageRoute(builder: (context) => const HomePage()),
         );
       }
-    });
+    }
   }
 
   @override

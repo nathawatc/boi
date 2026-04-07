@@ -26,17 +26,11 @@ class ProductDetailPage extends StatefulWidget {
 class _ProductDetailPageState extends State<ProductDetailPage> {
   int _quantity = 1;
 
-  void _increment() {
-    setState(() {
-      _quantity++;
-    });
-  }
+  void _increment() => setState(() => _quantity++);
 
   void _decrement() {
     if (_quantity > 1) {
-      setState(() {
-        _quantity--;
-      });
+      setState(() => _quantity--);
     }
   }
 

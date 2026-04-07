@@ -261,7 +261,10 @@ class CartPage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PaymentPage(totalAmount: cart.totalAmount),
+                                builder: (context) => PaymentPage(
+                                  totalAmount: cart.totalAmount,
+                                  orderItems: cart.items,
+                                ),
                               ),
                             );
                           },

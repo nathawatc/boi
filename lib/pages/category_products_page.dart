@@ -4,6 +4,21 @@ import '../theme/app_theme.dart';
 import '../providers/cart_provider.dart';
 import 'product_detail_page.dart';
 
+/// Represents a product with typed fields instead of using maps
+class Product {
+  final String id;
+  final String name;
+  final String price;
+  final String imageUrl;
+
+  const Product({
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.imageUrl,
+  });
+}
+
 class CategoryProductsPage extends StatefulWidget {
   final String categoryName;
 
@@ -86,16 +101,16 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                 final childAspectRatio = width > 600 ? 0.85 : 0.75;
 
                 // Generate products
-                final allProducts = List.generate(10, (i) => {
-                  'id': 'prod_$i',
-                  'name': 'สินค้าตัวอย่าง ${i + 1}',
-                  'price': '${(i + 1) * 10 + 5}.-',
-                  'imageUrl': 'https://loremflickr.com/300/300/food,snack?lock=$i',
-                });
+                final allProducts = List.generate(10, (i) => Product(
+                  id: 'prod_$i',
+                  name: 'สินค้าตัวอย่าง ${i + 1}',
+                  price: '${(i + 1) * 10 + 5}.-',
+                  imageUrl: 'https://loremflickr.com/300/300/food,snack?lock=$i',
+                ));
 
                 final products = _searchQuery.isEmpty
                     ? allProducts
-                    : allProducts.where((p) => (p['name'] as String).contains(_searchQuery)).toList();
+                    : allProducts.where((p) => p.name.contains(_searchQuery)).toList();
 
                 return SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -108,10 +123,10 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                     (context, index) {
                       final product = products[index];
                       return _ProductCard(
-                        id: product['id'] as String,
-                        name: product['name'] as String,
-                        price: product['price'] as String,
-                        imageUrl: product['imageUrl'] as String,
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        imageUrl: product.imageUrl,
                       );
                     },
                     childCount: products.length,

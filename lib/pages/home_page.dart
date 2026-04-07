@@ -243,9 +243,9 @@ class HomeContent extends StatelessWidget {
                             children: [
                               Text(
                                 settings.isThai ? 'ดูทั้งหมด' : 'View All',
-                                style: TextStyle(color: Colors.grey, fontSize: 13),
+                                style: const TextStyle(color: Colors.grey, fontSize: 13),
                               ),
-                              Icon(Icons.chevron_right, color: Colors.grey, size: 16),
+                              const Icon(Icons.chevron_right, color: Colors.grey, size: 16),
                             ],
                           ),
                         );

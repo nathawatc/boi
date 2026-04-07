@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:collection/collection.dart';
 import '../providers/cart_provider.dart';
 import '../theme/app_theme.dart';
 
@@ -12,19 +13,10 @@ class OrderDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
       builder: (context, cart, child) {
-        final order = cart.orders.firstWhere(
-          (o) => o.id == orderId,
-          orElse: () => Order(
-            id: '',
-            items: [],
-            totalAmount: 0,
-            date: DateTime.now(),
-            status: 'ไม่พบคำสั่งซื้อ',
-          ),
-        );
+        final order = cart.orders.firstWhereOrNull((o) => o.id == orderId);
 
         // If order not found, show error and back button
-        if (order.id.isEmpty) {
+        if (order == null) {
           return Scaffold(
             backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(
