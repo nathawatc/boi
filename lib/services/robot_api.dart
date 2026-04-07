@@ -118,7 +118,6 @@ class RobotApi extends ChangeNotifier {
   String? _selectedRobotIp;
   bool _isManualIpConfigured = false;
 
-  // PERFORMANCE FIX: Reuse socket instead of creating/destroying on every command
   RawDatagramSocket? _socket;
   bool _isInitialized = false;
 

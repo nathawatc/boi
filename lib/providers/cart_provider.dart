@@ -333,10 +333,7 @@ class CartProvider with ChangeNotifier {
     _items.clear();
     _appliedCoupon = null;
 
-    // FIX: Only simulate incoming call if explicitly requested (for testing)
-    // This was previously always called, causing a fake incoming call after every checkout
     if (simulateIncomingCall) {
-      // playNotificationSound already calls notifyListeners internally
       playNotificationSound(isLong: true);
     } else {
       _safeNotifyListeners();

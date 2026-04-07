@@ -39,7 +39,6 @@ class _CouponInputFieldState extends State<_CouponInputField> {
       onSubmitted: (value) {
         if (cart.applyCoupon(value)) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ใช้คูปองสำเร็จ!'), backgroundColor: Colors.green));
-          // FIX: Clear the field after successful submission
           _couponController.clear();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('รหัสคูปองไม่ถูกต้อง'), backgroundColor: Colors.red));

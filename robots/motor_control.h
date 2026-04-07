@@ -12,13 +12,9 @@ void initMotors() {
     pinMode(MOTOR_B_IN3, OUTPUT);
     pinMode(MOTOR_B_IN4, OUTPUT);
 
-    // Setup PWM channels for ENA and ENB (Speed Control)
-    // New ESP32 Arduino Core 3.x API - combines setup and attach
     ledcAttachChannel(MOTOR_A_EN, PWM_FREQ, PWM_RESOLUTION, PWM_CH_A_EN);
     ledcAttachChannel(MOTOR_B_EN, PWM_FREQ, PWM_RESOLUTION, PWM_CH_B_EN);
 
-    // FIX: Use brake mode (HIGH, HIGH) for consistency with stopMotors()
-    // Previously used coast mode (LOW, LOW) which was inconsistent
     digitalWrite(MOTOR_A_IN1, HIGH);
     digitalWrite(MOTOR_A_IN2, HIGH);
     digitalWrite(MOTOR_B_IN3, HIGH);
@@ -43,8 +39,6 @@ void setMotorLeft(int speed) {
         digitalWrite(MOTOR_A_IN2, HIGH);
         ledcWrite(MOTOR_A_EN, -speed);
     } else {
-        // SAFETY FIX: Use brake mode (HIGH, HIGH) instead of coast mode (LOW, LOW)
-        // Brake mode provides faster, safer emergency stops
         digitalWrite(MOTOR_A_IN1, HIGH);
         digitalWrite(MOTOR_A_IN2, HIGH);
         ledcWrite(MOTOR_A_EN, 0);
@@ -66,8 +60,6 @@ void setMotorRight(int speed) {
         digitalWrite(MOTOR_B_IN4, HIGH);
         ledcWrite(MOTOR_B_EN, -speed);
     } else {
-        // SAFETY FIX: Use brake mode (HIGH, HIGH) instead of coast mode (LOW, LOW)
-        // Brake mode provides faster, safer emergency stops
         digitalWrite(MOTOR_B_IN3, HIGH);
         digitalWrite(MOTOR_B_IN4, HIGH);
         ledcWrite(MOTOR_B_EN, 0);

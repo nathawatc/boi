@@ -6,8 +6,6 @@
 #include "motor_control.h"
 
 // Variables for PID control
-// FIX: Made static to prevent ODR (One Definition Rule) violations
-// if this header is included in multiple translation units
 static float previous_error = 0;
 static float integral = 0;
 const float INTEGRAL_MAX = 100.0; // Clamp to prevent integral windup
@@ -20,10 +18,8 @@ float calculateLineError() {
     int center = digitalRead(SENSOR_LINE_CENTER);
     int right = digitalRead(SENSOR_LINE_RIGHT);
     
-    // FIX: Track when line is found to reset search timer
     static bool line_found = true;
 
-    // Simple error calculation logic based on sensor states
     if (left == 0 && center == 1 && right == 0) {
         line_found = true;
         return 0; // Centered
@@ -43,10 +39,8 @@ float calculateLineError() {
         line_found = true;
         return 0; // Intersection or all black
     } else if (left == 0 && center == 0 && right == 0) {
-        // FIX: Lost the line - alternate search direction instead of always turning same way
         static unsigned long line_lost_time = 0;
         
-        // Reset timer when line is first lost
         if (line_found) {
             line_lost_time = millis();
             line_found = false;
@@ -67,7 +61,6 @@ void updatePID() {
     // Calculate PID terms
     float proportional = error;
     
-    // FIX: Only compute integral if KI > 0 (saves CPU when using P-only or PD control)
     if (PID_KI > 0.0f) {
         integral += error;
         // Clamp integral to prevent windup

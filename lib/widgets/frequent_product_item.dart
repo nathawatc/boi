@@ -111,8 +111,6 @@ class FrequentProductItem extends StatelessWidget {
                           ),
                           GestureDetector(
                             onTap: () {
-                              // WARNING: Using name as product ID can cause collisions if products have duplicate names
-                              // TODO: Add unique ID field to product data model
                               context.read<CartProvider>().addItem(name, name, price);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

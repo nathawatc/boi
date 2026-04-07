@@ -42,7 +42,6 @@ void setup() {
   Serial.print(WIFI_SSID);
 
   // Wait for initial connection with timeout (10 seconds max)
-  // SAFETY FIX: Don't block forever - allow robot to start even if WiFi unavailable
   unsigned long wifiConnectStart = millis();
   while (WiFi.status() != WL_CONNECTED && (millis() - wifiConnectStart < 10000)) {
     delay(500);
@@ -99,9 +98,7 @@ void loop() {
   // ---------------------------------------------------------
   if (WiFi.status() != WL_CONNECTED && (currentMillis - previousWiFiCheckMillis >= WIFI_CHECK_INTERVAL)) {
     Serial.println("WiFi Disconnected. Attempting to reconnect...");
-    
-    // SAFETY FIX: Stop motors BEFORE attempting reconnection
-    // Previously, motors kept running during 3-second reconnect attempt
+
     stopMotors();
     isLineFollowing = false;
     isMovingManually = false;
@@ -126,9 +123,7 @@ void loop() {
     } else {
       Serial.println("\nWiFi Reconnect Failed");
     }
-    
-    // FIX: Always restart UDP to ensure clean state
-    // Previously only restarted on successful reconnect
+
     udp.stop();
     udp.begin(UDP_PORT);
     Serial.printf("UDP restarted on port %d\n", UDP_PORT);
@@ -168,13 +163,10 @@ void loop() {
     if (len > 0 && len < (int)sizeof(packetBuffer)) {
       packetBuffer[len] = 0; // null-terminate the string
     } else if (len >= (int)sizeof(packetBuffer)) {
-      // Safety: shouldn't happen, but ensure null termination
       packetBuffer[sizeof(packetBuffer) - 1] = 0;
       len = sizeof(packetBuffer) - 1;
     }
 
-    // PERFORMANCE FIX: Avoid String heap fragmentation by using strcmp()
-    // Trim whitespace manually instead of String.trim()
     int cmdLen = strlen(packetBuffer);
     while (cmdLen > 0 && (packetBuffer[cmdLen-1] == '\r' || packetBuffer[cmdLen-1] == '\n' || packetBuffer[cmdLen-1] == ' ')) {
       packetBuffer[--cmdLen] = 0;
@@ -182,11 +174,8 @@ void loop() {
 
     Serial.printf("Received UDP command: %s from %s:%d\n", packetBuffer, remoteIp.toString().c_str(), remotePort);
     
-    // FIX: Only reset safety timer on valid commands
-    // Previously reset on all packets, preventing timeout if garbage floods in
     bool validCommand = false;
 
-    // Process commands using strcmp() instead of String comparison
     if (strcmp(packetBuffer, "F") == 0) {
       validCommand = true;
       isLineFollowing = false;
@@ -249,8 +238,6 @@ void loop() {
   // ---------------------------------------------------------
   // 5. SAFETY: Dead-man's Switch for Line-Follow Mode
   // ---------------------------------------------------------
-  // SAFETY FIX: Previously, line-follow mode had NO timeout
-  // Robot could run indefinitely if line was lost or robot got stuck
   if (isLineFollowing && (currentMillis - lastCommandTime > COMMAND_TIMEOUT)) {
     Serial.println("Safety Timeout in Line-Follow: Stopping motors.");
     isLineFollowing = false;
@@ -258,11 +245,8 @@ void loop() {
   }
 
   // ---------------------------------------------------------
-  // 6. PID CONTINUOUS EXECUTION (Non-blocking)
+  // 6. PID CONTINUOUS EXECUTION
   // ---------------------------------------------------------
-  // FIX: Use non-blocking timing instead of delay(10)
-  // Previously, delay(10) blocked all other processing (WiFi, obstacles, UDP)
-  // Now PID updates at ~100Hz while keeping loop responsive
   if (isLineFollowing) {
     static unsigned long lastPidUpdate = 0;
     if (currentMillis - lastPidUpdate >= 10) {

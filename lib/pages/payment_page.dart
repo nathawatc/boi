@@ -460,11 +460,8 @@ class _PaymentPageState extends State<PaymentPage> {
 
   /// Safely navigate back to the home page by popping until reaching root
   void _navigateToHomePage(BuildContext context) {
-    // FIX: Use popUntil(isFirst) instead of magic number popCount < 3
-    // This is more robust and doesn't depend on navigation stack depth
     Navigator.of(context).popUntil((route) => route.isFirst);
 
-    // Set tab index to 0 (Home) after navigation
     if (mounted) {
       context.read<CartProvider>().setTabIndex(0);
     }
@@ -500,11 +497,8 @@ class _PaymentPageState extends State<PaymentPage> {
     });
 
     try {
-      // Send command to robot via new API
       final response = await robotApi.moveForward();
 
-      // Handle result with mounted check
-      // FIX: Use this.context instead of parameter context after async gap
       if (!mounted) return;
 
       final cartProvider = this.context.read<CartProvider>();
@@ -518,10 +512,8 @@ class _PaymentPageState extends State<PaymentPage> {
       }
     } catch (e) {
       debugPrint('Error sending robot command: $e');
-      // Handle error with mounted check
       if (mounted) {
         final cartProvider = this.context.read<CartProvider>();
-        // FIX: Show user-friendly message instead of raw exception
         _showErrorDialog(this.context, cartProvider, 'เกิดข้อผิดพลาดในการเชื่อมต่อหุ่นยนต์');
       }
     } finally {
