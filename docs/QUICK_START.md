@@ -2,8 +2,6 @@
 
 Get your Boi delivery robot system up and running in 5 minutes.
 
----
-
 ## Prerequisites
 
 ### For Flutter App
@@ -27,8 +25,6 @@ Get your Boi delivery robot system up and running in 5 minutes.
 - Smartphone with WiFi hotspot capability
 - OR any 2.4GHz WiFi router
 
----
-
 ## Step-by-Step Setup
 
 ### Step 1: Set up WiFi Hotspot
@@ -42,8 +38,6 @@ Get your Boi delivery robot system up and running in 5 minutes.
    - **Band**: 2.4GHz (ESP32 doesn't support 5GHz)
 
 > **Important**: ESP32 only supports 2.4GHz WiFi networks!
-
----
 
 ### Step 2: Flash ESP32 Firmware
 
@@ -78,8 +72,6 @@ Get your Boi delivery robot system up and running in 5 minutes.
      ===== ระบบพร้อมทำงาน =====
      ```
 
----
-
 ### Step 3: Run Flutter App
 
 1. **Clone/Download Repository**
@@ -109,8 +101,6 @@ Get your Boi delivery robot system up and running in 5 minutes.
    flutter run
 ```
 
----
-
 ### Step 4: Test Communication
 
 1. **Ensure Both Devices on Same Network**
@@ -133,8 +123,6 @@ Get your Boi delivery robot system up and running in 5 minutes.
      Received UDP command: F
    ```
 
----
-
 ## Verification Checklist
 
 - [ ] Phone hotspot is ON with SSID "Boi" and password "12345678"
@@ -143,8 +131,6 @@ Get your Boi delivery robot system up and running in 5 minutes.
 - [ ] Flutter app runs without errors
 - [ ] Both devices on same network
 - [ ] Sending "F" command makes robot move forward
-
----
 
 ## Troubleshooting
 
@@ -156,8 +142,6 @@ If you encounter issues, see the [Debug Guide](./DEBUG_GUIDE.md) for comprehensi
 - Check password is exactly `12345678`
 - Ensure both devices are on the same network
 - Restart ESP32 and hotspot if connection fails
-
----
 
 ## First Order Walkthrough
 
@@ -174,8 +158,6 @@ If you encounter issues, see the [Debug Guide](./DEBUG_GUIDE.md) for comprehensi
 11. **Wait for Delivery** → Robot arrives (simulated after 10s)
 12. **Receive Order** → Tap "รับสินค้า" on incoming call screen
 13. **Rate Experience** → Give 1-5 star rating
-
----
 
 ## Next Steps
 

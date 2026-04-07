@@ -2,8 +2,6 @@
 
 Understanding the organization and architecture of the Boi delivery robot codebase.
 
----
-
 ## Project Structure Overview
 
 ```text
@@ -84,8 +82,6 @@ boi/
 └── README.md                     # Project README
 ```
 
----
-
 ## Architecture Layers
 
 ### Layer 1: Presentation (UI)
@@ -112,8 +108,6 @@ widgets/incoming_call_widget.dart  // Robot arrival screen
 - Pages are full screens
 - Widgets are reusable components
 - Both use Provider for state access
-
----
 
 ### Layer 2: State Management
 
@@ -151,8 +145,6 @@ class MyWidget extends StatelessWidget {
 }
 ```
 
----
-
 ### Layer 3: Services (Business Logic)
 
 **Location**: `lib/services/`
@@ -181,8 +173,6 @@ final robotApi = RobotApi();
 await robotApi.moveForward();
 ```
 
----
-
 ### Layer 4: Firmware (Hardware)
 
 **Location**: `robots/`
@@ -200,67 +190,63 @@ pid_control.h        // Line following
 
 **Pattern**: Arduino-style setup() and loop()
 
----
-
 ## Data Flow
 
 ### Example: User Places Order
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
-│ 1. USER INTERACTION (Presentation Layer)                                                                       │
-│    - User clicks "ยืนยันรายการ" on PaymentPage                                                                    │
+│ 1. USER INTERACTION (Presentation Layer)                    │
+│    - User clicks "ยืนยันรายการ" on PaymentPage                 │
 └──────────────────┬──────────────────────────────────────────┘
-                                                │
-                                               ▼
+                   │
+                   ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 2. STATE ACCESS (State Management)                                                                                  │
-│    - Gets cartProvider reference                                                                                                │
-│    - Reads cart items for order                                                                                                    │
+│ 2. STATE ACCESS (State Management)                          │
+│    - Gets cartProvider reference                            │
+│    - Reads cart items for order                             │
 └──────────────────┬──────────────────────────────────────────┘
-                                                │
-                                                ▼
+                   │
+                   ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 3. ROBOT COMMAND (Service Layer)                                                                                     │
-│    - robotApi.moveForward() called                                                                                          │
-│    - UDP packet "F" created                                                                                                        │
-│    - Sent 3x to broadcast address 255.255.255.255:2001                                               │
+│ 3. ROBOT COMMAND (Service Layer)                            │
+│    - robotApi.moveForward() called                          │
+│    - UDP packet "F" created                                 │
+│    - Sent 3x to broadcast address 255.255.255.255:2001      │
 └──────────────────┬──────────────────────────────────────────┘
-                                                │
-                                               ▼
+                   │
+                   ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 4. NETWORK (WiFi Hotspot)                                                                                                     │
-│    - Packet travels over phone's hotspot                                                                                 │
-│    - ESP32 receives on UDP port 2001                                                                                    │
+│ 4. NETWORK (WiFi Hotspot)                                   │
+│    - Packet travels over phone's hotspot                    │
+│    - ESP32 receives on UDP port 2001                        │
 └──────────────────┬──────────────────────────────────────────┘
-                                                │
-                                               ▼
+                   │
+                   ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 5. FIRMWARE (ESP32)                                                                                                               │
-│    - robots.ino processes command                                                                                         │
-│    - motor_control.h drives motors                                                                                           │
-│    - Robot moves forward                                                                                                            │
+│ 5. FIRMWARE (ESP32)                                         │
+│    - robots.ino processes command                           │
+│    - motor_control.h drives motors                          │
+│    - Robot moves forward                                    │
 └──────────────────┬──────────────────────────────────────────┘
-                                                │
-                                               ▼
+                   │
+                   ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 6. STATE UPDATE (State Management)                                                                                  │
-│    - cartProvider.checkout() called                                                                                            │
-│    - Cart cleared                                                                                                                              │
-│    - Order created and added to history                                                                                   │
-│    - Timer started for incoming call (10s delay)                                                                     │
+│ 6. STATE UPDATE (State Management)                          │
+│    - cartProvider.checkout() called                         │
+│    - Cart cleared                                           │
+│    - Order created and added to history                     │
+│    - Timer started for incoming call (10s delay)            │
 └──────────────────┬──────────────────────────────────────────┘
-                                                │
-                                               ▼
+                   │
+                   ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 7. UI UPDATE (Presentation Layer)                                                                                         │
-│    - Success dialog shown                                                                                                           │
-│    - Navigate to order history                                                                                                      │
-│    - After 10s: Incoming call widget appears                                                                         │
+│ 7. UI UPDATE (Presentation Layer)                           │
+│    - Success dialog shown                                   │
+│    - Navigate to order history                              │
+│    - After 10s: Incoming call widget appears                │
 └─────────────────────────────────────────────────────────────┘
 ```
-
----
 
 ## Key Design Patterns
 
@@ -286,8 +272,6 @@ context.watch<CartProvider>().items;
 context.read<CartProvider>().addItem(...);
 ```
 
----
-
 ### 2. Service Layer Pattern
 
 **Where**: Robot API
@@ -307,8 +291,6 @@ class RobotApi extends ChangeNotifier {
 // UI only calls simple method
 await RobotApi().moveForward();
 ```
-
----
 
 ### 3. Observer Pattern
 
@@ -336,8 +318,6 @@ ListenableBuilder(
 )
 ```
 
----
-
 ### 4. Command Pattern
 
 **Where**: Robot commands
@@ -358,8 +338,6 @@ enum RobotCommand {
 await robotApi.sendCommand(RobotCommand.forward);  // CORRECT
 await robotApi.sendCommand("F");                   // INCORRECT - Not allowed
 ```
-
----
 
 ## Dependencies Graph
 
@@ -384,8 +362,6 @@ main.dart
       └── OrderHistoryPage
           └── Uses CartProvider.orders
 ```
-
----
 
 ## State Management
 
@@ -422,8 +398,6 @@ _orders[i] = _orders[i].copyWith(status: 'สำเร็จ');
 
 See source code for full class definitions.
 
----
-
 ## Theme Structure
 
 **Location**: `lib/theme/app_theme.dart`
@@ -454,8 +428,6 @@ color: AppTheme.primaryGreen,
 decoration: BoxDecoration(gradient: AppTheme.primaryGradient),
 ```
 
----
-
 ## Testing Structure
 
 ```text
@@ -476,8 +448,6 @@ test/
 - Order creation
 - Payment flow
 
----
-
 ## Configuration Files
 
 ### `pubspec.yaml`
@@ -497,8 +467,6 @@ test/
 - Platform-specific configs
 - Permissions (network, storage)
 - Build settings
-
----
 
 ## Entry Points
 
@@ -539,8 +507,6 @@ void loop() {
 }
 ```
 
----
-
 ## Naming Conventions
 
 ### Dart/Flutter
@@ -557,8 +523,6 @@ void loop() {
 - **Constants**: `UPPER_SNAKE_CASE`
 - **Variables**: `camelCase`
 - **Functions**: `camelCase`
-
----
 
 ## Related Documentation
 

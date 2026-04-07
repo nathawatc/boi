@@ -15,55 +15,53 @@ The system allows users to place orders via a mobile app, which then triggers a 
 ## System Architecture
 
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│                     USER (Customer)                                                                                                      │
-│                          │                                                                                                                               │
-│                          ▼                                                                                                                               │
-│  ┌──────────────────────────────────────────────────────────┐ │
-│  │           Flutter Mobile Application                                                                                       │  │
-│  │  ┌────────────┐  ┌──────────┐  ┌───────────────────────────┐ │  │
-│  │  │ Home Page        │  │ Cart                 │  │ Payment Page                                        │ │  │
-│  │  │ - Products          │  │ - Items           │  │ - Address                                                 │ │  │
-│  │  │ - Search              │  │ - Coupons     │  │ - Payment Method                                 │ │  │
-│  │  │ - Categories       │ │ - Total             │  │ - Confirm                                                  │ │  │
-│  │  └────────────┘  └──────────┘  └────────┬──────────────────┘ │  │
-│  │  ┌────────────┐  ┌──────────┐                         │                                                 │  │
-│  │  │ Orders                │  │ Coupons        │                         ▼                                                 │  │
-│  │  │ - History             │  │ - Collect        │  ┌─────────────────┐                           │  │
-│  │  │ - Track                │  │ - Apply           │  │  RobotApi                       │                            │  │
-│  │  └────────────┘  └──────────┘ │  Service                           │                            │  │
-│  │                                 └────────┬────────┘                                                                  │  │
-│  └──────────────────────────────────────────────┼──────────┘   │
-└────────────────────────────────────────────────┼────────────┘
-                                              │
+┌─────────────────────────────────────────────────────────────────────┐
+│                     USER (Customer)                                 │
+│                          │                                          │
+│                          ▼                                          │
+│  ┌───────────────────────────────────────────────────────────────┐  │
+│  │           Flutter Mobile Application                          │  │
+│  │  ┌─────────────┐  ┌──────────┐  ┌───────────────────────────┐ │  │
+│  │  │ Home Page   │  │ Cart     │  │ Payment Page              │ │  │
+│  │  │ - Products  │  │ - Items  │  │ - Address                 │ │  │
+│  │  │ - Search    │  │ - Coupons│  │ - Payment Method          │ │  │
+│  │  │ - Categories│  │ - Total  │  │ - Confirm                 │ │  │
+│  │  └─────────────┘  └──────────┘  └────────┬──────────────────┘ │  │
+│  │  ┌────────────┐  ┌──────────┐            │                    │  │
+│  │  │ Orders     │  │ Coupons  │            ▼                    │  │
+│  │  │ - History  │  │ - Collect│  ┌─────────────────┐            │  │
+│  │  │ - Track    │  │ - Apply  │  │  RobotApi       │            │  │
+│  │  └────────────┘  └──────────┘  │  Service        │            │  │
+│  │                                └────────┬────────┘            │  │
+│  └─────────────────────────────────────────┼─────────────────────┘  │
+└────────────────────────────────────────────┼────────────────────────┘
+                                             │
                                     UDP (Port 2001)
                                     Command: "F"
-                                              │
-                                              ▼
+                                             │
+                                             ▼
                     ┌─────────────────────────────────────┐
-                    │         Phone WiFi Hotspot                                                │
-                    │    SSID: "Boi"                                                                     │
-                    │    Network: 192.168.43.0/24                                       │
+                    │         Phone WiFi Hotspot          │
+                    │    SSID: "Boi"                      │
+                    │    Network: 192.168.43.0/24         │
                     └──────────────┬──────────────────────┘
-                                                          │
-                                                          │
-                    ┌──────────────▼──────────────────────┐
-                    │         ESP32 Robot                                                             │
-                    │  ┌──────────┐  ┌─────────────────────┐  │
-                    │  │ WiFi                 │  │ Motor Control                          │ │
-                    │  │ Station            │  │ L298N Driver                           │ │
-                    │  └──────────┘  └─────────────────────┘ │
-                    │  ┌──────────┐  ┌─────────────────────┐ │
-                    │  │ UDP                │  │ PID Line                                     │ │
-                    │  │ Listener         │  │ Following                                   │ │
-                    │  └──────────┘  └─────────────────────┘ │
+                                   │
+                                   │
+                    ┌──────────────▼────────────────────────┐
+                    │         ESP32 Robot                   │
+                    │  ┌──────────┐  ┌────────────────────┐ │
+                    │  │ WiFi     │  │ Motor Control      │ │
+                    │  │ Station  │  │ L298N Driver       │ │
+                    │  └──────────┘  └────────────────────┘ │
+                    │  ┌──────────┐  ┌────────────────────┐ │
+                    │  │ UDP      │  │ PID Line           │ │
+                    │  │ Listener │  │ Following          │ │
+                    │  └──────────┘  └────────────────────┘ │
                     │  ┌─────────────────────────────────┐  │
-                    │  │ Safety Timer (1.5s timeout)                               │  │
+                    │  │ Safety Timer (1.5s timeout)     │  │
                     │  └─────────────────────────────────┘  │
-                    └─────────────────────────────────────┘
+                    └───────────────────────────────────────┘
 ```
-
----
 
 ## Core Components
 
@@ -86,8 +84,6 @@ See [Code Structure](./CODE_STRUCTURE.md) for complete file listing.
 - `motor_control.h` - PWM motor driver (L298N)
 - `pid_control.h` - Line following algorithm
 
----
-
 ## Data Flow
 
 ### Order to Delivery Flow
@@ -108,18 +104,18 @@ See [Code Structure](./CODE_STRUCTURE.md) for complete file listing.
 7. Clicks "ยืนยันรายการ" (Confirm)
         ↓
 8. Flutter sends UDP "F" command ──────┐
-        ↓                                                                       │
-9. Shows success dialog                                    │
-        ↓                                                                      │
-10. Order saved to history                                │
-                                                                                ▼
-                                                          ESP32 receives "F"
-                                                                      ↓
-                                                          Moves robot FORWARD
-                                                                      ↓
-                                                          Safety timer starts (1.5s)
-                                                                      ↓
-                                                          If no new command in 1.5s → STOP
+        ↓                              │
+9. Shows success dialog                │
+        ↓                              │
+10. Order saved to history             │
+                                       ▼
+                               ESP32 receives "F"
+                                       ↓
+                              Moves robot FORWARD
+                                       ↓
+                           Safety timer starts (1.5s)
+                                       ↓
+                        If no new command in 1.5s → STOP
 ```
 
 ### Incoming Call Flow (Robot Arrival)
@@ -139,8 +135,6 @@ See [Code Structure](./CODE_STRUCTURE.md) for complete file listing.
         ↓
 7. Rating dialog appears
 ```
-
----
 
 ## Network Communication
 
@@ -171,8 +165,6 @@ See [Code Structure](./CODE_STRUCTURE.md) for complete file listing.
 2. **WiFi Reconnect**: Auto-reconnect if WiFi drops
 3. **Emergency Stop**: Send `S` command anytime
 4. **PID Reset**: Reset PID when entering line follow mode
-
----
 
 ## State Management
 
@@ -205,8 +197,6 @@ class CartProvider with ChangeNotifier {
 - Robot incoming call status
 - Call timeout countdown (180s)
 - Active tab index
-
----
 
 ## Code Quality Standards
 

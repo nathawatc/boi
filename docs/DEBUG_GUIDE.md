@@ -14,8 +14,6 @@ Based on your `config.h`, the default network is:
 - **SSID (WiFi Name):** `Boi`
 - **Password:** `12345678`
 
----
-
 ## Method 1: Full System Test (App + Robot)
 
 _Use this when you have both the Flutter app and the physical ESP32 ready._
@@ -39,8 +37,6 @@ _Use this when you have both the Flutter app and the physical ESP32 ready._
 5. **Verify:**
    - In the **Flutter Console**, you should see: `Successfully sent UDP packet "F" to Robot (Broadcast 2001)`
    - In the **Arduino Serial Monitor**, you should see: `Received UDP command: F` and the robot's motors should start moving.
-
----
 
 ## Method 2: Test Flutter App (Without Robot)
 
@@ -73,8 +69,6 @@ even if the robot is turned off._
 4. Press **"ยืนยันรายการ"** in the Flutter app.
 5. You should see the terminal print the received `"F"` command along with your phone's IP address.
 
----
-
 ## Method 3: Test Robot (Without Flutter App)
 
 _Use this to test the ESP32 logic and motor controls without needing the Flutter
@@ -103,8 +97,6 @@ app._
    ```
 
 _(Replace `<ESP32_IP_ADDRESS>` with the actual IP address of the robot)._
-
----
 
 ## Troubleshooting Common Issues
 

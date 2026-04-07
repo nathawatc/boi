@@ -2,22 +2,16 @@
 
 Complete documentation for the `RobotApi` service layer that handles communication between Flutter app and ESP32 robot.
 
----
-
 ## Location
 
 ```text
 lib/services/robot_api.dart
 ```
 
----
-
 ## Overview
 
 The `RobotApi` service provides a clean, type-safe interface for sending commands to the ESP32 robot via UDP. It handles
 connection tracking, error handling, and automatic broadcast address detection.
-
----
 
 ## Classes
 
@@ -47,8 +41,6 @@ RobotCommand.forward.value  // Returns: "F"
 // Use in sendCommand
 await robotApi.sendCommand(RobotCommand.forward);
 ```
-
----
 
 ### 2. RobotConnectionStatus (Enum)
 
@@ -123,8 +115,6 @@ const config = RobotConfig(
 );
 ```
 
----
-
 ### 4. RobotResponse
 
 Response from robot after command.
@@ -160,8 +150,6 @@ if (response.success) {
 }
 ```
 
----
-
 ### 5. RobotApi (Main Service Class)
 
 Main service class for robot communication.
@@ -188,8 +176,6 @@ class RobotApi extends ChangeNotifier {
   Future<RobotResponse> enableLineFollow({RobotConfig? config});
 }
 ```
-
----
 
 ## Methods
 
@@ -228,8 +214,6 @@ final response = await robotApi.sendCommand(RobotCommand.forward);
 5. Updates status to `connected` on success
 6. Returns response
 
----
-
 ### Convenience Methods
 
 Shortcut methods for common commands. All methods accept optional `RobotConfig` and return `Future<RobotResponse>`.
@@ -248,8 +232,6 @@ Shortcut methods for common commands. All methods accept optional `RobotConfig` 
 ```dart
 await robotApi.moveForward();
 ```
-
----
 
 ### discoverRobot()
 
@@ -284,8 +266,6 @@ if (ip != null) {
 3. Returns IP of responding device
 4. Updates `lastKnownIp` and connection status
 
----
-
 ### Configure()
 
 Update robot configuration.
@@ -305,8 +285,6 @@ robotApi.configure(RobotConfig(
 ));
 ```
 
----
-
 ### Reset()
 
 Reset connection status.
@@ -324,8 +302,6 @@ robotApi.reset();
 // Status back to disconnected
 ```
 
----
-
 ## Properties
 
 ### connectionStatus
@@ -341,8 +317,6 @@ print(robotApi.connectionStatus);
 // Output: RobotConnectionStatus.connected
 ```
 
----
-
 ### lastKnownIp
 
 Last known IP address of robot.
@@ -356,8 +330,6 @@ if (robotApi.lastKnownIp != null) {
   print('Robot was last seen at: ${robotApi.lastKnownIp}');
 }
 ```
-
----
 
 ### isConnected
 
@@ -374,8 +346,6 @@ if (robotApi.isConnected) {
   print('Robot not connected');
 }
 ```
-
----
 
 ## Usage Patterns
 
@@ -416,8 +386,6 @@ class _MyWidgetState extends State<MyWidget> {
 }
 ```
 
----
-
 ### With Connection Check
 
 ```dart
@@ -435,8 +403,6 @@ Future<void> _safeMove() async {
 }
 ```
 
----
-
 ### With Custom Config
 
 ```dart
@@ -448,8 +414,6 @@ final response = await robotApi.moveForward(
   ),
 );
 ```
-
----
 
 ### With Status Listening
 
@@ -473,8 +437,6 @@ class RobotStatusWidget extends StatelessWidget {
   }
 }
 ```
-
----
 
 ## Error Handling
 
@@ -501,8 +463,6 @@ try {
   showError('Unexpected error: $e');
 }
 ```
-
----
 
 ## Debugging
 
